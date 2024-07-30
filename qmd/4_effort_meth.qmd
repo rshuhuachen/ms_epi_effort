@@ -1,0 +1,12 @@
+---
+title: "Which changes in CpG site methylation are associated with reproductive effort?"
+format: 
+  html:
+    link-external-newwindow: true
+    code-fold: true
+    fig-cap-location: bottom
+    fig-width: 200
+    fig-height: 200
+---
+
+We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes. However, our approach is not informative about causality, and therefore our analysis will also result in CpG sites whose methylation change cause reproductive traits.

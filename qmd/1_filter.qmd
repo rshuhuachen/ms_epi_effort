@@ -1,0 +1,54 @@
+---
+title: "Preparing and filtering the data"
+format: 
+  html:
+    link-external-newwindow: true
+    code-fold: true
+    fig-cap-location: bottom
+    fig-width: 200
+    fig-height: 200
+---
+
+Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each. 
+
+First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.
+
+```{r load, echo=T, eval=F}
+ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
+                      sample.id = ids, assembly = "ltet", 
+                      treatment = c(rep(1, each =length(ids))), context = "CpG",
+                      sep = " ")
+```
+
+Where files = the list of 116 file locations and ids = the list of the 116 ID's of those files.
+
+Next, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile 
+
+```{r filter, echo=T, eval=F}
+
+ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
+                                    hi.count=NULL,hi.perc=99.9)   
+
+```
+
+Next, we unite the strands while only keeping CpG sites that are covered in at least 75% of all individuals.
+
+```{r unite, echo=T, eval=F}
+
+ltet_meth_unite_0.75 <- methylKit::unite(ltet_meth, destrand = TRUE, 
+                                    min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)
+
+```
+
+The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual
+and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.
+
+```{r convert, echo=T, eval=F}
+
+source("scripts/function_convert_methfile.R")
+
+prepost_long <- convert_meth(methfile = ltet_meth_unite_0.75, novar = "remove") 
+
+#Out of 274,197 CpG sites, kept 274,188 which is 1% removed due to invariance
+
+```
