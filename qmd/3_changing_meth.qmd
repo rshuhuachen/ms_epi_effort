@@ -108,4 +108,14 @@ out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = n
 
 save(out_glmer, file="results/modeloutput/pre_withinbetween_all_modeloutput_glmer_min0.75.RData")
 
+### only select CpG sites with significant effects of pre/post
+
+sub_glmer_prepost <- subset(out_glmer, isSingular == FALSE & prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & absolute(prepost_estimate >= 0.01))
+#N = 4954
+
+### collect the actual data from those significant CpG sites
+
+changing_cpg <- prepost_long %>% filter(chr_pos %in% sub_glmer_prepost$chr_pos)
+save(changing_cpg, file="results/modeloutput/subset_sites_sig_prepost.RData")
+
 ```
