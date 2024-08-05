@@ -1,22 +1,3 @@
----
-title: "Which changes in CpG site methylation are associated with reproductive effort?"
-format: 
-  html:
-    link-external-newwindow: true
-    code-fold: true
-    fig-cap-location: bottom
-    fig-width: 200
-    fig-height: 200
----
-
-We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes. 
-
-Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.
-
-First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).
-
-```{r delta_meth, echo=T, eval=F}
-
 ### load packages
 pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
                parallel, performance, lmerTest, tidystats, insight)
@@ -41,11 +22,9 @@ delta_meth <- delta_meth %>% relocate(c(id, year, born:age), .before=lib_id_pre)
 delta_meth <- delta_meth %>% mutate(delta_meth = methperc_post - methperc_pre, .after =born)
 delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
 delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
-```
 
-Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects. 
-
-```{r model, echo=T, eval=F}
+save(delta_meth, file = "results/modeloutput/subset_sites_sig_deltameth.RData")
+#Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model.
 
 #combine with site and behaviour info
 
@@ -216,10 +195,102 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 save(delta_out_all, file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
 
-```
+### significant ones
 
-There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. We can plot the raw data here:
+cpg_sig <- subset(delta_out_all, parameter_qval < 0.05)
+cpg_sig_dist <- subset(cpg_sig, parameter == "dist")
+cpg_sig_attend <- subset(cpg_sig, parameter == "attend")
+cpg_sig_fight <- subset(cpg_sig, parameter == "fight")
 
-![Raw data attendance](../plots/model_out/rawdata_plot_attend.png)
+### plotting
 
-![Raw data centrality](../plots/model_out/rawdata_plot_dist.png)
+source("scripts/plotting_theme.R")
+
+for (i in 1:nrow(cpg_sig_dist)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_dist$chr_pos[i]), aes(x = dist, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Centrality", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_dist$parameter_estimate[i], 2),
+                                        ", q-value = ", round(cpg_sig_dist$parameter_qval[i], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+    
+    ggsave(plot, file = paste0("plots/model_out/rawdata_plot_dist_cpg_", i, ".png"), width=8, height=8)}
+
+for (i in 1:nrow(cpg_sig_attend)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[i]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[i], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[i], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+    
+    ggsave(plot, file = paste0("plots/model_out/rawdata_plot_attend_cpg_", i, ".png"), width=8, height=8)
+}
+
+## combine in cowplot
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_dist$chr_pos[1]), aes(x = dist, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Centrality", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_dist$parameter_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_dist$parameter_qval[1], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_dist_1
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_dist$chr_pos[2]), aes(x = dist, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Centrality", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_dist$parameter_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_dist$parameter_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_dist_2
+
+cowplot::plot_grid(plot_dist_1, plot_dist_2, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_dist
+ggsave(plots_dist, file = paste0("plots/model_out/rawdata_plot_dist.png"), width=14, height=12)
+
+#attend
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[1]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[1], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_1
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[2]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_2
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[3]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[1], 3),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[1], 3))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_3
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[4]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[4], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[4], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_4
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[5]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[5], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[5], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_5
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_attend$chr_pos[6]), aes(x = attend, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = "Attendance", y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_attend$parameter_estimate[6], 2),
+                                        ", q-value = ", round(cpg_sig_attend$parameter_qval[6], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_attend_6
+
+cowplot::plot_grid(plot_attend_1, plot_attend_2, plot_attend_3, plot_attend_4, plot_attend_5, plot_attend_6, 
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_attend
+
+ggsave(plots_attend, file = paste0("plots/model_out/rawdata_plot_attend.png"), width=14, height=20)

@@ -26,7 +26,7 @@ rm(all_pheno_epi)
 
 ### merge with metadata
 
-prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "year", "born", "fulldate")], 
+prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "year", "born","site", "fulldate")], 
                           by = c("id", "year", "fulldate"))
 
 prepost_long$age <- prepost_long$year - prepost_long$born
@@ -56,7 +56,7 @@ function_model_glmer <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   # model
-  model <- lme4::glmer(cbind(numC, numT) ~ prepost + (1|id), family = "binomial", df)
+  model <- lme4::glmer(cbind(numC, numT) ~ prepost + (1|site/id), family = "binomial", df)
   
   #fixed effects
   prepost_estimate <- summary(model)$coefficients[2,1]
@@ -78,7 +78,7 @@ function_model_glmer <- function(df){tryCatch({
   
   isSingular <- isSingular(model)
   
-  icc_id <- icc(model, by_group = TRUE, tolerance = 0)[1,2]
+  icc_id_site <- icc(model, by_group = TRUE, tolerance = 0)[1,2]
   
   return(data.frame(chr_pos=chr_pos, 
                     prepost_estimate = prepost_estimate,
@@ -94,7 +94,7 @@ function_model_glmer <- function(df){tryCatch({
                     dispersion.rdf = dispersion.rdf,
                     dispersion.pval = dispersion.pval,
                     isSingular = isSingular,
-                    icc_id = icc_id
+                    icc_id_site = icc_id_site
                     ))
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
@@ -106,12 +106,12 @@ out_glmer <- do.call(rbind.data.frame, out_glmer)
 ### apply a FDR multiple-testing correction
 out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
 
-save(out_glmer, file="results/modeloutput/pre_withinbetween_all_modeloutput_glmer_min0.75.RData")
+save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
 
 ### only select CpG sites with significant effects of pre/post
 
-sub_glmer_prepost <- subset(out_glmer, isSingular == FALSE & prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & absolute(prepost_estimate >= 0.01))
-#N = 4954
+sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & abs(prepost_estimate >= 0.1))
+#N = 3,418
 
 ### collect the actual data from those significant CpG sites
 
