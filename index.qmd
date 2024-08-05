@@ -1,0 +1,9 @@
+---
+title: "Epigenetic changes associated with reproductive investment in a lekking bird"
+---
+
+This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (*Lyrurus tetrix*)
+
+Briefly, repeated samples were taken of yearling and adult black grouse males during 2002-2007. Blood samples were taken, which were used for epiGBS (RRBS), as well as measuring physiological traits and parasite abundance. We also have repeated samples of males that were caught pre- and post-lekking (defined as before mid April vs after mid April, ranging from approx. February until mid May in total).
+
+![DNA methylation](img/methylation.jpeg)

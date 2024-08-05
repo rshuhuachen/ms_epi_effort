@@ -185,3 +185,9 @@ There are 266 significant CpG sites for AMS but none for survival.
 Interestingly, two of the significant CpG sites are the same CpG sites that are significantly associated with changes in *Trypanosoma spp.*. Below, I plot the relationship between delta *Trypanosoma spp* and delta methylation (left) and the relationship between delta methylation and AMS (right) for the first (top) and second (bottom) CpG site.
 
 ![Raw data overlapping CpG sites](../plots/model_out/rawdata_plot_trypa_delta_AMS.png)
+
+The first CpG site is located in a gene body, intron and downstream region whereas the second CpG site was unannotated (located in an intergenic region) based on the black grouse genome annotation. Neither CpG was annotated based on the lifted over chicken genome annotation.
+
+### Annotation
+
+I annotated all CpG sites from this analysis as well as the previous ones and have lists of genes (based on the chicken genome). Inputting the list of genes in GOrilla shows that cell fate determination is a significant GO term for AMS, but that is the only significant output. 

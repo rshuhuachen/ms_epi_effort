@@ -1,0 +1,30 @@
+project:
+  type: book
+  output-dir: docs
+
+engine: knitr
+
+book:
+  title: "DNA methylation black grouse"
+  author: "Rebecca S. Chen"
+  cover-image: img/grouse.jpeg
+  chapters:
+      - index.qmd
+      - qmd/1_filter.qmd
+      - qmd/2_explore.qmd
+      - qmd/3_changing_meth.qmd
+      - qmd/4_effort_meth.qmd
+      - qmd/5_physio_meth.qmd
+      - qmd/6_fitness_meth.qmd
+  navbar:
+    search: true
+
+format:
+  html:
+    theme: solar
+    css: styles.css
+    toc: true
+    mainfont: Georgia, serif
+
+editor: visual
+
