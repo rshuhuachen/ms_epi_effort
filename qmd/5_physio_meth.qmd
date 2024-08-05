@@ -228,7 +228,7 @@ save(delta_out_all, file="results/modeloutput/physio_deltameth_modeloutput_filte
 
 After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.* and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing. 
 
-```{r plots, echo=F}
+
 ![Raw data delta Microfilaria](../plots/model_out/rawdata_plot_microf_dif_cpg_1.png)
 
 ![Raw data delta Trypanosoma CpG 1](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_1.png)
@@ -239,6 +239,5 @@ After also subsetting for at least an (absolute) estimate of 0.1, there is one s
 ![Raw data delta IgG CpG 2](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_2.png)
 ![Raw data delta IgG CpG 3](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_3.png)
 
-```
 
 It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).
