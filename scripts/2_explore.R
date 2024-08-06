@@ -2,6 +2,7 @@
 ## load packages
 pacman::p_load(tidyverse, data.table, methylKit, tibble, matrixStats, ggpointdensity)
 
+source("scripts/plotting_theme.R")
 
 ## load data
 load("data/processed/methylkit_prepost_raw.RData")
@@ -45,10 +46,23 @@ summary <- summary %>% mutate(mean_perc_meth = rowMeans(sum_meth_prop[,-1], na.r
 # site to rownames
 summary <- summary %>% remove_rownames %>% column_to_rownames(var = "site")
 write.csv(summary, file = "results/qc/summary_coverage_meth_unfiltered.csv", row.names=T, quote=F)
+write.csv(summary[c(1:10),], file = "results/tables/summary_coverage_meth_unfiltered_n10.csv", row.names=T, quote=F)
+
+### Plot distributions of mean methylation etc. ####
+
+ggplot(summary, aes(mean_cov)) + geom_histogram() + labs(x = "Mean coverage") -> hist_mean_cov
+ggplot(summary, aes(sd_cov)) + geom_histogram() + labs(x = "Mean coverage SD") -> hist_sd_cov
+ggplot(summary, aes(mean_n_meth)) + geom_histogram()+ labs(x = "Mean number of methylated C's") -> hist_mean_n_meth
+ggplot(summary, aes(sd_n_meth)) + geom_histogram() + labs(x = "Mean SD of number of methylated C's") -> hist_sd_n_meth
+ggplot(summary, aes(n)) + geom_histogram() + labs(x = "Mean sample size") -> hist_n
+ggplot(summary, aes(mean_perc_meth)) + geom_histogram() + labs(x = "Mean methylation %") -> hist_mean_perc_meth
+
+cowplot::plot_grid(hist_mean_cov, hist_sd_cov, hist_mean_n_meth, hist_sd_n_meth, hist_n, hist_mean_perc_meth,
+                  labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> hist_plots
+
+ggsave(hist_plots, file="plots/explore/hist_summary_stats_cov_meth.png", width=14, height=12)
 
 #### Plot relationshp coverage and dna methylation #####
-
-source("scripts/plotting_theme.R")
 
 # geom pointdensity to get an idea of which points are where since many are overlapping
 # on a subset of random CpGs

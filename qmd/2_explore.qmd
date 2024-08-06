@@ -76,6 +76,12 @@ summary[,-1] %>% kbl() %>%
 
 ```
 
+Below you can find the histograms of the parameters calculated (mean methylation etc.)
+
+![Summary statistics methylation]("../plots/explore/hist_summary_stats_cov_meth.png")
+
+## Coverage vs methylation
+
 Next, we can plot the relationship between mean coverage and mean DNA methylation per site. However, as there are many CpG sites we randomly subset 100,000 CpG sites to visualize, and also visualize the density of the points as it is difficult to see overlapping areas.
 
 ```{r cov_meth, echo=T, eval=F}
