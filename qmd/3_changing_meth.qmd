@@ -29,10 +29,14 @@ rm(all_pheno_epi)
 
 ### merge with metadata
 
-prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "year", "born","site", "fulldate")], 
+prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "Core", "year", "born","site", "fulldate")], 
                           by = c("id", "year", "fulldate"))
 
-prepost_long$age <- prepost_long$year - prepost_long$born
+prepost_long <- prepost_long %>% mutate(age_year = case_when(Core == "Core" ~ year - born,
+                                                        Core == "No core" ~ NA),
+                                        age = case_when(Core == "Core" & (year - born > 1) ~ "Adult",
+                                                        Core == "Core" & (year - born == 1) ~ "Yearling",
+                                                         Core == "No core" ~ "Adult"))
 
 ### convert data to a list, one per CpG site
 data <- prepost_long %>% group_split(chr_pos)

@@ -5,7 +5,7 @@ project:
 engine: knitr
 
 book:
-  title: "Epigenetic changes associated with reproductive investment in black grouse"
+  title: "Epigenetic changes associated with reproductive investment in a lekking bird"
   author: "Rebecca S. Chen"
   cover-image: img/grouse.jpeg
   chapters:
@@ -18,11 +18,13 @@ book:
       - qmd/6_fitness_meth.qmd
   navbar:
     search: true
+  favicon: img/grouse_silhouette.png
 
 format:
   html:
     theme: lux
     toc: true
+    
 
 editor: visual
 

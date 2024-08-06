@@ -8,7 +8,7 @@
 
 <meta name="author" content="Rebecca S. Chen">
 
-<title>Epigenetic changes associated with reproductive investment in black grouse</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -32,6 +32,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./qmd/1_filter.html" rel="next">
+<link href="./img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -62,7 +63,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Epigenetic changes associated with reproductive investment in black grouse</span>
+    <span class="navbar-title">Epigenetic changes associated with reproductive investment in a lekking bird</span>
     </a>
   </div>
         <div class="quarto-navbar-tools ms-auto">
@@ -86,7 +86,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Epigenetic changes associated with reproductive investment in a lekking bird</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -109,13 +109,13 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Epigenetic changes associated with reproductive investment in a lekking bird</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/1_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preparing and filtering the data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -127,25 +127,25 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Identifying CpG sites that change over the lekking season</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -161,7 +161,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Epigenetic changes associated with reproductive investment in a lekking bird</h1>
+<h1 class="title">Introduction</h1>
 </div>
 
 
@@ -182,11 +182,17 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p><img src="img/grouse.jpeg" title="Epigenetic changes associated with reproductive investment in black grouse" class="quarto-cover-image img-fluid"></p>
+<p><img src="img/grouse.jpeg" title="Epigenetic changes associated with reproductive investment in a lekking bird" class="quarto-cover-image img-fluid"></p>
+<p><strong>Epigenetic changes associated with reproductive investment in a lekking bird</strong></p>
 <p>This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (<em>Lyrurus tetrix</em>)</p>
 <p>Epigenetic, morphological, behavioural, and physiological data were obtained from 51 black grouse males sampled across five lekking sites in Central Finland between 2005 and 2007 inclusive. The birds were captured at two time points: before the lekking season (January-March) and after the lekking season (after mid-April) using walk-in traps. Six individuals were captured both before and after the lekking season in two years, and one individual was caught in three years, totalling to 116 captures.</p>
 <p>Reproductive effort was estimated using three behavioural indicators: lek attendance, fighting rate and lek centrality. Blood was used to quantify the abundance of <em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>, two extra-cellular blood parasites, immunoglobulin concentration in blood plasma, and haematocrit concentration. Additionally, body mass was quantified during capture to the nearest 10g.</p>
-<p>Our research questions are as follows: * Is reproductive effort associated with changes in DNA methylation? * Are physiological changes associated with changes in DNA methylation? * Are changes in DNA methylation associated with fitness (annual mating success and survival to the next year)?</p>
+<p>Our research questions are as follows:</p>
+<ul>
+<li>Is reproductive effort associated with changes in DNA methylation?</li>
+<li>Are physiological changes associated with changes in DNA methylation?</li>
+<li>Are changes in DNA methylation associated with fitness (annual mating success and survival to the next year)?</li>
+</ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="img/methylation.jpeg" class="img-fluid figure-img"></p>
@@ -435,7 +441,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
   <div class="nav-page nav-page-next">
       <a href="./qmd/1_filter.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preparing and filtering the data</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
