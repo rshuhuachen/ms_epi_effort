@@ -8,6 +8,8 @@ format:
     fig-height: 200
 ---
 
+** Data exploration, PCA, library effects **
+
 We explore our data to ensure there are no biases created by methodological factors. To do so, we conduct a PCA and build linear regression models to test for e.g. library effects.
 
 We only use unfiltered data for this exploration.

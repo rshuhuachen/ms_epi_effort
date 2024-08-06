@@ -1,5 +1,5 @@
 ---
-title: "Identifying CpG sites that change over the lekking season"
+title: "Changing CpG sites"
 format: 
   html:
     link-external-newwindow: true
@@ -7,6 +7,8 @@ format:
     fig-width: 200
     fig-height: 200
 ---
+
+** Identifying CpG sites that change over the lekking season **
 
 Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. Moreover, as there are multiple samples for each individual, we correct for the non-independence of samples by including ID as a random effect. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
 
@@ -118,6 +120,7 @@ out_glmer <- do.call(rbind.data.frame, out_glmer)
 
 ### apply a FDR multiple-testing correction
 out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
+out_glmer <- subset(out_glmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
 
 save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
 

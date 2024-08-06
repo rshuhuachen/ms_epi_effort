@@ -1,5 +1,5 @@
 ---
-title: "Which changes in CpG site methylation are associated with reproductive effort?"
+title: "Fitness effects"
 format: 
   html:
     link-external-newwindow: true
@@ -7,6 +7,8 @@ format:
     fig-width: 100
     fig-height: 100
 ---
+
+** Which changes in CpG site methylation are associated with fitness? **
 
 In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year.
 
@@ -184,9 +186,11 @@ delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
 ## Results
 
-There are 266 significant CpG sites for AMS but none for survival.
+There are 266 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.
 
-![Raw data AMS CpG 1](../plots/model_out/ams/rawdata_plot_ams_cpg_1.png) ![Raw data AMS CpG 2](../plots/model_out/ams/rawdata_plot_ams_cpg_2.png) ![Raw data AMS CpG 3](../plots/model_out/ams/rawdata_plot_ams_cpg_3.png) ![Raw data AMS CpG 4](../plots/model_out/ams/rawdata_plot_ams_cpg_4.png) ![Raw data AMS CpG 5](../plots/model_out/ams/rawdata_plot_ams_cpg_5.png)
+![Volcano plot fitness](../plots/model_out/volcano_fitness.png)
+
+![Raw data AMS top CpG](../plots/model_out/rawdata_plot_AMS_cpg_top.png)
 
 ### Overlapping CpGs previous analyses
 

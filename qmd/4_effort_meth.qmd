@@ -1,10 +1,12 @@
 ---
-title: "Which changes in CpG site methylation are associated with reproductive effort?"
+title: "Effort-associated CpG sites"
 format: 
   html:
     link-external-newwindow: true
     fig-cap-location: top
 ---
+
+** Which changes in CpG site methylation are associated with reproductive effort? **
 
 We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
 
@@ -235,8 +237,19 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 ## Results
 
-There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. We can plot the raw data here:
+There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. 
+
+Below you can find the volcano plots.
+
+![Volcano plot reproductive effort](../plots/model_out/volcano_effort.png)
+
+
+We can plot the raw data here:
+
+### Attendance
 
 ![Raw data attendance](../plots/model_out/rawdata_plot_attend.png)
+
+### Centrality
 
 ![Raw data centrality](../plots/model_out/rawdata_plot_dist.png)

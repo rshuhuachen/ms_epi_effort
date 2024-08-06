@@ -1,5 +1,5 @@
 ---
-title: "Which changes in CpG site methylation are associated with changes in physiology?"
+title: "Physio-associated CpG sites"
 format: 
   html:
     link-external-newwindow: true
@@ -7,6 +7,8 @@ format:
     fig-width: 100
     fig-height: 100
 ---
+
+** Which changes in CpG site methylation are associated with changes in physiology? **
 
 Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT.
 
@@ -245,12 +247,22 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 ## Results
 
-After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.* and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.
+Below we can see the volcano plots of all five physiological traits.
 
+![Volcano plot physiological change](../plots/model_out/volcano_physio.png)
+
+After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.*, 3 for delta HCT and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.
+
+### Microfilaria spp.
 ![Raw data delta Microfilaria](../plots/model_out/rawdata_plot_microf_dif_cpg_1.png)
 
-![Raw data delta Trypanosoma CpG 1](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_1.png) ![Raw data delta Trypanosoma CpG 2](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_2.png) ![Raw data delta Trypanosoma CpG 3](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_3.png)
+### Trypanosoma spp.
+![Raw data delta Trypanosoma top CpGs](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_top.png) 
 
-![Raw data delta IgG CpG 1](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_1.png) ![Raw data delta IgG CpG 2](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_2.png) ![Raw data delta IgG CpG 3](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_3.png)
+### IgG 
+![Raw data delta IgG top CpGs ](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_top.png) 
+
+### HCT 
+![Raw data delta HCT top CpGs ](../plots/model_out/igg/rawdata_plot_hct_dif.png) 
 
 It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).

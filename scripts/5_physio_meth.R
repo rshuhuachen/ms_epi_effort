@@ -208,16 +208,45 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 save(delta_out_all, file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
 
+### volcano plot
+source("scripts/plotting_theme.R")
+
+load(file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
+
+delta_out_all$parameter <- gsub("mass", "Delta body mass",delta_out_all$parameter)
+delta_out_all$parameter <- gsub("microf", "Delta Microfilaria spp.", delta_out_all$parameter)
+delta_out_all$parameter <- gsub("trypa", "Delta Trypanosoma spp.", delta_out_all$parameter)
+delta_out_all$parameter <- gsub("ig", "Delta IgG", delta_out_all$parameter)
+delta_out_all$parameter <- gsub("hct", "Delta HCT", delta_out_all$parameter)
+
+delta_out_all <- delta_out_all %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+
+clrs <- viridisLite::viridis(6)
+ggplot(delta_out_all, aes(x = parameter_estimate, y = -log10(parameter_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
+    facet_wrap(~parameter, ncol=1) +
+    xlim(-1,1)+
+    ylim(0,3)+
+    labs(x = "Estimate", y = "-log10(q-value)") +
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_physio
+
+ggsave(volcano_physio, file = "plots/model_out/volcano_physio.png", width=8, height=18)    
+
 ### significant ones
 
-cpg_sig_microf <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "microf" )
-cpg_sig_trypa <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "trypa")
-cpg_sig_ig <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "ig")
-cpg_sig_hct <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "hct")
+cpg_sig_microf <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Microfilaria spp." & abs(parameter_estimate) > 0.1)
+cpg_sig_trypa <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Trypanosoma spp."& abs(parameter_estimate) > 0.1)
+cpg_sig_ig <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta IgG"& abs(parameter_estimate) > 0.1)
+cpg_sig_hct <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta HCT"& abs(parameter_estimate) > 0.1)
 
 ### plotting
 
 source("scripts/plotting_theme.R")
+
+### microf
 
 ggplot(subset(delta_meth, chr_pos == cpg_sig_microf$chr_pos[1]), aes(x = microf_dif, y = delta_meth)) + 
     geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Microfilaria spp."), y = expression(Delta*" methylation"),
@@ -228,18 +257,37 @@ ggplot(subset(delta_meth, chr_pos == cpg_sig_microf$chr_pos[1]), aes(x = microf_
     
 ggsave(plot_microf, file = paste0("plots/model_out/rawdata_plot_microf_dif_cpg_1.png"), width=8, height=8)
 
-for (i in 1:nrow(cpg_sig_hct)){
-    ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[i]), aes(x = hct_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" haematocrit"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[i], 2),
-                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[i], 2))) +
+### hct plot all 3 in one
+ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[1]), aes(x = hct_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[1], 2))) +
                                         geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
-    
-    ggsave(plot, file = paste0("plots/model_out/rawdata_plot_hct_dif_cpg_", i, ".png"), width=8, height=8)}
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_1
 
+ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[2]), aes(x = hct_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_2
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[3]), aes(x = hct_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[3], 2),
+                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[3], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_3
+
+cowplot::plot_grid(plot_hct_1, plot_hct_2, plot_hct_3, labs="auto", align="hv", axis="lb", ncol=1, label_fontface = "plain", label_size = 22) -> plots_hct
+
+ggsave(plots_hct, file = paste0("plots/model_out/rawdata_plot_hct_dif.png"), width=8, height=14)
+
+## trypa
 # sort by significance
 cpg_sig_trypa <- cpg_sig_trypa %>% arrange(parameter_qval)
+
+# loop over all
 for (i in 1:nrow(cpg_sig_trypa)){
     ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[i]), aes(x = trypa_dif, y = delta_meth)) + 
     geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
@@ -250,7 +298,44 @@ for (i in 1:nrow(cpg_sig_trypa)){
     
     ggsave(plot, file = paste0("plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_", i, ".png"), width=8, height=8)}
 
+# top 4
+ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[1]), aes(x = trypa_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[1], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_1
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[2]), aes(x = trypa_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_2
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[3]), aes(x = trypa_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[3], 2),
+                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[3], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_3
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[4]), aes(x = trypa_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[4], 2),
+                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[4], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_4
+
+cowplot::plot_grid(plot_trypa_1, plot_trypa_2, plot_trypa_3, plot_trypa_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa
+
+ggsave(plots_trypa, file = paste0("plots/model_out/rawdata_plot_trypa_dif_cpg_top.png"), width=14, height=14)
+
+### IgG
+# sort by significance
 cpg_sig_ig <- cpg_sig_ig %>% arrange(parameter_qval)
+
+# loop over all
 for (i in 1:nrow(cpg_sig_ig)){
     ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[i]), aes(x = ig_dif, y = delta_meth)) + 
     geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
@@ -261,3 +346,36 @@ for (i in 1:nrow(cpg_sig_ig)){
     
     ggsave(plot, file = paste0("plots/model_out/igg/rawdata_plot_igg_dif_cpg_", i, ".png"), width=8, height=8)
 }
+
+# top 4
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[1]), aes(x = ig_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[1], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_1
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[2]), aes(x = ig_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_2
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[3]), aes(x = ig_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[3], 2),
+                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[3], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_3
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[4]), aes(x = ig_dif, y = delta_meth)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[4], 2),
+                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[4], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_4
+
+cowplot::plot_grid(plot_igg_1, plot_igg_2, plot_igg_3, plot_igg_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_igg
+
+ggsave(plots_igg, file = paste0("plots/model_out/rawdata_plot_igg_dif_cpg_top.png"), width=10, height=14)

@@ -149,6 +149,9 @@ delta_out_surv <- subset(delta_out_fitness, surv_message == "relative convergenc
 delta_out_ams$ams_delta_meth_qval <- p.adjust(delta_out_ams$ams_delta_meth_pval, method = "fdr", n = nrow(delta_out_ams))
 delta_out_surv$surv_delta_meth_qval <- p.adjust(delta_out_surv$surv_delta_meth_pval, method = "fdr", n = nrow(delta_out_surv))
 
+delta_out_ams$ams_pre_qval <- p.adjust(delta_out_ams$ams_pre_pval, method = "fdr", n = nrow(delta_out_ams))
+delta_out_surv$surv_pre_qval <- p.adjust(delta_out_surv$surv_pre_pval, method = "fdr", n = nrow(delta_out_surv))
+
 delta_out_ams$chr_pos <- as.factor(delta_out_ams$chr_pos)
 delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
@@ -160,6 +163,43 @@ save(delta_out_surv, file="results/modeloutput/surv_deltameth_modeloutput_filter
 
 nrow(subset(delta_out_ams, ams_delta_meth_qval < 0.05))
 nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05))
+
+### volcano plot
+source("scripts/plotting_theme.R")
+
+#ams
+load(file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
+
+delta_out_ams <- delta_out_ams %>% mutate(sig = case_when(ams_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+
+clrs <- viridisLite::viridis(6)
+ggplot(delta_out_ams, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
+    labs(x = "Estimate delta methylation", y = "-log10(q-value)") +
+    xlim(-1,1)+
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_ams
+
+# surv
+load(file="results/modeloutput/surv_deltameth_modeloutput_filtered.RData")
+
+delta_out_surv <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+
+ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_meth_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
+    labs(x = "Estimate delta methylation", y = "-log10(q-value)") +
+    xlim(-1,1)+
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_surv
+
+cowplot::plot_grid(volcano_ams, volcano_surv, labs=c("a) Annual mating succes", "b) Survival"), 
+        align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_fitness
+
+ggsave(plots_fitness, file = "plots/model_out/volcano_fitness.png", width=14, height=10)    
 
 ### significant ones
 
@@ -180,6 +220,41 @@ for (i in 1:10){
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
     
     ggsave(plot, file = paste0("plots/model_out/ams/rawdata_plot_AMS_cpg_", i, ".png"), width=8, height=8)}
+
+## top 
+
+# top 4
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[1]), aes(x = delta_meth, y = MS)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
+                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[1], 2),
+                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[1], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_1
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[2]), aes(x = delta_meth, y = MS)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
+                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[2], 2),
+                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[2], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_2
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[3]), aes(x = delta_meth, y = MS)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
+                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[3], 2),
+                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[3], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_3
+
+ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[4]), aes(x = delta_meth, y = MS)) + 
+    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
+                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[4], 2),
+                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[4], 2))) +
+                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_4
+
+cowplot::plot_grid(plot_ams_1, plot_ams_2, plot_ams_3, plot_ams_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams
+
+ggsave(plots_ams, file = paste0("plots/model_out/rawdata_plot_AMS_cpg_top.png"), width=14, height=14)
 
 ### is there any overlap with behavioural or physiological traits?
 load(file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")

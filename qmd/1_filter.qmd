@@ -1,5 +1,5 @@
 ---
-title: "Preparing and filtering the data"
+title: "Filtering"
 format: 
   html:
     link-external-newwindow: true
@@ -7,6 +7,8 @@ format:
     fig-width: 200
     fig-height: 200
 ---
+
+** Preparing and filtering the data **
 
 Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis). 
 

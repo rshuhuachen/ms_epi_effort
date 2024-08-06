@@ -102,5 +102,31 @@ out_glmer <- do.call(rbind.data.frame, out_glmer)
 
 ### apply a FDR multiple-testing correction
 out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
+out_glmer <- subset(out_glmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
 
-save(out_glmer, file="results/modeloutput/pre_withinbetween_all_modeloutput_glmer_min0.75.RData")
+save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+
+## save the epi data only from cpg's that are sig
+sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & abs(prepost_estimate >= 0.1))
+# N = 3,418
+
+changing_cpg <- subset(prepost_long, chr_pos %in% sub_glmer_prepost$chr_pos)
+save(changing_cpg, file="results/modeloutput/subset_sites_sig_prepost.RData")
+
+### volcano plot
+source("scripts/plotting_theme.R")
+
+load(file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(as.numeric(prepost_estimate)) > 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+
+clrs <- viridisLite::viridis(6)
+ggplot(out_glmer, aes(x = as.numeric(prepost_estimate), y = -log10(as.numeric(prepost_qval)))) + geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
+    labs(x = "Estimate time period", y = "-log10(q-value)") +
+    xlim(-1, 1)+
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_change
+
+ggsave(volcano_change, file = "plots/model_out/volcano_change.png", width=10, height=10)    

@@ -24,6 +24,7 @@ delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
 delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
 
 save(delta_meth, file = "results/modeloutput/subset_sites_sig_deltameth.RData")
+
 #Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model.
 
 #combine with site and behaviour info
@@ -195,6 +196,34 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 save(delta_out_all, file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
 
+
+### volcano plot
+source("scripts/plotting_theme.R")
+
+load(file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
+
+delta_out_all$parameter <- gsub("dist", "Centrality",delta_out_all$parameter)
+delta_out_all$parameter <- gsub("attend", "Attendance", delta_out_all$parameter)
+delta_out_all$parameter <- gsub("fight", "Fighting", delta_out_all$parameter)
+
+delta_out_all <- delta_out_all %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+
+clrs <- viridisLite::viridis(6)
+ggplot(delta_out_all, aes(x = parameter_estimate, y = -log10(parameter_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
+    facet_wrap(~parameter, ncol=1) +
+    xlim(-1,1)+
+    ylim(0,3)+
+    labs(x = "Estimate", y = "-log10(q-value)") +
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_effort
+
+ggsave(volcano_effort, file = "plots/model_out/volcano_effort.png", width=8, height=12)    
+
+
+
 ### significant ones
 
 cpg_sig <- subset(delta_out_all, parameter_qval < 0.05)
@@ -203,8 +232,6 @@ cpg_sig_attend <- subset(cpg_sig, parameter == "attend")
 cpg_sig_fight <- subset(cpg_sig, parameter == "fight")
 
 ### plotting
-
-source("scripts/plotting_theme.R")
 
 for (i in 1:nrow(cpg_sig_dist)){
     ggplot(subset(delta_meth, chr_pos == cpg_sig_dist$chr_pos[i]), aes(x = dist, y = delta_meth)) + 
