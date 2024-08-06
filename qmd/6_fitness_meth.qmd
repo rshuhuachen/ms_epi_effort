@@ -8,7 +8,7 @@ format:
     fig-height: 100
 ---
 
-** Which changes in CpG site methylation are associated with fitness? **
+**Which changes in CpG site methylation are associated with fitness?**
 
 In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year.
 

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in black grouse - 7&nbsp; Which changes in CpG site methylation are associated with reproductive effort?</title>
+<title>Epigenetic changes associated with reproductive investment in black grouse - 7&nbsp; Fitness effects</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -118,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/6_fitness_meth.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/6_fitness_meth.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -147,7 +147,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/1_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preparing and filtering the data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -159,25 +159,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Identifying CpG sites that change over the lekking season</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -206,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></h1>
 </div>
 
 
@@ -221,6 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p><strong>Which changes in CpG site methylation are associated with fitness?</strong></p>
 <p>In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year.</p>
 <p>We build two GLMMs per CpG site, one for AMS and one for survival, to identify CpG sites whose DNA methylation change is associated with fitness. In these models, we predict AMS and survival, and include delta methylation as a fixed effect, as well as age and pre-lekking methylation.</p>
 <section id="prepare-the-data" class="level2" data-number="7.1">
@@ -393,8 +394,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="results" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="results"><span class="header-section-number">7.4</span> Results</h2>
-<p>There are 266 significant CpG sites for AMS but none for survival.</p>
-<p><img src="../plots/model_out/ams/rawdata_plot_ams_cpg_1.png" class="img-fluid" alt="Raw data AMS CpG 1"> <img src="../plots/model_out/ams/rawdata_plot_ams_cpg_2.png" class="img-fluid" alt="Raw data AMS CpG 2"> <img src="../plots/model_out/ams/rawdata_plot_ams_cpg_3.png" class="img-fluid" alt="Raw data AMS CpG 3"> <img src="../plots/model_out/ams/rawdata_plot_ams_cpg_4.png" class="img-fluid" alt="Raw data AMS CpG 4"> <img src="../plots/model_out/ams/rawdata_plot_ams_cpg_5.png" class="img-fluid" alt="Raw data AMS CpG 5"></p>
+<p>There are 266 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot fitness</figcaption>
+<p><img src="../plots/model_out/volcano_fitness.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data AMS top CpG</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_AMS_cpg_top.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 <section id="overlapping-cpgs-previous-analyses" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="overlapping-cpgs-previous-analyses"><span class="header-section-number">7.4.1</span> Overlapping CpGs previous analyses</h3>
 <p>Interestingly, two of the significant CpG sites are the same CpG sites that are significantly associated with changes in <em>Trypanosoma spp.</em>. Below, I plot the relationship between delta <em>Trypanosoma spp</em> and delta methylation (left) and the relationship between delta methylation and AMS (right) for the first (top) and second (bottom) CpG site.</p>
@@ -665,7 +677,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../qmd/5_physio_meth.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

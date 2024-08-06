@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in black grouse - 5&nbsp; Which changes in CpG site methylation are associated with reproductive effort?</title>
+<title>Epigenetic changes associated with reproductive investment in black grouse - 5&nbsp; Effort-associated CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -119,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/4_effort_meth.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/4_effort_meth.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/1_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preparing and filtering the data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -160,25 +160,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Identifying CpG sites that change over the lekking season</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -191,10 +191,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">5.1</span> Prepare the data</a></li>
-  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">5.2</span> Function to run the model</a></li>
-  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">5.3</span> Run the model per trait</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">5.4</span> Results</a></li>
+  <li><a href="#delta-methylation" id="toc-delta-methylation" class="nav-link active" data-scroll-target="#delta-methylation"><span class="header-section-number">5.1</span> Delta methylation</a></li>
+  <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link" data-scroll-target="#prepare-the-data"><span class="header-section-number">5.2</span> Prepare the data</a></li>
+  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">5.3</span> Function to run the model</a></li>
+  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">5.4</span> Run the model per trait</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">5.5</span> Results</a>
+  <ul class="collapse">
+  <li><a href="#attendance" id="toc-attendance" class="nav-link" data-scroll-target="#attendance"><span class="header-section-number">5.5.1</span> Attendance</a></li>
+  <li><a href="#centrality" id="toc-centrality" class="nav-link" data-scroll-target="#centrality"><span class="header-section-number">5.5.2</span> Centrality</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -203,7 +208,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></h1>
 </div>
 
 
@@ -218,9 +223,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p><strong>Which changes in CpG site methylation are associated with reproductive effort?</strong></p>
 <p>We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.</p>
 <p>Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.</p>
 <p>First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).</p>
+<section id="delta-methylation" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="delta-methylation"><span class="header-section-number">5.1</span> Delta methylation</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, matrixStats, </span>
@@ -248,8 +256,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>delta_meth<span class="sc">$</span>diff_date <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_meth<span class="sc">$</span>diff_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects.</p>
-<section id="prepare-the-data" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="prepare-the-data"><span class="header-section-number">5.1</span> Prepare the data</h2>
+</section>
+<section id="prepare-the-data" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="prepare-the-data"><span class="header-section-number">5.2</span> Prepare the data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#combine with site and behaviour info</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -273,8 +282,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>delta_meth_ls <span class="ot">&lt;-</span> delta_meth <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="function-to-run-the-model" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">5.2</span> Function to run the model</h2>
+<section id="function-to-run-the-model" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">5.3</span> Function to run the model</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -369,8 +378,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="run-the-model-per-trait" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="run-the-model-per-trait"><span class="header-section-number">5.3</span> Run the model per trait</h2>
+<section id="run-the-model-per-trait" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="run-the-model-per-trait"><span class="header-section-number">5.4</span> Run the model per trait</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model per trait</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -435,15 +444,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="results" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="results"><span class="header-section-number">5.4</span> Results</h2>
-<p>There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. We can plot the raw data here:</p>
+<section id="results" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="results"><span class="header-section-number">5.5</span> Results</h2>
+<p>There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting.</p>
+<p>Below you can find the volcano plots.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot reproductive effort</figcaption>
+<p><img src="../plots/model_out/volcano_effort.png" class="img-fluid figure-img" width="350"></p>
+</figure>
+</div>
+<p>We can plot the raw data here:</p>
+<section id="attendance" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="attendance"><span class="header-section-number">5.5.1</span> Attendance</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Raw data attendance</figcaption>
 <p><img src="../plots/model_out/rawdata_plot_attend.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+</section>
+<section id="centrality" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="centrality"><span class="header-section-number">5.5.2</span> Centrality</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Raw data centrality</figcaption>
@@ -452,6 +474,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -705,12 +728,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../qmd/3_changing_meth.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Identifying CpG sites that change over the lekking season</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../qmd/5_physio_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in black grouse - 6&nbsp; Which changes in CpG site methylation are associated with changes in physiology?</title>
+<title>Epigenetic changes associated with reproductive investment in black grouse - 6&nbsp; Physio-associated CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -119,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/5_physio_meth.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/5_physio_meth.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/1_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Preparing and filtering the data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -160,25 +160,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Identifying CpG sites that change over the lekking season</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -194,7 +194,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">6.1</span> Prepare the data</a></li>
   <li><a href="#functon-to-run-the-model" id="toc-functon-to-run-the-model" class="nav-link" data-scroll-target="#functon-to-run-the-model"><span class="header-section-number">6.2</span> Functon to run the model</a></li>
   <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">6.4</span> Results</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">6.4</span> Results</a>
+  <ul class="collapse">
+  <li><a href="#microfilaria-spp." id="toc-microfilaria-spp." class="nav-link" data-scroll-target="#microfilaria-spp."><span class="header-section-number">6.4.1</span> Microfilaria spp.</a></li>
+  <li><a href="#trypanosoma-spp." id="toc-trypanosoma-spp." class="nav-link" data-scroll-target="#trypanosoma-spp."><span class="header-section-number">6.4.2</span> Trypanosoma spp.</a></li>
+  <li><a href="#igg" id="toc-igg" class="nav-link" data-scroll-target="#igg"><span class="header-section-number">6.4.3</span> IgG</a></li>
+  <li><a href="#hct" id="toc-hct" class="nav-link" data-scroll-target="#hct"><span class="header-section-number">6.4.4</span> HCT</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -203,7 +209,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with changes in physiology?</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></h1>
 </div>
 
 
@@ -218,6 +224,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p><strong>Which changes in CpG site methylation are associated with changes in physiology?</strong></p>
 <p>Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (<em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>), body mass, IgG and HCT.</p>
 <p>Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.</p>
 <section id="prepare-the-data" class="level2" data-number="6.1">
@@ -449,18 +456,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="results" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="results"><span class="header-section-number">6.4</span> Results</h2>
-<p>After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta <em>Microfilaria spp</em>, 29 for delta <em>Trypanosoma spp.</em> and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.</p>
-<div class="quarto-figure quarto-figure-center">
+<p>Below we can see the volcano plots of all five physiological traits.</p>
+<div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Microfilaria</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_microf_dif_cpg_1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Volcano plot physiological change</figcaption>
+<p><img src="../plots/model_out/volcano_physio.png" class="img-fluid figure-img" width="350"></p>
 </figure>
 </div>
-<p><img src="../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_1.png" class="img-fluid" alt="Raw data delta Trypanosoma CpG 1"> <img src="../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_2.png" class="img-fluid" alt="Raw data delta Trypanosoma CpG 2"> <img src="../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_3.png" class="img-fluid" alt="Raw data delta Trypanosoma CpG 3"></p>
-<p><img src="../plots/model_out/igg/rawdata_plot_igg_dif_cpg_1.png" class="img-fluid" alt="Raw data delta IgG CpG 1"> <img src="../plots/model_out/igg/rawdata_plot_igg_dif_cpg_2.png" class="img-fluid" alt="Raw data delta IgG CpG 2"> <img src="../plots/model_out/igg/rawdata_plot_igg_dif_cpg_3.png" class="img-fluid" alt="Raw data delta IgG CpG 3"></p>
+<p>After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta <em>Microfilaria spp</em>, 29 for delta <em>Trypanosoma spp.</em>, 3 for delta HCT and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.</p>
+<section id="microfilaria-spp." class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">6.4.1</span> Microfilaria spp.</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta Microfilaria</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_microf_dif_cpg_1.png" class="img-fluid figure-img" width="300"></p>
+</figure>
+</div>
+</section>
+<section id="trypanosoma-spp." class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">6.4.2</span> Trypanosoma spp.</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta Trypanosoma top CpGs</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_trypa_dif_cpg_top.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="igg" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="igg"><span class="header-section-number">6.4.3</span> IgG</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta IgG top CpGs</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_igg_dif_cpg_top.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="hct" class="level3" data-number="6.4.4">
+<h3 data-number="6.4.4" class="anchored" data-anchor-id="hct"><span class="header-section-number">6.4.4</span> HCT</h3>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta HCT top CpGs</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_hct_dif.png" class="img-fluid figure-img" width="300"></p>
+</figure>
+</div>
 <p>It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -714,12 +756,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../qmd/4_effort_meth.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../qmd/6_fitness_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Which changes in CpG site methylation are associated with reproductive effort?</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
