@@ -21,11 +21,13 @@ load("data/processed/methylkit_prepost_raw.RData")
 data <- getData(ltet_meth_unite)
 ```
 
-## Summary statistics 
+## Summary statistics
 
 We start by collecting summary statistics per CpG site to check if methylation level is associated with coverage.
 
-```{r sum, echo=T, eval=F, code-fold=T}
+```{r sum, echo=T, eval=F}
+#| code-fold: true
+
 #### Get summary statistics ####
 # select columns for specific data: number of sites that are methylated, coverage
 # number of columns in data
@@ -64,10 +66,11 @@ summary <- summary %>% mutate(mean_perc_meth = rowMeans(sum_meth_prop[,-1], na.r
 summary <- summary %>% remove_rownames %>% column_to_rownames(var = "site")
 ```
 
-We can see the first 10 rows 
+We can see the first 10 rows
+
 ```{r summary, echo=F, message=F}
 pacman::p_load(kableExtra)
-summary <- read.csv(file = "results/tables/summary_coverage_meth_unfiltered.csv", nrows=10)
+summary <- read.csv(file = "results/qc/summary_coverage_meth_unfiltered_n10.csv", nrows=10)
 summary %>% kbl() %>%
   kable_classic_2()
 
@@ -89,7 +92,7 @@ ggplot(data=summary[sample(nrow(summary),random_n),], aes(x=mean_cov, y=mean_per
 
 ```
 
-![Relationship coverage and mean methylation]("../plots/explore/plot_coverage_mean_methylation_random.png")
+![Relationship coverage and mean methylation](%22../plots/explore/plot_coverage_mean_methylation_random.png%22)
 
 Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).
 
@@ -97,8 +100,8 @@ Here we see that there are many CpG sites with low average coverage and very low
 
 Next, we can conduct a PCA to visualize potential methodological biases towards methylation. We only use complete data to conduct the PCA, meaning we only include CpG sites that are covered in each sample.
 
-```{r pca, echo=T, eval=F, code-fold=T}
-
+```{r pca, echo=T, eval=F}
+#| code-fold: true
 #### PCA ####
 # create dataset for PCA with only complete data
 data_pca <- data.frame(matrix(unlist(sum_meth_prop), nrow=nrow(sum_meth_prop)),stringsAsFactors=FALSE)
@@ -188,7 +191,7 @@ cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc
                   labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> pca_plots
 ```
 
-![PCA plots]("../plots/explore/pca_plots_factors.png")
+![PCA plots](%22../plots/explore/pca_plots_factors.png%22)
 
 ## Linear mixed effect model
 
@@ -197,6 +200,7 @@ Lastly, we want to make sure that average methylation percentage is not affected
 ```{r, load_sum, echo=F, message=F}
 load(file = "results/tables/quality_check_pca_meanmeth.RData")
 ```
+
 ```{r lm, echo=T}
 #### LM ####
 lmer_lib <- lmerTest::lmer(mean_perc_meth ~ lib + (1|id), data = merge_pca)

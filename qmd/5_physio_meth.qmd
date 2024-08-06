@@ -3,13 +3,12 @@ title: "Which changes in CpG site methylation are associated with changes in phy
 format: 
   html:
     link-external-newwindow: true
-    code-fold: true
-    fig-cap-location: bottom
-    fig-width: 200
-    fig-height: 200
+    fig-cap-location: top
+    fig-width: 100
+    fig-height: 100
 ---
 
-Similar to the previous section, we next test  which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT. 
+Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT.
 
 Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.
 
@@ -49,7 +48,8 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ## Functon to run the model
 
-```{r function, code-fold=T, eval=F}
+```{r function, eval=F}
+#| code-fold: true
 # function to run the model
 function_model_delta <- function(df, parameter){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -167,7 +167,8 @@ delta_out_mass$age_qval <- p.adjust(delta_out_mass$age_pval, method = "fdr", n =
 
 Repeat this for all traits:
 
-```{r run_model, echo=T, eval=F, code-fold=T}
+```{r run_model, echo=T, eval=F}
+#| code-fold: true
 ### microf
 # run model
 delta_out_microf <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="microf",mc.cores=12)
@@ -244,18 +245,12 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 ## Results
 
-After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.* and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing. 
-
+After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.* and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.
 
 ![Raw data delta Microfilaria](../plots/model_out/rawdata_plot_microf_dif_cpg_1.png)
 
-![Raw data delta Trypanosoma CpG 1](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_1.png)
-![Raw data delta Trypanosoma CpG 2](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_2.png)
-![Raw data delta Trypanosoma CpG 3](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_3.png)
+![Raw data delta Trypanosoma CpG 1](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_1.png) ![Raw data delta Trypanosoma CpG 2](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_2.png) ![Raw data delta Trypanosoma CpG 3](../plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_3.png)
 
-![Raw data delta IgG CpG 1](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_1.png)
-![Raw data delta IgG CpG 2](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_2.png)
-![Raw data delta IgG CpG 3](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_3.png)
-
+![Raw data delta IgG CpG 1](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_1.png) ![Raw data delta IgG CpG 2](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_2.png) ![Raw data delta IgG CpG 3](../plots/model_out/igg/rawdata_plot_igg_dif_cpg_3.png)
 
 It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).

@@ -6,7 +6,7 @@ format:
     fig-cap-location: top
 ---
 
-We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes. 
+We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
 
 Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.
 
@@ -40,7 +40,7 @@ delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
 delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
 ```
 
-Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects. 
+Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects.
 
 ## Prepare the data
 
@@ -71,7 +71,8 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ## Functon to run the model
 
-```{r function, code-fold=T, eval=F}
+```{r function, eval=F}
+#| code-fold: true
 # function to run the model
 function_model_delta <- function(df, parameter){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -187,7 +188,9 @@ delta_out_dist$age_qval <- p.adjust(delta_out_dist$age_pval, method = "fdr", n =
 ```
 
 Repeat this for all traits:
-```{r run_model, echo=T, eval=F, code-fold=T}
+
+```{r run_model, echo=T, eval=F}
+#| code-fold: true
 ### attendance
 # run model
 delta_out_attend <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="attend",mc.cores=12)
@@ -232,8 +235,6 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. We can plot the raw data here:
 
-
 ![Raw data attendance](../plots/model_out/rawdata_plot_attend.png)
-
 
 ![Raw data centrality](../plots/model_out/rawdata_plot_dist.png)

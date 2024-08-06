@@ -3,13 +3,14 @@ title: "Which changes in CpG site methylation are associated with reproductive e
 format: 
   html:
     link-external-newwindow: true
-    fig-cap-location: bottom
-    fig-width: 200
-    fig-height: 200
+    fig-cap-location: top
+    fig-width: 100
+    fig-height: 100
 ---
-In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year. 
 
-We build two GLMMs per CpG site, one for AMS and one for survival, to identify CpG sites whose DNA methylation change is associated with fitness. In these models, we predict AMS and survival, and include delta methylation as a fixed effect, as well as age and pre-lekking methylation. 
+In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year.
+
+We build two GLMMs per CpG site, one for AMS and one for survival, to identify CpG sites whose DNA methylation change is associated with fitness. In these models, we predict AMS and survival, and include delta methylation as a fixed effect, as well as age and pre-lekking methylation.
 
 ## Prepare the data
 
@@ -38,7 +39,8 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ## Functon to run the model
 
-```{r function, code-fold=T, eval=F}
+```{r function, eval=F}
+#| code-fold: true
 # function to run the model
 function_model_fitness <- function(df){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -155,7 +157,7 @@ function_model_fitness <- function(df){tryCatch({
 
 ```
 
-## Run the model 
+## Run the model
 
 ```{r run_model, echo=T, eval=F}
 ### run the model 
@@ -184,11 +186,9 @@ delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
 There are 266 significant CpG sites for AMS but none for survival.
 
-![Raw data AMS CpG 1](../plots/model_out/ams/rawdata_plot_ams_cpg_1.png)
-![Raw data AMS CpG 2](../plots/model_out/ams/rawdata_plot_ams_cpg_2.png)
-![Raw data AMS CpG 3](../plots/model_out/ams/rawdata_plot_ams_cpg_3.png)
-![Raw data AMS CpG 4](../plots/model_out/ams/rawdata_plot_ams_cpg_4.png)
-![Raw data AMS CpG 5](../plots/model_out/ams/rawdata_plot_ams_cpg_5.png)
+![Raw data AMS CpG 1](../plots/model_out/ams/rawdata_plot_ams_cpg_1.png) ![Raw data AMS CpG 2](../plots/model_out/ams/rawdata_plot_ams_cpg_2.png) ![Raw data AMS CpG 3](../plots/model_out/ams/rawdata_plot_ams_cpg_3.png) ![Raw data AMS CpG 4](../plots/model_out/ams/rawdata_plot_ams_cpg_4.png) ![Raw data AMS CpG 5](../plots/model_out/ams/rawdata_plot_ams_cpg_5.png)
+
+### Overlapping CpGs previous analyses
 
 Interestingly, two of the significant CpG sites are the same CpG sites that are significantly associated with changes in *Trypanosoma spp.*. Below, I plot the relationship between delta *Trypanosoma spp* and delta methylation (left) and the relationship between delta methylation and AMS (right) for the first (top) and second (bottom) CpG site.
 
@@ -198,4 +198,4 @@ The first CpG site is located in a gene body, intron and downstream region where
 
 ## Annotation
 
-I annotated all CpG sites from this analysis as well as the previous ones and have lists of genes (based on the chicken genome). Inputting the list of genes in GOrilla shows that cell fate determination is a significant GO term for AMS, but that is the only significant output. 
+I annotated all CpG sites from this analysis as well as the previous ones and have lists of genes (based on the chicken genome). Inputting the list of genes in GOrilla shows that cell fate determination is a significant GO term for AMS, but that is the only significant output.

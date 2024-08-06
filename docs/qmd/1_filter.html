@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DNA methylation black grouse - 2&nbsp; Preparing and filtering the data</title>
+<title>Epigenetic changes associated with reproductive investment in black grouse - 2&nbsp; Preparing and filtering the data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">DNA methylation black grouse</span>
+    <span class="navbar-title">Epigenetic changes associated with reproductive investment in black grouse</span>
     </a>
   </div>
         <div class="quarto-navbar-tools ms-auto">
@@ -188,7 +188,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link active" data-scroll-target="#prepare-data"><span class="header-section-number">2.1</span> Prepare data</a></li>
+  <li><a href="#filter-data" id="toc-filter-data" class="nav-link" data-scroll-target="#filter-data"><span class="header-section-number">2.2</span> Filter data</a></li>
+  <li><a href="#convert-data" id="toc-convert-data" class="nav-link" data-scroll-target="#convert-data"><span class="header-section-number">2.3</span> Convert data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -212,45 +220,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each.</p>
 <p>First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.</p>
+<section id="prepare-data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="prepare-data"><span class="header-section-number">2.1</span> Prepare data</h2>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">methRead</span>(files, <span class="at">pipeline =</span> <span class="st">"bismarkCytosineReport"</span>,</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sample.id =</span> ids, <span class="at">assembly =</span> <span class="st">"ltet"</span>, </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">treatment =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="at">each =</span><span class="fu">length</span>(ids))), <span class="at">context =</span> <span class="st">"CpG"</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
-<p>Where files = the list of 116 file locations and ids = the list of the 116 ID’s of those files.</p>
+<p>Where <code>files</code> = the list of 116 file locations and <code>ids</code> = the list of the 116 ID’s of those files.</p>
+</section>
+<section id="filter-data" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="filter-data"><span class="header-section-number">2.2</span> Filter data</h2>
 <p>Next, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">filterByCoverage</span>(ltet_meth,<span class="at">lo.count=</span><span class="dv">10</span>,<span class="at">lo.perc=</span><span class="cn">NULL</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">hi.count=</span><span class="cn">NULL</span>,<span class="at">hi.perc=</span><span class="fl">99.9</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Next, we unite the strands while only keeping CpG sites that are covered in at least 75% of all individuals.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltet_meth_unite_0<span class="fl">.75</span> <span class="ot">&lt;-</span> methylKit<span class="sc">::</span><span class="fu">unite</span>(ltet_meth, <span class="at">destrand =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">min.per.group =</span> <span class="fu">as.integer</span>(<span class="fl">0.75</span><span class="sc">*</span><span class="fu">length</span>(ids)), <span class="at">mc.cores =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
+</section>
+<section id="convert-data" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="convert-data"><span class="header-section-number">2.3</span> Convert data</h2>
 <p>The next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/function_convert_methfile.R"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prepost_long <span class="ot">&lt;-</span> <span class="fu">convert_meth</span>(<span class="at">methfile =</span> ltet_meth_unite_0<span class="fl">.75</span>, <span class="at">novar =</span> <span class="st">"remove"</span>) </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 274,197 CpG sites, kept 274,188 which is 1% removed due to invariance</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

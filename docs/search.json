@@ -26,5 +26,26 @@
     "title": "Epigenetic changes associated with reproductive investment in a lekking bird",
     "section": "",
     "text": "This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (Lyrurus tetrix)\nBriefly, repeated samples were taken of yearling and adult black grouse males between 2002-2007. Blood samples were taken, which were used for epiGBS (RRBS), as well as measuring physiological traits and parasite abundance. We also have repeated samples of males that were caught pre- and post-lekking (defined as before mid April vs after mid April, ranging from approx. February until mid May in total).\n\n\n\nDNA methylation"
+  },
+  {
+    "objectID": "qmd/1_filter.html#prepare-data",
+    "href": "qmd/1_filter.html#prepare-data",
+    "title": "2  Preparing and filtering the data",
+    "section": "2.1 Prepare data",
+    "text": "2.1 Prepare data\n\nltet_meth &lt;- methRead(files, pipeline = \"bismarkCytosineReport\",\n                      sample.id = ids, assembly = \"ltet\", \n                      treatment = c(rep(1, each =length(ids))), context = \"CpG\",\n                      sep = \" \")\n\nWhere files = the list of 116 file locations and ids = the list of the 116 ID’s of those files."
+  },
+  {
+    "objectID": "qmd/1_filter.html#filter-data",
+    "href": "qmd/1_filter.html#filter-data",
+    "title": "2  Preparing and filtering the data",
+    "section": "2.2 Filter data",
+    "text": "2.2 Filter data\nNext, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile\n\nltet_meth &lt;- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,\n                                    hi.count=NULL,hi.perc=99.9)   \n\nNext, we unite the strands while only keeping CpG sites that are covered in at least 75% of all individuals.\n\nltet_meth_unite_0.75 &lt;- methylKit::unite(ltet_meth, destrand = TRUE, \n                                    min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)"
+  },
+  {
+    "objectID": "qmd/1_filter.html#convert-data",
+    "href": "qmd/1_filter.html#convert-data",
+    "title": "2  Preparing and filtering the data",
+    "section": "2.3 Convert data",
+    "text": "2.3 Convert data\nThe next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.\n\nsource(\"scripts/function_convert_methfile.R\")\n\nprepost_long &lt;- convert_meth(methfile = ltet_meth_unite_0.75, novar = \"remove\") \n\n#Out of 274,197 CpG sites, kept 274,188 which is 1% removed due to invariance"
   }
 ]
