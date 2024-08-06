@@ -5,7 +5,7 @@ project:
 engine: knitr
 
 book:
-  title: "DNA methylation black grouse"
+  title: "Epigenetic changes associated with reproductive investment in black grouse"
   author: "Rebecca S. Chen"
   cover-image: img/grouse.jpeg
   chapters:
@@ -21,10 +21,9 @@ book:
 
 format:
   html:
-    theme: solar
+    theme: lux
     css: styles.css
     toc: true
-    mainfont: Georgia, serif
 
 editor: visual
 

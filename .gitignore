@@ -8,3 +8,5 @@ data/processed
 /.quarto/
 results/modeloutput
 results/annotated
+results/pca
+results/qc

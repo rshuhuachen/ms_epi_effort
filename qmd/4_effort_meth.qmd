@@ -3,10 +3,7 @@ title: "Which changes in CpG site methylation are associated with reproductive e
 format: 
   html:
     link-external-newwindow: true
-    code-fold: true
-    fig-cap-location: bottom
-    fig-width: 200
-    fig-height: 200
+    fig-cap-location: top
 ---
 
 We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes. 
@@ -45,6 +42,8 @@ delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
 
 Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects. 
 
+## Prepare the data
+
 ```{r model, echo=T, eval=F}
 
 #combine with site and behaviour info
@@ -68,6 +67,11 @@ delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "
                                            
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
+```
+
+## Functon to run the model
+
+```{r function, code-fold=T, eval=F}
 # function to run the model
 function_model_delta <- function(df, parameter){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -156,7 +160,11 @@ function_model_delta <- function(df, parameter){tryCatch({
   ))
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
+```
 
+## Run the model per trait
+
+```{r run_model_example, echo=T, eval=F}
 ### run the model per trait
 
 ### centrality
@@ -176,6 +184,10 @@ delta_out_dist$parameter_qval <- p.adjust(delta_out_dist$parameter_pval, method 
 
 delta_out_dist$age_qval <- p.adjust(delta_out_dist$age_pval, method = "fdr", n = nrow(delta_out_dist))
 
+```
+
+Repeat this for all traits:
+```{r run_model, echo=T, eval=F, code-fold=T}
 ### attendance
 # run model
 delta_out_attend <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="attend",mc.cores=12)
@@ -214,12 +226,14 @@ delta_out_all$parameter <- as.factor(delta_out_all$parameter)
 delta_out_all$isSingular <- as.logical(delta_out_all$isSingular)
 delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeric)
 
-save(delta_out_all, file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
-
 ```
+
+## Results
 
 There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. We can plot the raw data here:
 
+
 ![Raw data attendance](../plots/model_out/rawdata_plot_attend.png)
+
 
 ![Raw data centrality](../plots/model_out/rawdata_plot_dist.png)

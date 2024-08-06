@@ -3,7 +3,6 @@ title: "Identifying CpG sites that change over the lekking season"
 format: 
   html:
     link-external-newwindow: true
-    code-fold: true
     fig-cap-location: bottom
     fig-width: 200
     fig-height: 200

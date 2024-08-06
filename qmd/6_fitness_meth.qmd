@@ -3,7 +3,6 @@ title: "Which changes in CpG site methylation are associated with reproductive e
 format: 
   html:
     link-external-newwindow: true
-    code-fold: true
     fig-cap-location: bottom
     fig-width: 200
     fig-height: 200
@@ -11,6 +10,8 @@ format:
 In this script, we test for which CpG site changes are significantly associated with fitness, measured as annual mating success (AMS) and survival to the next year. 
 
 We build two GLMMs per CpG site, one for AMS and one for survival, to identify CpG sites whose DNA methylation change is associated with fitness. In these models, we predict AMS and survival, and include delta methylation as a fixed effect, as well as age and pre-lekking methylation. 
+
+## Prepare the data
 
 ```{r delta_meth, echo=T, eval=F}
 
@@ -33,6 +34,11 @@ delta_meth <- left_join(delta_meth, unique(pheno_pre[,c("id", "year", "MS", "sur
                                            
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
+```
+
+## Functon to run the model
+
+```{r function, code-fold=T, eval=F}
 # function to run the model
 function_model_fitness <- function(df){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -147,6 +153,11 @@ function_model_fitness <- function(df){tryCatch({
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
 
+```
+
+## Run the model 
+
+```{r run_model, echo=T, eval=F}
 ### run the model 
 # run model
 delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=12)
@@ -167,12 +178,9 @@ delta_out_surv$surv_delta_meth_qval <- p.adjust(delta_out_surv$surv_delta_meth_p
 delta_out_ams$chr_pos <- as.factor(delta_out_ams$chr_pos)
 delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
-save(delta_out_ams, file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
-save(delta_out_surv, file="results/modeloutput/surv_deltameth_modeloutput_filtered.RData")
-
-nrow(subset(delta_out_ams, ams_delta_meth_qval < 0.05))
-nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05))
 ```
+
+## Results
 
 There are 266 significant CpG sites for AMS but none for survival.
 
@@ -188,6 +196,6 @@ Interestingly, two of the significant CpG sites are the same CpG sites that are 
 
 The first CpG site is located in a gene body, intron and downstream region whereas the second CpG site was unannotated (located in an intergenic region) based on the black grouse genome annotation. Neither CpG was annotated based on the lifted over chicken genome annotation.
 
-### Annotation
+## Annotation
 
 I annotated all CpG sites from this analysis as well as the previous ones and have lists of genes (based on the chicken genome). Inputting the list of genes in GOrilla shows that cell fate determination is a significant GO term for AMS, but that is the only significant output. 

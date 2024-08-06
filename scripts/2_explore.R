@@ -1,32 +1,14 @@
----
-title: "Data exploration"
-format: 
-  html:
-    link-external-newwindow: true
-    fig-cap-location: bottom
-    fig-width: 200
-    fig-height: 200
----
 
-We explore our data to ensure there are no biases created by methodological factors. To do so, we conduct a PCA and build linear regression models to test for e.g. library effects.
-
-We only use unfiltered data for this exploration.
-
-```{r unfiltered data, echo=T, eval=F}
 ## load packages
 pacman::p_load(tidyverse, data.table, methylKit, tibble, matrixStats, ggpointdensity)
+
 
 ## load data
 load("data/processed/methylkit_prepost_raw.RData")
 data <- getData(ltet_meth_unite)
-```
 
-## Summary statistics 
-
-We start by collecting summary statistics per CpG site to check if methylation level is associated with coverage.
-
-```{r sum, echo=T, eval=F, code-fold=T}
 #### Get summary statistics ####
+
 # select columns for specific data: number of sites that are methylated, coverage
 # number of columns in data
 ncol <- ncol(data) 
@@ -62,21 +44,11 @@ summary <- summary %>% mutate(mean_perc_meth = rowMeans(sum_meth_prop[,-1], na.r
 
 # site to rownames
 summary <- summary %>% remove_rownames %>% column_to_rownames(var = "site")
-```
+write.csv(summary, file = "results/qc/summary_coverage_meth_unfiltered.csv", row.names=T, quote=F)
 
-We can see the first 10 rows 
-```{r summary, echo=F, message=F}
-pacman::p_load(kableExtra)
-summary <- read.csv(file = "results/tables/summary_coverage_meth_unfiltered.csv", nrows=10)
-summary %>% kbl() %>%
-  kable_classic_2()
-
-```
-
-Next, we can plot the relationship between mean coverage and mean DNA methylation per site. However, as there are many CpG sites we randomly subset 100,000 CpG sites to visualize, and also visualize the density of the points as it is difficult to see overlapping areas.
-
-```{r cov_meth, echo=T, eval=F}
 #### Plot relationshp coverage and dna methylation #####
+
+source("scripts/plotting_theme.R")
 
 # geom pointdensity to get an idea of which points are where since many are overlapping
 # on a subset of random CpGs
@@ -87,17 +59,7 @@ ggplot(data=summary[sample(nrow(summary),random_n),], aes(x=mean_cov, y=mean_per
   geom_pointdensity()  +
   scale_color_viridis_c() -> plot_cov_meth 
 
-```
-
-![Relationship coverage and mean methylation]("../plots/explore/plot_coverage_mean_methylation_random.png")
-
-Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).
-
-## pca
-
-Next, we can conduct a PCA to visualize potential methodological biases towards methylation. We only use complete data to conduct the PCA, meaning we only include CpG sites that are covered in each sample.
-
-```{r pca, echo=T, eval=F, code-fold=T}
+ggsave(plot_cov_meth, file = "plots/explore/plot_coverage_mean_methylation_random.png", width = 10, height = 10)
 
 #### PCA ####
 # create dataset for PCA with only complete data
@@ -110,10 +72,21 @@ data_pca <- lapply(data_pca, as.numeric)
 # conduct pca and save plots
 PCA <- prcomp(t(as.data.frame(data_pca)), center=F, scale=F) # t() transposes the matrix meth_PCA to get one coordinate for each id
 
+png(file = "plots/explore/pca_biplot.png", width=1000, height = 1000)
+biplot(PCA,scale = T,center=F,cex=0.25)
+dev.off()
+
+ggplot() + geom_point(aes(x=PCA$x[,1],y=PCA$x[,2]), size = 3) + labs(x = "PC1", y = "PC2") -> pca_plot
+ggsave(pca_plot, file = "plots/explore/pca.png", width = 10, height=10)
+
 # get eigenvalues and percentage explained
+fviz_eig(PCA)
+
 eigs <- PCA$sdev^2
 var <- eigs/sum(eigs)
-explained<-100*eigs/sum(eigs) #PC1 explains 97% of data
+explained<-100*eigs/sum(eigs)
+
+head(explained) #PC1 explains 97% of data
 
 # PCA coloured by library, site
 
@@ -141,6 +114,8 @@ merge_pca <- left_join(merge_pca, qc_ltet, by = "sample_id")
 merge_pca <- left_join(merge_pca, meta_ltet, by = c("Sample" = "epi_nr"))
 merge_pca$pc1 <- PCA$x[,1]
 merge_pca$pc2 <- PCA$x[,2]
+
+save(merge_pca, file = "results/pca/quality_check_pca_meanmeth.RData")
 
 # and with mean methylation level
 summary_per_sample <- data.frame(sample_id = ltet_meth_unite@sample.ids)
@@ -170,8 +145,7 @@ ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = as.facto
     theme(legend.position="none")+
     scale_color_viridis_d() -> pca_lib_n
 
-merge_pca$conc_std[which(merge_pca$conc_std > 400)] <- NA #outlier and must be wrong
-
+merge_pca$conc_std[which(merge_pca$conc_std > 400)] <- NA
 ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = conc_std)) + 
     labs(x = "PC 1", y = "PC 2", col = "Concentration") +
     scale_color_viridis_c() -> pca_conc
@@ -186,22 +160,12 @@ ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = as.facto
 
 cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc, pca_batch, pca_batch_ext,
                   labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> pca_plots
-```
 
-![PCA plots]("../plots/explore/pca_plots_factors.png")
+ggsave(pca_plots, file = "plots/explore/pca_plots_factors.png", width=12, height=20)
 
-## Linear mixed effect model
 
-Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM
-
-```{r, load_sum, echo=F, message=F}
-load(file = "results/tables/quality_check_pca_meanmeth.RData")
-```
-```{r lm, echo=T}
 #### LM ####
+
 lmer_lib <- lmerTest::lmer(mean_perc_meth ~ lib + (1|id), data = merge_pca)
 lmer_null  <- lmerTest::lmer(mean_perc_meth ~ 1 + (1|id), data = merge_pca)
 anova(lmer_lib, lmer_null)
-```
-
-It seems there are no library effects on average CpG methylation.

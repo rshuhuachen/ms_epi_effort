@@ -3,7 +3,6 @@ title: "Preparing and filtering the data"
 format: 
   html:
     link-external-newwindow: true
-    code-fold: true
     fig-cap-location: bottom
     fig-width: 200
     fig-height: 200
@@ -13,6 +12,8 @@ Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. 
 
 First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.
 
+## Prepare data 
+
 ```{r load, echo=T, eval=F}
 ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
                       sample.id = ids, assembly = "ltet", 
@@ -20,7 +21,9 @@ ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
                       sep = " ")
 ```
 
-Where files = the list of 116 file locations and ids = the list of the 116 ID's of those files.
+Where `files` = the list of 116 file locations and `ids` = the list of the 116 ID's of those files.
+
+## Filter data 
 
 Next, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile 
 
@@ -39,6 +42,8 @@ ltet_meth_unite_0.75 <- methylKit::unite(ltet_meth, destrand = TRUE,
                                     min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)
 
 ```
+
+## Convert data
 
 The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual
 and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.

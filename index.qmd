@@ -4,6 +4,13 @@ title: "Epigenetic changes associated with reproductive investment in a lekking 
 
 This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (*Lyrurus tetrix*)
 
-Briefly, repeated samples were taken of yearling and adult black grouse males between 2002-2007. Blood samples were taken, which were used for epiGBS (RRBS), as well as measuring physiological traits and parasite abundance. We also have repeated samples of males that were caught pre- and post-lekking (defined as before mid April vs after mid April, ranging from approx. February until mid May in total).
+Epigenetic, morphological, behavioural, and physiological data were obtained from 51 black grouse males sampled across five lekking sites in Central Finland between 2005 and 2007 inclusive. The birds were captured at two time points: before the lekking season (January-March) and after the lekking season (after mid-April) using walk-in traps. Six individuals were captured both before and after the lekking season in two years, and one individual was caught in three years, totalling to 116 captures. 
+
+Reproductive effort was estimated using three behavioural indicators: lek attendance, fighting rate and lek centrality. Blood was used to quantify the abundance of *Microfilaria spp.* and *Trypanosoma spp.*, two extra-cellular blood parasites, immunoglobulin concentration in blood plasma, and haematocrit concentration. Additionally, body mass was quantified during capture to the nearest 10g. 
+
+Our research questions are as follows:
+* Is reproductive effort associated with changes in DNA methylation?
+* Are physiological changes associated with changes in DNA methylation?
+* Are changes in DNA methylation associated with fitness (annual mating success and survival to the next year)?
 
 ![DNA methylation](img/methylation.jpeg)
