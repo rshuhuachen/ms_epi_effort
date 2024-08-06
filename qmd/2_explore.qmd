@@ -70,7 +70,7 @@ We can see the first 10 rows
 
 ```{r summary, echo=F, message=F}
 pacman::p_load(kableExtra)
-summary <- read.csv(file = "results/qc/summary_coverage_meth_unfiltered_n10.csv", nrows=10)
+summary <- read.csv(file = "results/tables/summary_coverage_meth_unfiltered_n10.csv", nrows=10)
 summary %>% kbl() %>%
   kable_classic_2()
 
