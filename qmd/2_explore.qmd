@@ -66,12 +66,12 @@ summary <- summary %>% mutate(mean_perc_meth = rowMeans(sum_meth_prop[,-1], na.r
 summary <- summary %>% remove_rownames %>% column_to_rownames(var = "site")
 ```
 
-We can see the first 10 rows
+The whole dataframe is very long, but we can check out the first 10 rows to see what the data look like:
 
 ```{r summary, echo=F, message=F}
 pacman::p_load(kableExtra)
 summary <- read.csv(file = "../results/tables/summary_coverage_meth_unfiltered_n10.csv")
-summary %>% kbl() %>%
+summary[,-1] %>% kbl() %>%
   kable_classic_2()
 
 ```
@@ -96,7 +96,7 @@ ggplot(data=summary[sample(nrow(summary),random_n),], aes(x=mean_cov, y=mean_per
 
 Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).
 
-## pca
+## PCA
 
 Next, we can conduct a PCA to visualize potential methodological biases towards methylation. We only use complete data to conduct the PCA, meaning we only include CpG sites that are covered in each sample.
 
@@ -198,7 +198,7 @@ cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc
 Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM
 
 ```{r, load_sum, echo=F, message=F}
-load(file = "results/qc/quality_check_pca_meanmeth.RData")
+load(file = "../results/pca/quality_check_pca_meanmeth.RData")
 ```
 
 ```{r lm, echo=T}

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DNA methylation black grouse - 3&nbsp; Data exploration</title>
+<title>Epigenetic changes associated with reproductive investment in black grouse - 3&nbsp; Data exploration</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -37,10 +71,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,6 +95,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -73,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">DNA methylation black grouse</span>
+    <span class="navbar-title">Epigenetic changes associated with reproductive investment in black grouse</span>
     </a>
   </div>
         <div class="quarto-navbar-tools ms-auto">
@@ -154,7 +191,15 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link active" data-scroll-target="#summary-statistics"><span class="header-section-number">3.1</span> Summary statistics</a></li>
+  <li><a href="#pca" id="toc-pca" class="nav-link" data-scroll-target="#pca"><span class="header-section-number">3.2</span> pca</a></li>
+  <li><a href="#linear-mixed-effect-model" id="toc-linear-mixed-effect-model" class="nav-link" data-scroll-target="#linear-mixed-effect-model"><span class="header-section-number">3.3</span> Linear mixed effect model</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -176,8 +221,353 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>We explore our data to ensure there are no biases created by methodological factors. To do so, we conduct a PCA and build linear regression models to test for e.g.&nbsp;library effects.</p>
+<p>We only use unfiltered data for this exploration.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, methylKit, tibble, matrixStats, ggpointdensity)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">## load data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/processed/methylkit_prepost_raw.RData"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">getData</span>(ltet_meth_unite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="summary-statistics" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="summary-statistics"><span class="header-section-number">3.1</span> Summary statistics</h2>
+<p>We start by collecting summary statistics per CpG site to check if methylation level is associated with coverage.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Get summary statistics ####</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># select columns for specific data: number of sites that are methylated, coverage</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># number of columns in data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ncol <span class="ot">&lt;-</span> <span class="fu">ncol</span>(data) </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># first column with data respectively</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>first_cov <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>first_meth_n <span class="ot">&lt;-</span> <span class="dv">6</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># select columns </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>cols_cov <span class="ot">&lt;-</span> <span class="fu">seq</span>(first_cov, ncol<span class="sc">-</span>(<span class="dv">2</span><span class="sc">-</span>(first_cov<span class="dv">-5</span>)), <span class="dv">3</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>cols_meth_n <span class="ot">&lt;-</span> <span class="fu">seq</span>(first_meth_n, ncol<span class="sc">-</span>(<span class="dv">2</span><span class="sc">-</span>(first_meth_n<span class="dv">-5</span>)), <span class="dv">3</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># make summary across all cpg sites</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">c</span>(<span class="fu">paste</span>(data<span class="sc">$</span>chr, data<span class="sc">$</span>start, <span class="at">sep=</span><span class="st">"_"</span>)))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> summary <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mean_cov =</span> <span class="fu">rowMeans</span>(data[cols_cov], <span class="at">na.rm=</span>T),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                              <span class="at">sd_cov =</span> <span class="fu">rowSds</span>(<span class="fu">as.matrix</span>(data[cols_cov]), <span class="at">na.rm=</span>T),</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                              <span class="at">mean_n_meth =</span> <span class="fu">rowMeans</span>(data[cols_meth_n], <span class="at">na.rm=</span>T),</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                              <span class="at">sd_n_meth =</span> <span class="fu">rowSds</span>(<span class="fu">as.matrix</span>(data[cols_meth_n]), <span class="at">na.rm=</span>T),</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                              <span class="at">na =</span>  <span class="fu">rowSums</span>(<span class="fu">is.na</span>(data[cols_cov])),</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                              <span class="at">n =</span>  <span class="fu">rowSums</span>(<span class="sc">!</span><span class="fu">is.na</span>(data[cols_cov])))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate percentage methylation</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>sum_meth_prop <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">c</span>(<span class="fu">paste</span>(data<span class="sc">$</span>chr, data<span class="sc">$</span>start, <span class="at">sep=</span><span class="st">"_"</span>)))</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(cols_cov)){</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  sum_meth_prop <span class="ot">&lt;-</span> sum_meth_prop <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">methProp =</span> data[cols_meth_n[i]]<span class="sc">/</span>data[cols_cov[i]])</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(sum_meth_prop)[i<span class="sc">+</span><span class="dv">1</span>] <span class="ot">&lt;-</span> ltet_meth_unite<span class="sc">@</span>sample.ids[i] </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>}                              </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># add summary percentage methylation</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> summary <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mean_perc_meth =</span> <span class="fu">rowMeans</span>(sum_meth_prop[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">na.rm=</span>T),</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                              <span class="at">sd_perc_meth =</span> <span class="fu">rowSds</span>(<span class="fu">as.matrix</span>(sum_meth_prop[,<span class="sc">-</span><span class="dv">1</span>]), <span class="at">na.rm=</span>T), <span class="at">.before =</span> mean_cov)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># site to rownames</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> summary <span class="sc">%&gt;%</span> remove_rownames <span class="sc">%&gt;%</span> <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"site"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We can see the first 10 rows</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">X.1</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">X</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean_perc_meth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd_perc_meth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean_cov</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd_cov</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean_n_meth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd_n_meth</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">na</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ScEsiA3_10002__HRSCAF_10935_92</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">11.00000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">11.0000000</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">115</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">ScEsiA3_10006__HRSCAF_10939_97</td>
+<td style="text-align: right;">0.8362985</td>
+<td style="text-align: right;">0.1392619</td>
+<td style="text-align: right;">17.14286</td>
+<td style="text-align: right;">9.3235493</td>
+<td style="text-align: right;">14.4761905</td>
+<td style="text-align: right;">8.9644802</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_69</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">10.33333</td>
+<td style="text-align: right;">0.5773503</td>
+<td style="text-align: right;">10.3333333</td>
+<td style="text-align: right;">0.5773503</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_73</td>
+<td style="text-align: right;">0.0435897</td>
+<td style="text-align: right;">0.1383665</td>
+<td style="text-align: right;">12.76923</td>
+<td style="text-align: right;">2.1661735</td>
+<td style="text-align: right;">0.5384615</td>
+<td style="text-align: right;">1.6641006</td>
+<td style="text-align: right;">103</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_90</td>
+<td style="text-align: right;">0.0665976</td>
+<td style="text-align: right;">0.1105658</td>
+<td style="text-align: right;">15.76667</td>
+<td style="text-align: right;">4.6511647</td>
+<td style="text-align: right;">1.1000000</td>
+<td style="text-align: right;">2.0060254</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_99</td>
+<td style="text-align: right;">0.9523810</td>
+<td style="text-align: right;">0.0824786</td>
+<td style="text-align: right;">11.33333</td>
+<td style="text-align: right;">2.3094011</td>
+<td style="text-align: right;">10.6666667</td>
+<td style="text-align: right;">1.1547005</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_107</td>
+<td style="text-align: right;">0.0358021</td>
+<td style="text-align: right;">0.0438772</td>
+<td style="text-align: right;">43.53763</td>
+<td style="text-align: right;">31.4229766</td>
+<td style="text-align: right;">1.5806452</td>
+<td style="text-align: right;">1.9411033</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">93</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_109</td>
+<td style="text-align: right;">0.0463004</td>
+<td style="text-align: right;">0.0457295</td>
+<td style="text-align: right;">43.51613</td>
+<td style="text-align: right;">31.4188440</td>
+<td style="text-align: right;">2.1075269</td>
+<td style="text-align: right;">2.3334168</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">93</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_191</td>
+<td style="text-align: right;">0.0175915</td>
+<td style="text-align: right;">0.0336013</td>
+<td style="text-align: right;">43.52688</td>
+<td style="text-align: right;">31.4177987</td>
+<td style="text-align: right;">0.7096774</td>
+<td style="text-align: right;">1.1570262</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">93</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_213</td>
+<td style="text-align: right;">0.0160323</td>
+<td style="text-align: right;">0.0356791</td>
+<td style="text-align: right;">43.50538</td>
+<td style="text-align: right;">31.4077752</td>
+<td style="text-align: right;">0.5698925</td>
+<td style="text-align: right;">1.0150803</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">93</td>
+</tr>
+</tbody>
+</table>
 
 
+</div>
+</div>
+<p>Next, we can plot the relationship between mean coverage and mean DNA methylation per site. However, as there are many CpG sites we randomly subset 100,000 CpG sites to visualize, and also visualize the density of the points as it is difficult to see overlapping areas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Plot relationshp coverage and dna methylation #####</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># geom pointdensity to get an idea of which points are where since many are overlapping</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># on a subset of random CpGs</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>random_n <span class="ot">&lt;-</span> <span class="dv">100000</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>summary[<span class="fu">sample</span>(<span class="fu">nrow</span>(summary),random_n),], <span class="fu">aes</span>(<span class="at">x=</span>mean_cov, <span class="at">y=</span>mean_perc_meth)) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mean coverage"</span>, <span class="at">y =</span> <span class="st">"Mean methylation percentage"</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans =</span> scales<span class="sc">::</span><span class="fu">log_trans</span>(),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">log_breaks</span>()) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointdensity</span>()  <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>() <span class="ot">-&gt;</span> plot_cov_meth </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="&quot;../plots/explore/plot_coverage_mean_methylation_random.png&quot;" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Relationship coverage and mean methylation</figcaption>
+</figure>
+</div>
+<p>Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).</p>
+</section>
+<section id="pca" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="pca"><span class="header-section-number">3.2</span> pca</h2>
+<p>Next, we can conduct a PCA to visualize potential methodological biases towards methylation. We only use complete data to conduct the PCA, meaning we only include CpG sites that are covered in each sample.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### PCA ####</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># create dataset for PCA with only complete data</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">unlist</span>(sum_meth_prop), <span class="at">nrow=</span><span class="fu">nrow</span>(sum_meth_prop)),<span class="at">stringsAsFactors=</span><span class="cn">FALSE</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> data_pca[<span class="fu">complete.cases</span>(data_pca),] </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(data_pca) </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> data_pca[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>data_pca <span class="ot">&lt;-</span> <span class="fu">lapply</span>(data_pca, as.numeric)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># conduct pca and save plots</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>PCA <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">t</span>(<span class="fu">as.data.frame</span>(data_pca)), <span class="at">center=</span>F, <span class="at">scale=</span>F) <span class="co"># t() transposes the matrix meth_PCA to get one coordinate for each id</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># get eigenvalues and percentage explained</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>eigs <span class="ot">&lt;-</span> PCA<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>var <span class="ot">&lt;-</span> eigs<span class="sc">/</span><span class="fu">sum</span>(eigs)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>explained<span class="ot">&lt;-</span><span class="dv">100</span><span class="sc">*</span>eigs<span class="sc">/</span><span class="fu">sum</span>(eigs) <span class="co">#PC1 explains 97% of data</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA coloured by library, site</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># first collect data required to plot the PCs</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># data on lek site, sampling </span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/fulldata_complete_epi_withdates.RData"</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>meta_ltet <span class="ot">&lt;-</span> all_pheno_epi <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(epi_nr, id, site, prepost, year)) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(prepost))</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co"># data on QC</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">"/home/nioo/rebeccash/PhD_grouse/methylation_grouse/data/genomics/qc_epi.RData"</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> qc <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(sample_id, Sample, lib, n_in_lib, conc_std, batch, extraction_batch))</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> <span class="fu">subset</span>(qc_ltet, Sample <span class="sc">%in%</span> meta_ltet<span class="sc">$</span>epi_nr)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude repeats</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> <span class="fu">subset</span>(qc_ltet, sample_id <span class="sc">!=</span> <span class="st">"lib99_1"</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> <span class="fu">subset</span>(qc_ltet, sample_id <span class="sc">!=</span> <span class="st">"lib20_119"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> <span class="fu">subset</span>(qc_ltet, sample_id <span class="sc">!=</span> <span class="st">"lib20_191"</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>qc_ltet <span class="ot">&lt;-</span> <span class="fu">subset</span>(qc_ltet, sample_id <span class="sc">!=</span> <span class="st">"lib7_250"</span>)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co"># combine data with PC loadings</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>merge_pca <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">sample_id =</span> ltet_meth_unite<span class="sc">@</span>sample.ids)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>merge_pca <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merge_pca, qc_ltet, <span class="at">by =</span> <span class="st">"sample_id"</span>)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>merge_pca <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merge_pca, meta_ltet, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Sample"</span> <span class="ot">=</span> <span class="st">"epi_nr"</span>))</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>merge_pca<span class="sc">$</span>pc1 <span class="ot">&lt;-</span> PCA<span class="sc">$</span>x[,<span class="dv">1</span>]</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>merge_pca<span class="sc">$</span>pc2 <span class="ot">&lt;-</span> PCA<span class="sc">$</span>x[,<span class="dv">2</span>]</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co"># and with mean methylation level</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>summary_per_sample <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">sample_id =</span> ltet_meth_unite<span class="sc">@</span>sample.ids)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>summary_per_sample <span class="ot">&lt;-</span> summary_per_sample <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">mean_perc_meth =</span> <span class="fu">colMeans</span>(sum_meth_prop[,<span class="sc">-</span><span class="dv">1</span>], <span class="at">na.rm=</span>T))</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>merge_pca <span class="ot">&lt;-</span> <span class="fu">left_join</span>(merge_pca, summary_per_sample, <span class="at">by =</span> <span class="st">"sample_id"</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="co"># plot PCs</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> site)) <span class="sc">+</span> </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Lek site"</span>) <span class="sc">+</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_site</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> prepost)) <span class="sc">+</span> </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Time period"</span>) <span class="sc">+</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_prepost</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(year))) <span class="sc">+</span> </span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Year"</span>) <span class="sc">+</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_year</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> lib)) <span class="sc">+</span> </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Library"</span>) <span class="sc">+</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_lib</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(n_in_lib))) <span class="sc">+</span> </span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">subtitle =</span> <span class="st">"Sample within library"</span>) <span class="sc">+</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>)<span class="sc">+</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_lib_n</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>merge_pca<span class="sc">$</span>conc_std[<span class="fu">which</span>(merge_pca<span class="sc">$</span>conc_std <span class="sc">&gt;</span> <span class="dv">400</span>)] <span class="ot">&lt;-</span> <span class="cn">NA</span> <span class="co">#outlier and must be wrong</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> conc_std)) <span class="sc">+</span> </span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Concentration"</span>) <span class="sc">+</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="ot">-&gt;</span> pca_conc</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(batch))) <span class="sc">+</span> </span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Batch"</span>) <span class="sc">+</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_batch</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(merge_pca, <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(extraction_batch))) <span class="sc">+</span> </span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"PC 1"</span>, <span class="at">y =</span> <span class="st">"PC 2"</span>, <span class="at">col =</span> <span class="st">"Batch"</span>) <span class="sc">+</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_d</span>() <span class="ot">-&gt;</span> pca_batch_ext    </span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>cowplot<span class="sc">::</span><span class="fu">plot_grid</span>(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc, pca_batch, pca_batch_ext,</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>                  <span class="at">labs=</span><span class="st">"auto"</span>, <span class="at">align=</span><span class="st">"hv"</span>, <span class="at">axis=</span><span class="st">"lb"</span>, <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">label_fontface =</span> <span class="st">"plain"</span>, <span class="at">label_size =</span> <span class="dv">22</span>) <span class="ot">-&gt;</span> pca_plots</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="&quot;../plots/explore/pca_plots_factors.png&quot;" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">PCA plots</figcaption>
+</figure>
+</div>
+</section>
+<section id="linear-mixed-effect-model" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="linear-mixed-effect-model"><span class="header-section-number">3.3</span> Linear mixed effect model</h2>
+<p>Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### LM ####</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lmer_lib <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(mean_perc_meth <span class="sc">~</span> lib <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> merge_pca)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>lmer_null  <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(mean_perc_meth <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>id), <span class="at">data =</span> merge_pca)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(lmer_lib, lmer_null)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: merge_pca
+Models:
+lmer_null: mean_perc_meth ~ 1 + (1 | id)
+lmer_lib: mean_perc_meth ~ lib + (1 | id)
+          npar     AIC     BIC logLik deviance  Chisq Df Pr(&gt;Chisq)
+lmer_null    3 -399.71 -391.45 202.85  -405.71                     
+lmer_lib    12 -392.84 -359.80 208.42  -416.84 11.133  9     0.2667</code></pre>
+</div>
+</div>
+<p>It seems there are no library effects on average CpG methylation.</p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
