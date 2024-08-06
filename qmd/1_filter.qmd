@@ -8,7 +8,7 @@ format:
     fig-height: 200
 ---
 
-Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each. 
+Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis). 
 
 First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.
 

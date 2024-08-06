@@ -70,7 +70,7 @@ We can see the first 10 rows
 
 ```{r summary, echo=F, message=F}
 pacman::p_load(kableExtra)
-summary <- read.csv(file = "results/tables/summary_coverage_meth_unfiltered_n10.csv", nrows=10)
+summary <- read.csv(file = "../results/tables/summary_coverage_meth_unfiltered_n10.csv")
 summary %>% kbl() %>%
   kable_classic_2()
 
@@ -198,7 +198,7 @@ cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc
 Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM
 
 ```{r, load_sum, echo=F, message=F}
-load(file = "results/tables/quality_check_pca_meanmeth.RData")
+load(file = "results/qc/quality_check_pca_meanmeth.RData")
 ```
 
 ```{r lm, echo=T}
