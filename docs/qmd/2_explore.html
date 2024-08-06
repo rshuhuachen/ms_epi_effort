@@ -99,7 +99,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -196,8 +195,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link active" data-scroll-target="#summary-statistics"><span class="header-section-number">3.1</span> Summary statistics</a></li>
-  <li><a href="#pca" id="toc-pca" class="nav-link" data-scroll-target="#pca"><span class="header-section-number">3.2</span> pca</a></li>
-  <li><a href="#linear-mixed-effect-model" id="toc-linear-mixed-effect-model" class="nav-link" data-scroll-target="#linear-mixed-effect-model"><span class="header-section-number">3.3</span> Linear mixed effect model</a></li>
+  <li><a href="#coverage-vs-methylation" id="toc-coverage-vs-methylation" class="nav-link" data-scroll-target="#coverage-vs-methylation"><span class="header-section-number">3.2</span> Coverage vs methylation</a></li>
+  <li><a href="#pca" id="toc-pca" class="nav-link" data-scroll-target="#pca"><span class="header-section-number">3.3</span> PCA</a></li>
+  <li><a href="#linear-mixed-effect-model" id="toc-linear-mixed-effect-model" class="nav-link" data-scroll-target="#linear-mixed-effect-model"><span class="header-section-number">3.4</span> Linear mixed effect model</a></li>
   </ul>
 </nav>
     </div>
@@ -275,13 +275,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>summary <span class="ot">&lt;-</span> summary <span class="sc">%&gt;%</span> remove_rownames <span class="sc">%&gt;%</span> <span class="fu">column_to_rownames</span>(<span class="at">var =</span> <span class="st">"site"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>We can see the first 10 rows</p>
+<p>The whole dataframe is very long, but we can check out the first 10 rows to see what the data look like:</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
 <thead>
 <tr class="header">
-<th style="text-align: right;" data-quarto-table-cell-role="th">X.1</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">X</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">mean_perc_meth</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">sd_perc_meth</th>
@@ -295,7 +294,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">1</td>
 <td style="text-align: left;">ScEsiA3_10002__HRSCAF_10935_92</td>
 <td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">NA</td>
@@ -307,7 +305,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">2</td>
 <td style="text-align: left;">ScEsiA3_10006__HRSCAF_10939_97</td>
 <td style="text-align: right;">0.8362985</td>
 <td style="text-align: right;">0.1392619</td>
@@ -319,7 +316,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">21</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">3</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_69</td>
 <td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">0.0000000</td>
@@ -331,7 +327,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">4</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_73</td>
 <td style="text-align: right;">0.0435897</td>
 <td style="text-align: right;">0.1383665</td>
@@ -343,7 +338,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">13</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_90</td>
 <td style="text-align: right;">0.0665976</td>
 <td style="text-align: right;">0.1105658</td>
@@ -355,7 +349,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">30</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">6</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_99</td>
 <td style="text-align: right;">0.9523810</td>
 <td style="text-align: right;">0.0824786</td>
@@ -367,7 +360,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">7</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_107</td>
 <td style="text-align: right;">0.0358021</td>
 <td style="text-align: right;">0.0438772</td>
@@ -379,7 +371,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">93</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">8</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_109</td>
 <td style="text-align: right;">0.0463004</td>
 <td style="text-align: right;">0.0457295</td>
@@ -391,7 +382,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">93</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">9</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_191</td>
 <td style="text-align: right;">0.0175915</td>
 <td style="text-align: right;">0.0336013</td>
@@ -403,7 +393,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">93</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">10</td>
 <td style="text-align: left;">ScEsiA3_1000__HRSCAF_1603_213</td>
 <td style="text-align: right;">0.0160323</td>
 <td style="text-align: right;">0.0356791</td>
@@ -420,6 +409,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </div>
 </div>
+<p>Below you can find the histograms of the parameters calculated (mean methylation etc.)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Summary statistics methylation</figcaption>
+<p><img src="../plots/explore/hist_summary_stats_cov_meth.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="coverage-vs-methylation" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="coverage-vs-methylation"><span class="header-section-number">3.2</span> Coverage vs methylation</h2>
 <p>Next, we can plot the relationship between mean coverage and mean DNA methylation per site. However, as there are many CpG sites we randomly subset 100,000 CpG sites to visualize, and also visualize the density of the points as it is difficult to see overlapping areas.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Plot relationshp coverage and dna methylation #####</span></span>
@@ -435,14 +434,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="&quot;../plots/explore/plot_coverage_mean_methylation_random.png&quot;" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">Relationship coverage and mean methylation</figcaption>
+<p><img src="../plots/explore/plot_coverage_mean_methylation_random.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <p>Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).</p>
 </section>
-<section id="pca" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="pca"><span class="header-section-number">3.2</span> pca</h2>
+<section id="pca" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="pca"><span class="header-section-number">3.3</span> PCA</h2>
 <p>Next, we can conduct a PCA to visualize potential methodological biases towards methylation. We only use complete data to conduct the PCA, meaning we only include CpG sites that are covered in each sample.</p>
 <div class="cell">
 <details>
@@ -538,13 +537,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="&quot;../plots/explore/pca_plots_factors.png&quot;" class="img-fluid figure-img"></p>
 <figcaption class="figure-caption">PCA plots</figcaption>
+<p><img src="../plots/explore/pca_plots_factors.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="linear-mixed-effect-model" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="linear-mixed-effect-model"><span class="header-section-number">3.3</span> Linear mixed effect model</h2>
+<section id="linear-mixed-effect-model" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="linear-mixed-effect-model"><span class="header-section-number">3.4</span> Linear mixed effect model</h2>
 <p>Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### LM ####</span></span>

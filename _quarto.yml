@@ -22,7 +22,6 @@ book:
 format:
   html:
     theme: lux
-    css: styles.css
     toc: true
 
 editor: visual

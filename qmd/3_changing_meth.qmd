@@ -10,6 +10,8 @@ format:
 
 Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. Moreover, as there are multiple samples for each individual, we correct for the non-independence of samples by including ID as a random effect. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
 
+## Prepare the data
+
 ```{r model, echo=T, eval=F}
 ### load packages 
 pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
@@ -33,6 +35,12 @@ prepost_long$age <- prepost_long$year - prepost_long$born
 ### convert data to a list, one per CpG site
 data <- prepost_long %>% group_split(chr_pos)
 
+```
+
+## Function to run the model
+
+```{r function, eval=F}
+#| code-fold: true
 ### define function to collect overdispersion statistics
 overdisp.lmer_fun <- function(model) {
   vpars <- function(m) {
@@ -98,6 +106,12 @@ function_model_glmer <- function(df){tryCatch({
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
 
+```
+
+## Run the model
+
+```{r run_model, echo=T, eval=F}
+
 ### run the model in parallel per CpG site (list item)
 out_glmer <- parallel::mclapply(data, function_model_glmer, mc.cores=4)
 out_glmer <- do.call(rbind.data.frame, out_glmer)
@@ -110,11 +124,8 @@ save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RDat
 ### only select CpG sites with significant effects of pre/post
 
 sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & abs(prepost_estimate >= 0.1))
-#N = 3,418
-
-### collect the actual data from those significant CpG sites
-
-changing_cpg <- prepost_long %>% filter(chr_pos %in% sub_glmer_prepost$chr_pos)
-save(changing_cpg, file="results/modeloutput/subset_sites_sig_prepost.RData")
+# N = 3,418
 
 ```
+
+A total of 3,418 CpG sites  significantly change across the lekking period.

@@ -12,6 +12,8 @@ Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA 
 
 First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).
 
+## Delta methylation 
+
 ```{r delta_meth, echo=T, eval=F}
 
 ### load packages
@@ -69,7 +71,7 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ```
 
-## Functon to run the model
+## Function to run the model
 
 ```{r function, eval=F}
 #| code-fold: true

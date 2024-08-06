@@ -96,7 +96,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
@@ -188,7 +187,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">4.1</span> Prepare the data</a></li>
+  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">4.2</span> Function to run the model</a></li>
+  <li><a href="#run-the-model" id="toc-run-the-model" class="nav-link" data-scroll-target="#run-the-model"><span class="header-section-number">4.3</span> Run the model</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -211,6 +218,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. Moreover, as there are multiple samples for each individual, we correct for the non-independence of samples by including ID as a random effect. The response variables in these models are both the number of methylated and number of unmethylated C’s, using the <code>cbind</code> function.</p>
+<section id="prepare-the-data" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="prepare-the-data"><span class="header-section-number">4.1</span> Prepare the data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, matrixStats, </span>
@@ -232,94 +241,102 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>prepost_long<span class="sc">$</span>age <span class="ot">&lt;-</span> prepost_long<span class="sc">$</span>year <span class="sc">-</span> prepost_long<span class="sc">$</span>born</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="do">### convert data to a list, one per CpG site</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="do">### define function to collect overdispersion statistics</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>overdisp.lmer_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  vpars <span class="ot">&lt;-</span> <span class="cf">function</span>(m) {</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nrow</span>(m)<span class="sc">*</span>(<span class="fu">nrow</span>(m)<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  model.df <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">sapply</span>(<span class="fu">VarCorr</span>(model),vpars))<span class="sc">+</span><span class="fu">length</span>(<span class="fu">fixef</span>(model))</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  rdf <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">model.frame</span>(model))<span class="sc">-</span>model.df</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  rp <span class="ot">&lt;-</span> <span class="fu">residuals</span>(model,<span class="at">type=</span><span class="st">"pearson"</span>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  Pearson.chisq <span class="ot">&lt;-</span> <span class="fu">sum</span>(rp<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  prat <span class="ot">&lt;-</span> Pearson.chisq<span class="sc">/</span>rdf</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  pval <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(Pearson.chisq, <span class="at">df=</span>rdf, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">chisq=</span>Pearson.chisq,<span class="at">ratio=</span>prat,<span class="at">rdf=</span>rdf,<span class="at">p=</span>pval)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="do">### build function to run the model</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>function_model_glmer <span class="ot">&lt;-</span> <span class="cf">function</span>(df){<span class="fu">tryCatch</span>({</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  chr_pos <span class="ot">&lt;-</span> <span class="fu">as.character</span>(df[<span class="dv">1</span>,<span class="dv">1</span>])</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(df)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>prepost <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>prepost)</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>id)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> lme4<span class="sc">::</span><span class="fu">glmer</span>(<span class="fu">cbind</span>(numC, numT) <span class="sc">~</span> prepost <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id), <span class="at">family =</span> <span class="st">"binomial"</span>, df)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effects</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  prepost_estimate <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  prepost_se <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  prepost_zval <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">3</span>]</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  prepost_pval <span class="ot">&lt;-</span>  <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">4</span>]</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>  <span class="co">#random effects </span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>  id_sd <span class="ot">&lt;-</span> <span class="fu">attributes</span>(<span class="fu">VarCorr</span>(model)<span class="sc">$</span>id)<span class="sc">$</span>stddev</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  id_variance <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">VarCorr</span>(model), <span class="at">comp=</span><span class="st">"Variance"</span>)[<span class="dv">1</span>,<span class="dv">4</span>]</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  rsqc <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_conditional <span class="co">#fixed plus random effects relative to overall variance</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>  rsqm <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_marginal <span class="co">#fixed effects relative to overall variance</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  dispersion.chisq <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">1</span>]</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  dispersion.ratio <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  dispersion.rdf <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">3</span>]</span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>  dispersion.pval <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">4</span>]</span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>  isSingular <span class="ot">&lt;-</span> <span class="fu">isSingular</span>(model)</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  icc_id_site <span class="ot">&lt;-</span> <span class="fu">icc</span>(model, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos=</span>chr_pos, </span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_estimate =</span> prepost_estimate,</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_se =</span> prepost_se,</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_zval =</span> prepost_zval,</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_pval =</span> prepost_pval,</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>                    <span class="at">id_sd =</span> id_sd,</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>                    <span class="at">id_variance =</span> id_variance,</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqc =</span> rsqc,</span>
-<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqm =</span> rsqm,</span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.chisq =</span> dispersion.chisq,</span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.ratio =</span> dispersion.ratio,</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.rdf =</span> dispersion.rdf,</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.pval =</span> dispersion.pval,</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>                    <span class="at">isSingular =</span> isSingular,</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>                    <span class="at">icc_id_site =</span> icc_id_site</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>                    ))</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"ERROR :"</span>, <span class="fu">conditionMessage</span>(e), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>);<span class="fu">print</span>(chr_pos)})</span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model in parallel per CpG site (list item)</span></span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(data, function_model_glmer, <span class="at">mc.cores=</span><span class="dv">4</span>)</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, out_glmer)</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="do">### apply a FDR multiple-testing correction</span></span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>out_glmer<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer))</span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(out_glmer, <span class="at">file=</span><span class="st">"results/modeloutput/prepost_modeloutput_glmer_min0.75.RData"</span>)</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="do">### only select CpG sites with significant effects of pre/post</span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>sub_glmer_prepost <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(prepost_estimate <span class="sc">&gt;=</span> <span class="fl">0.1</span>))</span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="co">#N = 3,418</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="do">### collect the actual data from those significant CpG sites</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>changing_cpg <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> <span class="fu">filter</span>(chr_pos <span class="sc">%in%</span> sub_glmer_prepost<span class="sc">$</span>chr_pos)</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(changing_cpg, <span class="at">file=</span><span class="st">"results/modeloutput/subset_sites_sig_prepost.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="function-to-run-the-model" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">4.2</span> Function to run the model</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">### define function to collect overdispersion statistics</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>overdisp.lmer_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  vpars <span class="ot">&lt;-</span> <span class="cf">function</span>(m) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">nrow</span>(m)<span class="sc">*</span>(<span class="fu">nrow</span>(m)<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  model.df <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">sapply</span>(<span class="fu">VarCorr</span>(model),vpars))<span class="sc">+</span><span class="fu">length</span>(<span class="fu">fixef</span>(model))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  rdf <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">model.frame</span>(model))<span class="sc">-</span>model.df</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  rp <span class="ot">&lt;-</span> <span class="fu">residuals</span>(model,<span class="at">type=</span><span class="st">"pearson"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  Pearson.chisq <span class="ot">&lt;-</span> <span class="fu">sum</span>(rp<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  prat <span class="ot">&lt;-</span> Pearson.chisq<span class="sc">/</span>rdf</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  pval <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(Pearson.chisq, <span class="at">df=</span>rdf, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">chisq=</span>Pearson.chisq,<span class="at">ratio=</span>prat,<span class="at">rdf=</span>rdf,<span class="at">p=</span>pval)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">### build function to run the model</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>function_model_glmer <span class="ot">&lt;-</span> <span class="cf">function</span>(df){<span class="fu">tryCatch</span>({</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  chr_pos <span class="ot">&lt;-</span> <span class="fu">as.character</span>(df[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(df)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>prepost <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>prepost)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>id)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># model</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> lme4<span class="sc">::</span><span class="fu">glmer</span>(<span class="fu">cbind</span>(numC, numT) <span class="sc">~</span> prepost <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id), <span class="at">family =</span> <span class="st">"binomial"</span>, df)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effects</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  prepost_estimate <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  prepost_se <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  prepost_zval <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">3</span>]</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  prepost_pval <span class="ot">&lt;-</span>  <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">#random effects </span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  id_sd <span class="ot">&lt;-</span> <span class="fu">attributes</span>(<span class="fu">VarCorr</span>(model)<span class="sc">$</span>id)<span class="sc">$</span>stddev</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  id_variance <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">VarCorr</span>(model), <span class="at">comp=</span><span class="st">"Variance"</span>)[<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  rsqc <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_conditional <span class="co">#fixed plus random effects relative to overall variance</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  rsqm <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_marginal <span class="co">#fixed effects relative to overall variance</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  dispersion.chisq <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  dispersion.ratio <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  dispersion.rdf <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">3</span>]</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  dispersion.pval <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">4</span>]</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  isSingular <span class="ot">&lt;-</span> <span class="fu">isSingular</span>(model)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  icc_id_site <span class="ot">&lt;-</span> <span class="fu">icc</span>(model, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos=</span>chr_pos, </span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_estimate =</span> prepost_estimate,</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_se =</span> prepost_se,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_zval =</span> prepost_zval,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prepost_pval =</span> prepost_pval,</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                    <span class="at">id_sd =</span> id_sd,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                    <span class="at">id_variance =</span> id_variance,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqc =</span> rsqc,</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqm =</span> rsqm,</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.chisq =</span> dispersion.chisq,</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.ratio =</span> dispersion.ratio,</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.rdf =</span> dispersion.rdf,</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.pval =</span> dispersion.pval,</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                    <span class="at">isSingular =</span> isSingular,</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                    <span class="at">icc_id_site =</span> icc_id_site</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                    ))</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"ERROR :"</span>, <span class="fu">conditionMessage</span>(e), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>);<span class="fu">print</span>(chr_pos)})</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="run-the-model" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="run-the-model"><span class="header-section-number">4.3</span> Run the model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model in parallel per CpG site (list item)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(data, function_model_glmer, <span class="at">mc.cores=</span><span class="dv">4</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, out_glmer)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="do">### apply a FDR multiple-testing correction</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>out_glmer<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(out_glmer, <span class="at">file=</span><span class="st">"results/modeloutput/prepost_modeloutput_glmer_min0.75.RData"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="do">### only select CpG sites with significant effects of pre/post</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>sub_glmer_prepost <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(prepost_estimate <span class="sc">&gt;=</span> <span class="fl">0.1</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># N = 3,418</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A total of 3,418 CpG sites significantly change across the lekking period.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

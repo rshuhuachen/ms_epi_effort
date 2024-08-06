@@ -3,7 +3,7 @@ title: "Data exploration"
 format: 
   html:
     link-external-newwindow: true
-    fig-cap-location: bottom
+    fig-cap-location: top
     fig-width: 200
     fig-height: 200
 ---
@@ -76,9 +76,11 @@ summary[,-1] %>% kbl() %>%
 
 ```
 
+
 Below you can find the histograms of the parameters calculated (mean methylation etc.)
 
-![Summary statistics methylation]("../plots/explore/hist_summary_stats_cov_meth.png")
+
+![Summary statistics methylation](../plots/explore/hist_summary_stats_cov_meth.png)
 
 ## Coverage vs methylation
 
@@ -98,7 +100,7 @@ ggplot(data=summary[sample(nrow(summary),random_n),], aes(x=mean_cov, y=mean_per
 
 ```
 
-![Relationship coverage and mean methylation](%22../plots/explore/plot_coverage_mean_methylation_random.png%22)
+![Relationship coverage and mean methylation](../plots/explore/plot_coverage_mean_methylation_random.png)
 
 Here we see that there are many CpG sites with low average coverage and very low DNA methylation or very high DNA methylation. There is no obvious relationshp between the two, but there is some clustering going on (as expected).
 
@@ -197,7 +199,7 @@ cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc
                   labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> pca_plots
 ```
 
-![PCA plots](%22../plots/explore/pca_plots_factors.png%22)
+![PCA plots](../plots/explore/pca_plots_factors.png)
 
 ## Linear mixed effect model
 
