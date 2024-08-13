@@ -33,7 +33,7 @@ function_model_delta <- function(df, parameter){tryCatch({
   df <- as.data.frame(df)
   df$methperc_pre_scl <- scale(df$methperc_pre)
 
-  formula <- formula(paste0("scale(delta_meth) ~ ", parameter, "_dif_scl + age + scale(methperc_pre) + (1|site/id) "))
+  formula <- formula(paste0("scale(delta_meth) ~ ", parameter, "_dif_scl + age + scale(methperc_pre) + (1|id) + (1|site) "))
   
   model <- lmerTest::lmer(formula, data=df)
   summary <- summary(model)
@@ -51,6 +51,7 @@ function_model_delta <- function(df, parameter){tryCatch({
     data.frame(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval)
   }
   
+  intercept = summary$coefficients["(Intercept)","Estimate"]
   #fixed effect
   parameter_estimate <- summary$coefficients[2,1]
   parameter_se <- summary$coefficients[2,2]
@@ -59,11 +60,11 @@ function_model_delta <- function(df, parameter){tryCatch({
   parameter_pval <- summary$coefficients[2,5]
   
   #age effect
-  age_estimate <- summary$coefficients["age", "Estimate"]
-  age_se <- summary$coefficients["age", "Std. Error"]
-  age_df <- summary$coefficients["age", "df"]
-  age_tval <- summary$coefficients["age", "t value"]
-  age_pval <- summary$coefficients["age", "Pr(>|t|)"]
+  age_yearling_estimate <- summary$coefficients["ageYearling", "Estimate"]
+  age_yearling_se <- summary$coefficients["ageYearling", "Std. Error"]
+  age_yearling_df <- summary$coefficients["ageYearling", "df"]
+  age_yearling_tval <- summary$coefficients["ageYearling", "t value"]
+  age_yearling_pval <- summary$coefficients["ageYearling", "Pr(>|t|)"]
   
   #premeth effect
   pre_estimate <- summary$coefficients["scale(methperc_pre)", "Estimate"]
@@ -82,23 +83,33 @@ function_model_delta <- function(df, parameter){tryCatch({
   
   isSingular <- isSingular(model)
   
-  icc_id_site <-icc(model, by_group = TRUE, tolerance = 0)[1,2]
+
+  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- NA
+  }
+
+  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- summary(model)$optinfo$conv$lme4$messages
+  }
+
+  icc_id <-icc(model, by_group = TRUE, tolerance = 0)[1,2]
   icc_site <-icc(model, by_group = TRUE, tolerance = 0)[2,2]
   
   return(data.frame(chr_pos=as.factor(chr_pos),
                     parameter = as.factor(parameter),
-                    icc_id_site = as.numeric(icc_id_site),
+                    intercept= as.numeric(intercept),
+                    icc_id = as.numeric(icc_id),
                     icc_site = as.numeric(icc_site),
                     parameter_estimate = as.numeric(parameter_estimate),
                     parameter_se = as.numeric(parameter_se),
                     parameter_df = as.numeric(parameter_df),
                     parameter_tval = as.numeric(parameter_tval),
                     parameter_pval = as.numeric(parameter_pval),
-                    age_estimate = as.numeric(age_estimate),
-                    age_se = as.numeric(age_se),
-                    age_df = as.numeric(age_df),
-                    age_tval = as.numeric(age_tval),
-                    age_pval = as.numeric(age_pval),
+                    age_yearling_estimate = as.numeric(age_yearling_estimate),
+                    age_yearling_se = as.numeric(age_yearling_se),
+                    age_yearling_df = as.numeric(age_yearling_df),
+                    age_yearling_tval = as.numeric(age_yearling_tval),
+                    age_yearling_pval = as.numeric(age_yearling_pval),
                     pre_estimate = as.numeric(pre_estimate),
                     pre_se = as.numeric(pre_se),
                     pre_df = as.numeric(pre_df),
@@ -110,7 +121,8 @@ function_model_delta <- function(df, parameter){tryCatch({
                     dispersion.ratio = as.numeric(dispersion.ratio),
                     dispersion.rdf = as.numeric(dispersion.rdf),
                     dispersion.pval = as.numeric(dispersion.pval),
-                    isSingular = as.logical(isSingular)
+                    isSingular = as.logical(isSingular),
+                    convergence = convergence
                     
   ))
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
@@ -120,91 +132,259 @@ function_model_delta <- function(df, parameter){tryCatch({
 
 ### mass
 # run model
-delta_out_mass <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="mass",mc.cores=12)
+delta_out_mass <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="mass",mc.cores=4)
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_mass)){
+  length <- length(delta_out_mass[[i]])
+  if(length != 28){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_mass[[1]])
+for (i in 1:length(delta_out_mass)){
+  wrongnames <- names == names(delta_out_mass[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_mass <- delta_out_mass[-errors]
+delta_out_mass <- delta_out_mass[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_mass[[1]])
+for (i in 1:length(delta_out_mass)){
+  wrongnames <- names == names(delta_out_mass[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_mass <- delta_out_mass[-errors_cols]
+
 delta_out_mass <- do.call(rbind.data.frame, delta_out_mass)
 
 # convert to numeric
 delta_out_mass$parameter_pval <- as.numeric(delta_out_mass$parameter_pval)
-delta_out_mass$age_pval <- as.numeric(delta_out_mass$age_pval)
+delta_out_mass$age_yearling_pval <- as.numeric(delta_out_mass$age_yearling_pval)
 
 # exclude those with overdispersion
 delta_out_mass <- subset(delta_out_mass, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
 
 # FDR correction
 delta_out_mass$parameter_qval <- p.adjust(delta_out_mass$parameter_pval, method = "fdr", n = nrow(delta_out_mass))
-
-delta_out_mass$age_qval <- p.adjust(delta_out_mass$age_pval, method = "fdr", n = nrow(delta_out_mass))
+delta_out_mass$age_yearling_qval <- p.adjust(delta_out_mass$age_yearling_pval, method = "fdr", n = nrow(delta_out_mass))
 
 ### microf
 # run model
-delta_out_microf <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="microf",mc.cores=12)
-delta_out_microf <- do.call(rbind.data.frame, delta_out_microf)
+delta_out_microf <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="microf",mc.cores=4)
+
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_microf)){
+  length <- length(delta_out_microf[[i]])
+  if(length != 28){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_microf[[4]])
+for (i in 1:length(delta_out_microf)){
+  wrongnames <- names == names(delta_out_microf[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_microf <- delta_out_microf[-errors]
+delta_out_microf <- delta_out_microf[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_microf[[1]])
+for (i in 1:length(delta_out_microf)){
+  wrongnames <- names == names(delta_out_microf[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_microf <- delta_out_microf[-errors_cols]
+delta_out_microf <- do.call(rbind.data.frame, delta_out_microf) #1632
 
 # to numeric
 delta_out_microf$parameter_pval <- as.numeric(delta_out_microf$parameter_pval)
-delta_out_microf$age_pval <- as.numeric(delta_out_microf$age_pval)
+delta_out_microf$age_yearling_pval <- as.numeric(delta_out_microf$age_yearling_pval)
 
 # exclude overdispersion
 delta_out_microf <- subset(delta_out_microf, isSingular == FALSE & dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+#445
 
 # FDR correction
 delta_out_microf$parameter_qval <- p.adjust(delta_out_microf$parameter_pval, method = "fdr", n = nrow(delta_out_microf))
-delta_out_microf$age_qval <- p.adjust(delta_out_microf$age_pval, method = "fdr", n = nrow(delta_out_microf))
+delta_out_microf$age_yearling_qval <- p.adjust(delta_out_microf$age_yearling_pval, method = "fdr", n = nrow(delta_out_microf))
 
 ### trypa
 # run model
-delta_out_trypa <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="trypa",mc.cores=12)
+delta_out_trypa <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="trypa",mc.cores=4)
+
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_trypa)){
+  length <- length(delta_out_trypa[[i]])
+  if(length != 28){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_trypa[[4]])
+for (i in 1:length(delta_out_trypa)){
+  wrongnames <- names == names(delta_out_trypa[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_trypa <- delta_out_trypa[-errors]
+delta_out_trypa <- delta_out_trypa[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_trypa[[1]])
+for (i in 1:length(delta_out_trypa)){
+  wrongnames <- names == names(delta_out_trypa[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_trypa <- delta_out_trypa[-errors_cols]
+
 delta_out_trypa <- do.call(rbind.data.frame, delta_out_trypa)
 
 # as numeric
 delta_out_trypa$parameter_pval <- as.numeric(delta_out_trypa$parameter_pval)
-delta_out_trypa$age_pval <- as.numeric(delta_out_trypa$age_pval)
+delta_out_trypa$age_yearling_pval <- as.numeric(delta_out_trypa$age_yearling_pval)
 
 # exclude overdispersion
 delta_out_trypa <- subset(delta_out_trypa, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
 
 # FDR correction
 delta_out_trypa$parameter_qval <- p.adjust(delta_out_trypa$parameter_pval, method = "fdr", n = nrow(delta_out_trypa))
-delta_out_trypa$age_qval <- p.adjust(delta_out_trypa$age_pval, method = "fdr", n = nrow(delta_out_trypa))
+delta_out_trypa$age_yearling_qval <- p.adjust(delta_out_trypa$age_yearling_pval, method = "fdr", n = nrow(delta_out_trypa))
 
 ### ig
 # run model
-delta_out_ig <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="ig",mc.cores=12)
-delta_out_ig <- do.call(rbind.data.frame, delta_out_ig)
+delta_out_ig <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="ig",mc.cores=4)
+
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_ig)){
+  length <- length(delta_out_ig[[i]])
+  if(length != 28){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_ig[[4]])
+for (i in 1:length(delta_out_ig)){
+  wrongnames <- names == names(delta_out_ig[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_ig <- delta_out_ig[-errors]
+delta_out_ig <- delta_out_ig[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_ig[[1]])
+for (i in 1:length(delta_out_ig)){
+  wrongnames <- names == names(delta_out_ig[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_ig <- delta_out_ig[-errors_cols]
+
+delta_out_ig <- do.call(rbind.data.frame, delta_out_ig)#3422
 
 # as numeric
 delta_out_ig$parameter_pval <- as.numeric(delta_out_ig$parameter_pval)
-delta_out_ig$age_pval <- as.numeric(delta_out_ig$age_pval)
+delta_out_ig$age_yearling_pval <- as.numeric(delta_out_ig$age_yearling_pval)
 
 # exclude overdispersion
-delta_out_ig <- subset(delta_out_ig, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+delta_out_ig <- subset(delta_out_ig, dispersion.ratio < 1.1 & dispersion.pval > 0.05)#3364
 
 # FDR correction
 delta_out_ig$parameter_qval <- p.adjust(delta_out_ig$parameter_pval, method = "fdr", n = nrow(delta_out_ig))
-delta_out_ig$age_qval <- p.adjust(delta_out_ig$age_pval, method = "fdr", n = nrow(delta_out_ig))
+delta_out_ig$age_yearling_qval <- p.adjust(delta_out_ig$age_yearling_pval, method = "fdr", n = nrow(delta_out_ig))
 
 ### hct
 # run model
-delta_out_hct <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="hct",mc.cores=12)
-delta_out_hct <- do.call(rbind.data.frame, delta_out_hct)
+delta_out_hct <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="hct",mc.cores=4)
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_hct)){
+  length <- length(delta_out_hct[[i]])
+  if(length != 28){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_hct[[4]])
+for (i in 1:length(delta_out_hct)){
+  wrongnames <- names == names(delta_out_hct[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_hct <- delta_out_hct[-errors]
+delta_out_hct <- delta_out_hct[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_hct[[1]])
+for (i in 1:length(delta_out_hct)){
+  wrongnames <- names == names(delta_out_hct[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_hct <- delta_out_hct[-errors_cols]
+
+delta_out_hct <- do.call(rbind.data.frame, delta_out_hct) #2797
 
 # as numeric
 delta_out_hct$parameter_pval <- as.numeric(delta_out_hct$parameter_pval)
-delta_out_hct$age_pval <- as.numeric(delta_out_hct$age_pval)
+delta_out_hct$age_yearling_pval <- as.numeric(delta_out_hct$age_yearling_pval)
 
 # exclude overdispersion
-delta_out_hct <- subset(delta_out_hct, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+delta_out_hct <- subset(delta_out_hct, dispersion.ratio < 1.1 & dispersion.pval > 0.05) #2651
 
 # FDR correction
 delta_out_hct$parameter_qval <- p.adjust(delta_out_hct$parameter_pval, method = "fdr", n = nrow(delta_out_hct))
-delta_out_hct$age_qval <- p.adjust(delta_out_hct$age_pval, method = "fdr", n = nrow(delta_out_hct))
+delta_out_hct$age_yearling_qval <- p.adjust(delta_out_hct$age_yearling_pval, method = "fdr", n = nrow(delta_out_hct))
 
 ### combine
 delta_out_all <- rbind(delta_out_mass, delta_out_microf, delta_out_trypa, delta_out_ig, delta_out_hct)
 delta_out_all$chr_pos <- as.factor(delta_out_all$chr_pos)
 delta_out_all$parameter <- as.factor(delta_out_all$parameter)
 delta_out_all$isSingular <- as.logical(delta_out_all$isSingular)
-delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeric)
+
+delta_out_all <- subset(delta_out_all, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
 
 save(delta_out_all, file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
 
@@ -223,9 +403,9 @@ delta_out_all <- delta_out_all %>% mutate(sig = case_when(parameter_qval < 0.05 
 
 clrs <- viridisLite::viridis(6)
 ggplot(delta_out_all, aes(x = parameter_estimate, y = -log10(parameter_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
-    facet_wrap(~parameter, ncol=1) +
-    xlim(-1,1)+
-    ylim(0,3)+
+    facet_wrap(~parameter, ncol=1, scales="free") +
+   # xlim(-1,1)+
+   # ylim(0,3)+
     labs(x = "Estimate", y = "-log10(q-value)") +
     scale_color_manual(values=c("grey60", clrs[4])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -236,146 +416,101 @@ ggplot(delta_out_all, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
 ggsave(volcano_physio, file = "plots/model_out/volcano_physio.png", width=8, height=18)    
 
 ### significant ones
-
-cpg_sig_microf <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Microfilaria spp." & abs(parameter_estimate) > 0.1)
-cpg_sig_trypa <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Trypanosoma spp."& abs(parameter_estimate) > 0.1)
-cpg_sig_ig <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta IgG"& abs(parameter_estimate) > 0.1)
-cpg_sig_hct <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta HCT"& abs(parameter_estimate) > 0.1)
+cpg_sig_mass <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta body mass" & abs(parameter_estimate) > 0.1) #0
+cpg_sig_microf <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Microfilaria spp." & abs(parameter_estimate) > 0.1) #12
+cpg_sig_trypa <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Trypanosoma spp."& abs(parameter_estimate) > 0.1) #21
+cpg_sig_ig <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta IgG"& abs(parameter_estimate) > 0.1) #5
+cpg_sig_hct <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta HCT"& abs(parameter_estimate) > 0.1) #23
 
 ### plotting
 
 source("scripts/plotting_theme.R")
 
 ### microf
+list_plot_microf <- list()
+for (i in 1:nrow(cpg_sig_microf)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_microf$chr_pos[i]), aes(x = microf_dif_scl, y = scale(delta_meth))) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" Microfilaria spp."), y = expression("z-transformed "*Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_microf$parameter_estimate[i], 2), ", q-value = ", round(cpg_sig_microf$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_microf$intercept[i], slope = cpg_sig_microf$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+    list_plot_microf[[i]] <- plot   
+   }
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_microf$chr_pos[1]), aes(x = microf_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Microfilaria spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_microf$parameter_estimate[1], 2),
-                                        ", q-value = ", round(cpg_sig_microf$parameter_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_microf
-    
-ggsave(plot_microf, file = paste0("plots/model_out/rawdata_plot_microf_dif_cpg_1.png"), width=8, height=8)
+cowplot::plot_grid(list_plot_microf[[1]], list_plot_microf[[2]], list_plot_microf[[3]], list_plot_microf[[4]], list_plot_microf[[5]], list_plot_microf[[6]], 
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_microf_a
 
-### hct plot all 3 in one
-ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[1]), aes(x = hct_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[1], 2),
-                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_1
+cowplot::plot_grid(list_plot_microf[[7]], list_plot_microf[[8]], list_plot_microf[[9]], list_plot_microf[[10]], list_plot_microf[[11]], list_plot_microf[[12]], 
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_microf_b
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[2]), aes(x = hct_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[2], 2),
-                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[2], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_2
+ggsave(plots_microf_a, file = paste0("plots/model_out/rawdata_plot_microf_a.png"), width=14, height=20)
+ggsave(plots_microf_b, file = paste0("plots/model_out/rawdata_plot_microf_b.png"), width=14, height=20)
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[3]), aes(x = hct_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Haematocrit"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[3], 2),
-                                        ", q-value = ", round(cpg_sig_hct$parameter_qval[3], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_hct_3
 
-cowplot::plot_grid(plot_hct_1, plot_hct_2, plot_hct_3, labs="auto", align="hv", axis="lb", ncol=1, label_fontface = "plain", label_size = 22) -> plots_hct
-
-ggsave(plots_hct, file = paste0("plots/model_out/rawdata_plot_hct_dif.png"), width=8, height=14)
-
-## trypa
-# sort by significance
+### trypa
 cpg_sig_trypa <- cpg_sig_trypa %>% arrange(parameter_qval)
 
-# loop over all
+list_plot_trypa <- list()
 for (i in 1:nrow(cpg_sig_trypa)){
-    ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[i]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[i], 2),
-                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[i], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[i]), aes(x = trypa_dif_scl, y = scale(delta_meth))) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" Trypanosoma spp."), y = expression("z-transformed "*Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[i], 2), ", q-value = ", round(cpg_sig_trypa$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_trypa$intercept[i], slope = cpg_sig_trypa$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
-    
-    ggsave(plot, file = paste0("plots/model_out/trypa/rawdata_plot_trypa_dif_cpg_", i, ".png"), width=8, height=8)}
+    list_plot_trypa[[i]] <- plot   
+   }
 
-# top 4
-ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[1]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[1], 2),
-                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_1
+cowplot::plot_grid(list_plot_trypa[[1]], list_plot_trypa[[2]], list_plot_trypa[[3]], list_plot_trypa[[4]], list_plot_trypa[[5]], list_plot_trypa[[6]], 
+                    list_plot_trypa[[7]], list_plot_trypa[[8]], list_plot_trypa[[9]], list_plot_trypa[[10]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa_a
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[2]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[2], 2),
-                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[2], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_2
+cowplot::plot_grid(list_plot_trypa[[11]], list_plot_trypa[[12]], list_plot_trypa[[13]], list_plot_trypa[[14]], list_plot_trypa[[15]], list_plot_trypa[[16]], 
+                    list_plot_trypa[[17]], list_plot_trypa[[18]], list_plot_trypa[[19]], list_plot_trypa[[20]],list_plot_trypa[[21]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa_b
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[3]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[3], 2),
-                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[3], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_3
+ggsave(plots_trypa_a, file = paste0("plots/model_out/rawdata_plot_trypa_a.png"), width=14, height=20)
+ggsave(plots_trypa_b, file = paste0("plots/model_out/rawdata_plot_trypa_b.png"), width=14, height=20)
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_trypa$chr_pos[4]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_trypa$parameter_estimate[4], 2),
-                                        ", q-value = ", round(cpg_sig_trypa$parameter_qval[4], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_trypa_4
-
-cowplot::plot_grid(plot_trypa_1, plot_trypa_2, plot_trypa_3, plot_trypa_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa
-
-ggsave(plots_trypa, file = paste0("plots/model_out/rawdata_plot_trypa_dif_cpg_top.png"), width=14, height=14)
-
-### IgG
-# sort by significance
-cpg_sig_ig <- cpg_sig_ig %>% arrange(parameter_qval)
-
-# loop over all
+### igg
+list_plot_igg <- list()
 for (i in 1:nrow(cpg_sig_ig)){
-    ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[i]), aes(x = ig_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[i], 2),
-                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[i], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[i]), aes(x = ig_dif_scl, y = scale(delta_meth))) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" IgG"), y = expression("z-transformed "*Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[i], 2), ", q-value = ", round(cpg_sig_ig$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_ig$intercept[i], slope = cpg_sig_ig$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
-    
-    ggsave(plot, file = paste0("plots/model_out/igg/rawdata_plot_igg_dif_cpg_", i, ".png"), width=8, height=8)
-}
+    list_plot_igg[[i]] <- plot   
+   }
 
-# top 4
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[1]), aes(x = ig_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[1], 2),
-                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_1
+cowplot::plot_grid(list_plot_igg[[1]], list_plot_igg[[2]], list_plot_igg[[3]], list_plot_igg[[4]], list_plot_igg[[5]], 
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_igg
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[2]), aes(x = ig_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[2], 2),
-                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[2], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_2
+ggsave(plots_igg, file = paste0("plots/model_out/rawdata_plot_igg.png"), width=14, height=20)
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[3]), aes(x = ig_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[3], 2),
-                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[3], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_3
+### hct plot all 3 in one
+cpg_sig_hct <- cpg_sig_hct %>% arrange(parameter_qval)
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ig$chr_pos[4]), aes(x = ig_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" IgG"), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(cpg_sig_ig$parameter_estimate[4], 2),
-                                        ", q-value = ", round(cpg_sig_ig$parameter_qval[4], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_igg_4
+list_plot_hct <- list()
+for (i in 1:nrow(cpg_sig_hct)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_hct$chr_pos[i]), aes(x = trypa_dif_scl, y = scale(delta_meth))) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" HCT"), y = expression("z-transformed "*Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_hct$parameter_estimate[i], 2), ", q-value = ", round(cpg_sig_hct$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_hct$intercept[i], slope = cpg_sig_hct$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+    list_plot_hct[[i]] <- plot   
+   }
 
-cowplot::plot_grid(plot_igg_1, plot_igg_2, plot_igg_3, plot_igg_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_igg
+cowplot::plot_grid(list_plot_hct[[1]], list_plot_hct[[2]], list_plot_hct[[3]], list_plot_hct[[4]], list_plot_hct[[5]], list_plot_hct[[6]], 
+                    list_plot_hct[[7]], list_plot_hct[[8]], list_plot_hct[[9]], list_plot_hct[[10]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_hct_a
 
-ggsave(plots_igg, file = paste0("plots/model_out/rawdata_plot_igg_dif_cpg_top.png"), width=10, height=14)
+cowplot::plot_grid(list_plot_hct[[11]], list_plot_hct[[12]], list_plot_hct[[13]], list_plot_hct[[14]], list_plot_hct[[15]], list_plot_hct[[16]], 
+                    list_plot_hct[[17]], list_plot_hct[[18]], list_plot_hct[[19]], list_plot_hct[[20]],list_plot_hct[[21]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_hct_b
+
+ggsave(plots_hct_a, file = paste0("plots/model_out/rawdata_plot_hct_a.png"), width=14, height=20)
+ggsave(plots_hct_b, file = paste0("plots/model_out/rawdata_plot_hct_b.png"), width=14, height=20)

@@ -62,9 +62,35 @@ ltet_meth_unite_0.75 <- methylKit::unite(ltet_meth, destrand = TRUE,
 save(ltet_meth_unite_0.75, file = "data/processed/methylkit_prepost_min0.75.RData") # 274,197
 
 #### Restructure the methylation file #####
-load(file = "data/processed/methylkit_prepost_min0.75.RData")
+load(file = "data/processed/methylkit_prepost_raw.RData")
 source("scripts/function_convert_methfile.R")
 
-prepost_long <- convert_meth(methfile = ltet_meth_unite_0.75, novar = "remove") #Out of 274,197 CpG sites, kept 274,188 which is 1% removed
-save(prepost_long, file = "data/processed/methylkit_prepost_long_onlyvar_min0.75.RData")
+prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) #t of 1559800 CpG sites, kept 815460 which is 47.72% removed  
+save(prepost_long, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3.RData")
 
+#### Filter for at least 50% of samples in both time points (N>30)
+
+#count number of individuals per CpG per time point
+n_per_prepost <- prepost_long %>% 
+  group_by(chr_pos, prepost) %>% 
+  summarise(count=n())
+
+n_per_prepost_wide <-  spread(n_per_prepost,
+                  key=prepost,
+                  value=count)
+
+colnames(n_per_prepost_wide)[2] <- "n_post"
+colnames(n_per_prepost_wide)[3] <- "n_pre"
+
+#keep only if CpG site is covered in at least 50% of samples at both time points
+thres = 0.5
+n_per_prepost_wide <- n_per_prepost_wide %>% mutate(keep = as.factor(case_when(n_pre  > thres*(118*0.5) & n_post > thres*(118*0.5) ~ "keep")))
+
+summary(n_per_prepost_wide$keep) # 354,649
+
+prepost_long_clean <- left_join(prepost_long, n_per_prepost_wide, by = c("chr_pos"))
+
+prepost_long_clean <- subset(prepost_long_clean, keep == "keep")
+prepost_long_clean$keep <- NULL
+
+save(prepost_long_clean, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group.RData")

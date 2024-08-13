@@ -2,7 +2,7 @@
 ### to a long file, where each line is a CpG site per individual
 ### and in the columns we have CpG site, nC, nT, cov, %meth
 
-convert_meth <- function(methfile, novar){
+convert_meth <- function(methfile, novar, threshold){
   #extract data
   pacman::p_load(dplyr, methylKit)
   data <- methylKit::getData(methfile) #get methdata to dataframe
@@ -12,7 +12,28 @@ convert_meth <- function(methfile, novar){
     data <- data[apply(data[,grep("numT", names(data), value = T)], 1, var,na.rm=T) != 0,]#no var in numT = all 0 = 100% meth
   }
   
-  message(paste0("Out of ", nrow(methfile), " CpG sites, kept ", nrow(data), " which is ", round(nrow(data)/nrow(methfile), 2), "% removed"))
+  if (threshold > 0){
+    # first num C
+    numcs <- grep("numC", names(data))
+    data$zero_c <- rowSums(data[,numcs] == 0, na.rm=T)
+    data$no_na_c <- rowSums(!is.na(data[,numcs]))
+    data <- data %>% mutate(zero_c_perc = zero_c/no_na_c)
+    data <- subset(data, zero_c_perc < 1-threshold)
+
+    # num T
+    numts <- grep("numT", names(data))
+    data$zero_t <- rowSums(data[,numts] == 0, na.rm=T)
+    data$no_na_t <- rowSums(!is.na(data[,numts]))
+    data <- data %>% mutate(zero_t_perc = zero_t/no_na_t)
+    data <- subset(data, zero_t_perc < 1-threshold)
+
+    data$zero_c <- NULL
+    data$no_na_c <- NULL
+    data$zero_t <- NULL
+    data$no_na_t <- NULL
+  }
+  
+  message(paste0("Out of ", nrow(methfile), " CpG sites, kept ", nrow(data), " which is ", round((100-(nrow(data)/nrow(methfile)*100)), 2), "% removed"))
   
   data <- data %>% mutate(chr_pos = paste0(data$chr, "_", data$start), .before=chr) #create chr_pos column
   
@@ -31,6 +52,10 @@ convert_meth <- function(methfile, novar){
   long$cov <- long$numC + long$numT
   long$methperc <- long$numC / long$cov
   
+  # remove NA's
+  long <- subset(long, !is.na(methperc))
+
+  # split up epi_nr and lib
   long <- long %>% mutate(epi_nr = gsub(".*_", "", lib_id),
                         lib = gsub("_.*", "", lib_id), .after =lib_id) # add epinr and library (splitting up lib_id)
   
@@ -42,6 +67,6 @@ convert_meth <- function(methfile, novar){
   
   #add some other data from pheno file
   load("data/phenotypes/fulldata_complete_epi_withdates.RData")
-  long <- left_join(long, all_pheno_epi[,c("epi_nr", "id", "year", "fulldate")], by = "epi_nr")
+  long <- left_join(long, all_pheno_epi[,c("epi_nr", "id", "year", "fulldate", "prepost")], by = "epi_nr")
   
   return(long)}

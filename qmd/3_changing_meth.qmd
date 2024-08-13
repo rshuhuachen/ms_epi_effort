@@ -32,11 +32,11 @@ rm(all_pheno_epi)
 prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "Core", "year", "born","site", "fulldate")], 
                           by = c("id", "year", "fulldate"))
 
-prepost_long <- prepost_long %>% mutate(age_year = case_when(Core == "Core" ~ year - born,
-                                                        Core == "No core" ~ NA),
-                                        age = case_when(Core == "Core" & (year - born > 1) ~ "Adult",
+prepost_long <- prepost_long %>% mutate(age_year = as.factor(case_when(Core == "Core" ~ year - born,
+                                                        Core == "No core" ~ NA)),
+                                        age = as.factor(case_when(Core == "Core" & (year - born > 1) ~ "Adult",
                                                         Core == "Core" & (year - born == 1) ~ "Yearling",
-                                                         Core == "No core" ~ "Adult"))
+                                                        Core == "No core" ~ "Adult")))
 
 ### convert data to a list, one per CpG site
 data <- prepost_long %>% group_split(chr_pos)
@@ -136,3 +136,7 @@ sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & dispersion.ratio < 
 ```
 
 A total of 3,418 CpG sites significantly change across the lekking period.
+
+## Note on LMM vs GLMM
+
+
