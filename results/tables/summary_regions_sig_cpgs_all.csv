@@ -1,0 +1,100 @@
+region,model,n
+downstream,all,76860
+exon,all,31280
+fiveUTR,all,940
+gene,all,53797
+intron,all,22985
+promoter,all,50074
+threeUTR,all,158
+TSS,all,13824
+upstream,all,87692
+downstream,Annual mating success,187
+exon,Annual mating success,89
+fiveUTR,Annual mating success,0
+gene,Annual mating success,159
+intron,Annual mating success,73
+promoter,Annual mating success,88
+threeUTR,Annual mating success,0
+TSS,Annual mating success,22
+upstream,Annual mating success,222
+downstream,Attendance,2
+exon,Attendance,0
+fiveUTR,Attendance,0
+gene,Attendance,0
+intron,Attendance,0
+promoter,Attendance,1
+threeUTR,Attendance,0
+TSS,Attendance,1
+upstream,Attendance,2
+downstream,Delta body mass,4
+exon,Delta body mass,3
+fiveUTR,Delta body mass,0
+gene,Delta body mass,3
+intron,Delta body mass,0
+promoter,Delta body mass,3
+threeUTR,Delta body mass,0
+TSS,Delta body mass,1
+upstream,Delta body mass,4
+downstream,Delta HCT,6
+exon,Delta HCT,3
+fiveUTR,Delta HCT,0
+gene,Delta HCT,7
+intron,Delta HCT,4
+promoter,Delta HCT,3
+threeUTR,Delta HCT,0
+TSS,Delta HCT,0
+upstream,Delta HCT,12
+downstream,Delta IgG,1
+exon,Delta IgG,2
+fiveUTR,Delta IgG,0
+gene,Delta IgG,3
+intron,Delta IgG,1
+promoter,Delta IgG,2
+threeUTR,Delta IgG,0
+TSS,Delta IgG,0
+upstream,Delta IgG,2
+downstream,Delta Microfilaria spp.,6
+exon,Delta Microfilaria spp.,0
+fiveUTR,Delta Microfilaria spp.,0
+gene,Delta Microfilaria spp.,5
+intron,Delta Microfilaria spp.,5
+promoter,Delta Microfilaria spp.,1
+threeUTR,Delta Microfilaria spp.,0
+TSS,Delta Microfilaria spp.,0
+upstream,Delta Microfilaria spp.,3
+downstream,Delta Trypanosoma spp.,11
+exon,Delta Trypanosoma spp.,2
+fiveUTR,Delta Trypanosoma spp.,0
+gene,Delta Trypanosoma spp.,5
+intron,Delta Trypanosoma spp.,3
+promoter,Delta Trypanosoma spp.,2
+threeUTR,Delta Trypanosoma spp.,0
+TSS,Delta Trypanosoma spp.,0
+upstream,Delta Trypanosoma spp.,9
+downstream,Centrality,2
+exon,Centrality,0
+fiveUTR,Centrality,0
+gene,Centrality,0
+intron,Centrality,0
+promoter,Centrality,0
+threeUTR,Centrality,0
+TSS,Centrality,0
+upstream,Centrality,3
+downstream,Fighting rate,13
+exon,Fighting rate,3
+fiveUTR,Fighting rate,0
+gene,Fighting rate,11
+intron,Fighting rate,9
+promoter,Fighting rate,3
+threeUTR,Fighting rate,0
+TSS,Fighting rate,0
+upstream,Fighting rate,12
+downstream,Time period,1343
+exon,Time period,572
+fiveUTR,Time period,12
+gene,Time period,1043
+intron,Time period,488
+promoter,Time period,762
+threeUTR,Time period,1
+TSS,Time period,155
+upstream,Time period,1638

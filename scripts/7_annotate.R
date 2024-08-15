@@ -8,24 +8,41 @@ pacman::p_load(tidyverse, data.table, genomation, GenomicFeatures, rtracklayer,
 source("scripts/plotting_theme.R")
 
 ### Significants sites ####
+# changing
+load(file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+cpg_change <- subset(out_glmer, prepost_qval < 0.05 & abs(prepost_estimate) > 0.1)
+
 # AMS
 load(file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
-cpg_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05)
+cpg_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05 & abs(ams_delta_meth_estimate) > 0.1)
+
 # effort
 load(file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
-cpg_effort <- subset(delta_out_all, parameter_qval < 0.05)
+cpg_effort <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
+
 #physio
 load(file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
-cpg_physio <- subset(delta_out_all, parameter_qval < 0.05)
+cpg_physio <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
+
+
 
 ### combine
+cpg_all <- out_glmer %>% dplyr::select(c(chr_pos, prepost_qval))
+names(cpg_all)[2] <- "parameter_qval"
+cpg_all$parameter <- "all"
+
+cpg_changing_select <- cpg_change %>% dplyr::select(c(chr_pos, prepost_qval))
+names(cpg_changing_select)[2] <- "parameter_qval"
+cpg_changing_select$parameter <- "time_period"
+
 cpg_ams_select <- cpg_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
 names(cpg_ams_select)[2] <- "parameter_qval"
 cpg_ams_select$parameter <- "AMS"
+
 cpg_effort_select <- cpg_effort %>% dplyr::select(c(chr_pos, parameter, parameter_qval))
 cpg_physio_select <- cpg_physio %>% dplyr::select(c(chr_pos, parameter, parameter_qval))
 
-all_models_sig <- rbind(cpg_ams_select, cpg_effort_select, cpg_physio_select)
+all_models_sig <- rbind(cpg_all, cpg_changing_select, cpg_ams_select, cpg_effort_select, cpg_physio_select)
 
 ### Rename chr_pos and divide ###
 all_models_sig$chr_pos <- gsub("__", ";", all_models_sig$chr_pos)
@@ -78,6 +95,7 @@ sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
 sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
   add_column("region" = "gene", .after="parameter") %>% 
   dplyr::select(-c(seqnames:strand)) 
+
 sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
   add_column("region" = "TSS", .after="parameter") %>%
   dplyr::select(-c(seqnames:strand)) 
@@ -112,6 +130,21 @@ all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
 
 summary(as.factor(all_models_sig_annotated$region))
 save(all_models_sig_annotated, file="results/annotated/annotated_modeloutput_sig_annotated.RData")
+
+sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
+names(sum_annotated) <- c("region", "model", "n")
+sum_annotated$model <- gsub("AMS", "Annual mating success", sum_annotated$model)
+sum_annotated$model <- gsub("attend", "Attendance", sum_annotated$model)
+sum_annotated$model <- gsub("dist", "Centrality", sum_annotated$model)
+sum_annotated$model <- gsub("fight", "Fighting rate", sum_annotated$model)
+sum_annotated$model <- gsub("time_period", "Time period", sum_annotated$model)
+
+write.csv(sum_annotated, file="results/tables/summary_regions_sig_cpgs_all.csv", row.names=F, quote=F)
+
+source("scripts/plotting_theme.R")
+ggplot(sum_annotated, aes(x = region, y = n)) + geom_bar(stat="identity") + 
+  facet_wrap(~model, ncol=2, scales="free") + coord_flip() -> num_region_cpg
+ggsave(num_region_cpg, file="plots/summary/n_sig_cpg_per_region.png", width=10, height=18)
 
 #### Based on chicken liftover ####
 ### load annotation data
@@ -218,6 +251,11 @@ all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
                                            !is.na(gene_id) &
                                              !grepl("LOC", gene_id))
 
+subset(all_models_sig_annotated_chicken, parameter == "all" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/all_gene_ids.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_chicken, parameter == "time_period" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_time_period.csv", quote=F, row.names=F, col.names = F)
 
 subset(all_models_sig_annotated_chicken, parameter == "AMS" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_AMS.csv", quote=F, row.names=F, col.names = F)

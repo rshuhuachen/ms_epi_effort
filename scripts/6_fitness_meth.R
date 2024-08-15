@@ -14,7 +14,7 @@ load("data/phenotypes/pheno_dif_prepost.RData")
 #combine with site and fitness data
 pheno_pre <- subset(all_pheno_epi, prepost=="pre")
 
-delta_meth <- left_join(delta_meth, unique(pheno_pre[,c("id", "year", "MS", "surv")]), by = c("id", "year"))
+delta_meth <- left_join(delta_meth, unique(pheno_pre[,c("id", "year", "MS", "surv", "site")]), by = c("id", "year"))
                                            
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
@@ -30,6 +30,8 @@ function_model_fitness <- function(df){tryCatch({
   model_ams <- glmmTMB(formula_ams, data=df, family = "poisson", ziformula=~1)
   summary_ams <- summary(model_ams)
   
+  intercept_ams <- summary_ams$coefficients$cond["(Intercept)", "Estimate"]
+
   #fixed effect
   parameter_estimate <- summary_ams$coefficients$cond["scale(delta_meth)", "Estimate"]
   parameter_se <- summary_ams$coefficients$cond["scale(delta_meth)","Std. Error"]
@@ -37,10 +39,10 @@ function_model_fitness <- function(df){tryCatch({
   parameter_pval <- summary_ams$coefficients$cond["scale(delta_meth)", "Pr(>|z|)"]
   
   #age effect
-  age_estimate <- summary_ams$coefficients$cond["age", "Estimate"]
-  age_se <- summary_ams$coefficients$cond["age", "Std. Error"]
-  age_zval <- summary_ams$coefficients$cond["age", "z value"]
-  age_pval <- summary_ams$coefficients$cond["age", "Pr(>|z|)"]
+  age_estimate <- summary_ams$coefficients$cond["ageYearling", "Estimate"]
+  age_se <- summary_ams$coefficients$cond["ageYearling", "Std. Error"]
+  age_zval <- summary_ams$coefficients$cond["ageYearling", "z value"]
+  age_pval <- summary_ams$coefficients$cond["ageYearling", "Pr(>|z|)"]
   
   #premeth effect
   pre_estimate <- summary_ams$coefficients$cond["scale(methperc_pre)", "Estimate"]
@@ -58,16 +60,17 @@ function_model_fitness <- function(df){tryCatch({
   
  
   ams <- data.frame(chr_pos=as.factor(chr_pos),
+                    intercept_ams = intercept_ams,
                     ams_icc_id_site = as.numeric(icc_id_site),
                     ams_icc_site = as.numeric(icc_site),
                     ams_delta_meth_estimate = as.numeric(parameter_estimate),
                     ams_delta_meth_se = as.numeric(parameter_se),
                     ams_delta_meth_zval = as.numeric(parameter_zval),
                     ams_delta_meth_pval = as.numeric(parameter_pval),
-                    ams_age_estimate = as.numeric(age_estimate),
-                    ams_age_se = as.numeric(age_se),
-                    ams_age_zval = as.numeric(age_zval),
-                    ams_age_pval = as.numeric(age_pval),
+                    ams_age_yearling_estimate = as.numeric(age_estimate),
+                    ams_age_yearling_se = as.numeric(age_se),
+                    ams_age_yearling_zval = as.numeric(age_zval),
+                    ams_age_yearling_pval = as.numeric(age_pval),
                     ams_pre_estimate = as.numeric(pre_estimate),
                     ams_pre_se = as.numeric(pre_se),
                     ams_pre_zval = as.numeric(pre_zval),
@@ -82,6 +85,8 @@ function_model_fitness <- function(df){tryCatch({
   model_surv <- glmmTMB(formula_surv, data=df, family = "binomial")
   summary_surv <- summary(model_surv)
   
+  intercept_surv <- summary_surv$coefficients$cond["(Intercept)", "Estimate"]
+
   #fixed effect
   parameter_estimate <- summary_surv$coefficients$cond["scale(delta_meth)", "Estimate"]
   parameter_se <- summary_surv$coefficients$cond["scale(delta_meth)","Std. Error"]
@@ -89,10 +94,10 @@ function_model_fitness <- function(df){tryCatch({
   parameter_pval <- summary_surv$coefficients$cond["scale(delta_meth)", "Pr(>|z|)"]
   
   #age effect
-  age_estimate <- summary_surv$coefficients$cond["age", "Estimate"]
-  age_se <- summary_surv$coefficients$cond["age", "Std. Error"]
-  age_zval <- summary_surv$coefficients$cond["age", "z value"]
-  age_pval <- summary_surv$coefficients$cond["age", "Pr(>|z|)"]
+  age_estimate <- summary_surv$coefficients$cond["ageYearling", "Estimate"]
+  age_se <- summary_surv$coefficients$cond["ageYearling", "Std. Error"]
+  age_zval <- summary_surv$coefficients$cond["ageYearling", "z value"]
+  age_pval <- summary_surv$coefficients$cond["ageYearling", "Pr(>|z|)"]
   
   #premeth effect
   pre_estimate <- summary_surv$coefficients$cond["scale(methperc_pre)", "Estimate"]
@@ -108,16 +113,17 @@ function_model_fitness <- function(df){tryCatch({
   icc_id_site <-icc(model_surv, by_group = TRUE, tolerance = 0)[1,2]
   icc_site <-icc(model_surv, by_group = TRUE, tolerance = 0)[2,2]
   
-  surv <- data.frame(surv_icc_id_site = as.numeric(icc_id_site),
+  surv <- data.frame(intercept_surv = intercept_surv,
+                    surv_icc_id_site = as.numeric(icc_id_site),
                     surv_icc_site = as.numeric(icc_site),
                     surv_delta_meth_estimate = as.numeric(parameter_estimate),
                     surv_delta_meth_se = as.numeric(parameter_se),
                     surv_delta_meth_zval = as.numeric(parameter_zval),
                     surv_delta_meth_pval = as.numeric(parameter_pval),
-                    surv_age_estimate = as.numeric(age_estimate),
-                    surv_age_se = as.numeric(age_se),
-                    surv_age_zval = as.numeric(age_zval),
-                    surv_age_pval = as.numeric(age_pval),
+                    surv_age_yearling_estimate = as.numeric(age_estimate),
+                    surv_age_yearling_se = as.numeric(age_se),
+                    surv_age_yearling_zval = as.numeric(age_zval),
+                    surv_age_yearling_pval = as.numeric(age_pval),
                     surv_pre_estimate = as.numeric(pre_estimate),
                     surv_pre_se = as.numeric(pre_se),
                     surv_pre_zval = as.numeric(pre_zval),
@@ -134,7 +140,7 @@ function_model_fitness <- function(df){tryCatch({
 
 ### run the model 
 # run model
-delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=12)
+delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=4)
 delta_out_fitness <- do.call(rbind.data.frame, delta_out_fitness)
 
 # convert to numeric
@@ -161,8 +167,8 @@ delta_out_surv <- delta_out_surv %>% select(c(chr_pos, surv_icc_id_site:surv_mes
 save(delta_out_ams, file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
 save(delta_out_surv, file="results/modeloutput/surv_deltameth_modeloutput_filtered.RData")
 
-nrow(subset(delta_out_ams, ams_delta_meth_qval < 0.05))
-nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05))
+nrow(subset(delta_out_ams, ams_delta_meth_qval < 0.05)) # n = 481
+nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05)) # n = 0
 
 ### volcano plot
 source("scripts/plotting_theme.R")
@@ -203,7 +209,8 @@ ggsave(plots_fitness, file = "plots/model_out/volcano_fitness.png", width=14, he
 
 ### significant ones
 
-cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05)
+cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #481
+cpg_sig_surv <- subset(delta_out_surv, surv_delta_meth_qval < 0.05) #0
 
 ### plotting
 
@@ -211,98 +218,115 @@ source("scripts/plotting_theme.R")
 
 cpg_sig_ams <- cpg_sig_ams %>% arrange(ams_delta_meth_qval)
 
-for (i in 1:10){
-    ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[i]), aes(x = delta_meth, y = MS)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[i], 2),
-                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[i], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+list_plot_ams <- list()
+for (i in 1:nrow(cpg_sig_ams)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[i]), aes(x = scale(delta_meth), y = MS)) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" methylation"), 
+      y = "Annual mating success"),
+                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[i], 2), ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_ams$intercept[i], slope = cpg_sig_ams$ams_delta_meth_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
-    
-    ggsave(plot, file = paste0("plots/model_out/ams/rawdata_plot_AMS_cpg_", i, ".png"), width=8, height=8)}
+    list_plot_ams[[i]] <- plot   
+   }
 
-## top 
+cowplot::plot_grid(list_plot_ams[[1]], list_plot_ams[[2]], list_plot_ams[[3]], list_plot_ams[[4]], list_plot_ams[[5]], list_plot_ams[[6]], 
+                    list_plot_ams[[7]], list_plot_ams[[8]], list_plot_ams[[9]], list_plot_ams[[10]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams_a
 
-# top 4
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[1]), aes(x = delta_meth, y = MS)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[1], 2),
-                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_1
+cowplot::plot_grid(list_plot_ams[[11]], list_pllist_plot_amsot_hct[[12]], list_plot_ams[[13]], list_plot_ams[[14]], list_plot_ams[[15]], list_plot_ams[[16]], 
+                    list_plot_ams[[17]], list_plot_ams[[18]], list_plot_ams[[19]], list_plot_ams[[20]],list_plot_ams[[21]],
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams_b
 
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[2]), aes(x = delta_meth, y = MS)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[2], 2),
-                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[2], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_2
-
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[3]), aes(x = delta_meth, y = MS)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[3], 2),
-                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[3], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_3
-
-ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[4]), aes(x = delta_meth, y = MS)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" methylation"), y = "Annual mating success",
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[4], 2),
-                                        ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[4], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot_ams_4
-
-cowplot::plot_grid(plot_ams_1, plot_ams_2, plot_ams_3, plot_ams_4, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams
-
-ggsave(plots_ams, file = paste0("plots/model_out/rawdata_plot_AMS_cpg_top.png"), width=14, height=14)
+ggsave(plots_ams_a, file = paste0("plots/model_out/rawdata_plot_AMS_cpg_top10.png"), width=14, height=22)
+ggsave(plots_ams_b, file = paste0("plots/model_out/rawdata_plot_AMS_cpg_top20.png"), width=14, height=22)
 
 ### is there any overlap with behavioural or physiological traits?
 load(file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
-cpg_effort <- subset(delta_out_all, parameter_qval < 0.05)
+cpg_effort <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
   
 load(file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
-cpg_physio <- subset(delta_out_all, parameter_qval < 0.05)
+cpg_physio <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
   
-subset(cpg_sig_ams, chr_pos %in% cpg_effort$chr_pos)  
-subset(cpg_sig_ams, chr_pos %in% cpg_physio$chr_pos)  
-subset(cpg_physio, chr_pos %in% cpg_sig_ams$chr_pos)  
+nrow(subset(cpg_sig_ams, chr_pos %in% cpg_effort$chr_pos))  # 8
+nrow(subset(cpg_sig_ams, chr_pos %in% cpg_physio$chr_pos))  # 15
+nrow(subset(cpg_physio, chr_pos %in% cpg_sig_ams$chr_pos))  # 18
 
 ### merge the data of those
+
+### physio and AMS
 overlap_ams_physio <- inner_join(cpg_physio, cpg_sig_ams, by="chr_pos")
 
-delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year",  "trypa_dif")], by = c("id", "year")))
-   
-ggplot(subset(delta_meth, chr_pos == overlap_ams_physio$chr_pos[1]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(overlap_ams_physio$parameter_estimate[1], 2),
-                                        ", q-value = ", round(overlap_ams_physio$parameter_qval[1], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_trypa_meth_1
+prepost_dif$mass_dif_scl <- scale(prepost_dif$mass_dif)
+prepost_dif$microf_dif_scl <- scale(prepost_dif$microf_dif)
+prepost_dif$trypa_dif_scl <- scale(prepost_dif$trypa_dif)
+prepost_dif$ig_dif_scl <- scale(prepost_dif$ig_dif)
+prepost_dif$hct_dif_scl <- scale(prepost_dif$hct_dif)
 
-ggplot(subset(delta_meth, chr_pos == overlap_ams_physio$chr_pos[1]), aes(x = delta_meth, y = MS)) + 
+delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_dif", "microf_dif", "trypa_dif", "ig_dif", "hct_dif",
+                        "mass_dif_scl", "microf_dif_scl", "trypa_dif_scl", "ig_dif_scl", "hct_dif_scl")], by = c("id", "year")))
+
+### Body mass  
+
+overlap_mass <- subset(overlap_ams_physio, parameter == "Delta body mass")
+
+list_plot_mass_a <- list()
+list_plot_mass_b <- list()
+
+for (i in 1:nrow(overlap_mass)){
+    ggplot(subset(delta_meth, chr_pos == overlap_mass$chr_pos[i]), aes(x = mass_dif_scl, y = scale(delta_meth))) + 
+        geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" body mass"), y = expression(Delta*" methylation"),
+                     title = paste0("Estimate = ", round(overlap_mass$parameter_estimate[i], 2), ", q-value = ", round(overlap_mass$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=overlap_mass$intercept[i], slope = overlap_mass$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_a
+    list_plot_mass_a[[i]] <- plot_a 
+
+    ggplot(subset(delta_meth, chr_pos == overlap_mass$chr_pos[i]), aes(x = scale(delta_meth), y = MS)) + 
     geom_point(fill=clrs_hunting[1], size=3) + labs(y = "Annual mating success", x = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(overlap_ams_physio$ams_delta_meth_estimate[1], 2),
-                                        ", q-value = ", round(overlap_ams_physio$ams_delta_meth_qval[1], 2))) +
+                      title = paste0("Estimate = ", round(overlap_mass$ams_delta_meth_estimate[i], 2),
+                                        ", q-value = ", round(overlap_mass$ams_delta_meth_qval[i], 2))) +
                                         geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_meth_ms_1
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
+    list_plot_mass_b[[i]] <- plot_b}
 
-ggplot(subset(delta_meth, chr_pos == overlap_ams_physio$chr_pos[2]), aes(x = trypa_dif, y = delta_meth)) + 
-    geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" Trypanosoma spp."), y = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(overlap_ams_physio$parameter_estimate[2], 2),
-                                        ", q-value = ", round(overlap_ams_physio$parameter_qval[2], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_trypa_meth_2
+cowplot::plot_grid(list_plot_mass_a[[1]], list_plot_mass_b[[1]], list_plot_mass_a[[2]], list_plot_mass_b[[2]],
+    list_plot_mass_a[[3]], list_plot_mass_b[[3]],
+    labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_mass_ams
 
-ggplot(subset(delta_meth, chr_pos == overlap_ams_physio$chr_pos[2]), aes(x = delta_meth, y = MS)) + 
+ggsave(plots_mass_ams, file = "plots/model_out/rawdata_plot_overlap_mass_AMS.png", width=14, height=20)                                
+
+### Delta HCT 
+
+overlap_hct <- subset(overlap_ams_physio, parameter == "Delta HCT")
+
+list_plot_hct_a <- list()
+list_plot_hct_b <- list()
+
+for (i in 1:nrow(overlap_hct)){
+    ggplot(subset(delta_meth, chr_pos == overlap_hct$chr_pos[i]), aes(x = hct_dif_scl, y = scale(delta_meth))) + 
+        geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression(Delta*" HCT"), y = expression(Delta*" methylation"),
+                     title = paste0("Estimate = ", round(overlap_hct$parameter_estimate[i], 2), ", q-value = ", round(overlap_hct$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=overlap_hct$intercept[i], slope = overlap_hct$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_a
+    list_plot_hct_a[[i]] <- plot_a 
+
+    ggplot(subset(delta_meth, chr_pos == overlap_hct$chr_pos[i]), aes(x = scale(delta_meth), y = MS)) + 
     geom_point(fill=clrs_hunting[1], size=3) + labs(y = "Annual mating success", x = expression(Delta*" methylation"),
-                      title = paste0("Estimate = ", round(overlap_ams_physio$ams_delta_meth_estimate[2], 2),
-                                        ", q-value = ", round(overlap_ams_physio$ams_delta_meth_qval[2], 2))) +
+                      title = paste0("Estimate = ", round(overlap_hct$ams_delta_meth_estimate[i], 2),
+                                        ", q-value = ", round(overlap_hct$ams_delta_meth_qval[i], 2))) +
                                         geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_meth_ms_2
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
+    list_plot_hct_b[[i]] <- plot_b}
 
-cowplot::plot_grid(plot_trypa_meth_1, plot_meth_ms_1, plot_trypa_meth_2, plot_meth_ms_2, 
-    labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_physio_ams
+cowplot::plot_grid(list_plot_hct_a[[1]], list_plot_hct_b[[1]], list_plot_hct_a[[2]], list_plot_hct_b[[2]],
+    list_plot_hct_a[[3]], list_plot_hct_b[[3]],list_plot_hct_a[[4]], list_plot_hct_b[[4]],
+    list_plot_hct_a[[5]], list_plot_hct_b[[5]],list_plot_hct_a[[6]], list_plot_hct_b[[6]],
+    list_plot_hct_a[[7]], list_plot_hct_b[[7]],list_plot_hct_a[[8]], list_plot_hct_b[[8]],
+    list_plot_hct_a[[9]], list_plot_hct_b[[9]],
+    labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_hct_ams
 
-ggsave(plots_physio_ams, file = paste0("plots/model_out/rawdata_plot_trypa_delta_AMS.png"), width=12, height=12)
-                                
-        
+ggsave(plots_hct_ams, file = "plots/model_out/rawdata_plot_overlap_hct_AMS.png", width=14, height=24)                                
+
+### continue with other traits including investment

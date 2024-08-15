@@ -393,7 +393,7 @@ source("scripts/plotting_theme.R")
 
 load(file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
 
-delta_out_all$parameter <- gsub("mass", "Delta body mass",delta_out_all$parameter)
+delta_out_all$parameter <- gsub("body mass", "Delta body mass",delta_out_all$parameter)
 delta_out_all$parameter <- gsub("microf", "Delta Microfilaria spp.", delta_out_all$parameter)
 delta_out_all$parameter <- gsub("trypa", "Delta Trypanosoma spp.", delta_out_all$parameter)
 delta_out_all$parameter <- gsub("ig", "Delta IgG", delta_out_all$parameter)
@@ -416,7 +416,7 @@ ggplot(delta_out_all, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
 ggsave(volcano_physio, file = "plots/model_out/volcano_physio.png", width=8, height=18)    
 
 ### significant ones
-cpg_sig_mass <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta body mass" & abs(parameter_estimate) > 0.1) #0
+cpg_sig_mass <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta body mass" & abs(parameter_estimate) > 0.1) #8
 cpg_sig_microf <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Microfilaria spp." & abs(parameter_estimate) > 0.1) #12
 cpg_sig_trypa <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta Trypanosoma spp."& abs(parameter_estimate) > 0.1) #21
 cpg_sig_ig <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta IgG"& abs(parameter_estimate) > 0.1) #5
@@ -425,6 +425,25 @@ cpg_sig_hct <- subset(delta_out_all, parameter_qval < 0.05 & parameter == "Delta
 ### plotting
 
 source("scripts/plotting_theme.R")
+
+### microf
+list_plot_mass <- list()
+for (i in 1:nrow(cpg_sig_mass)){
+    ggplot(subset(delta_meth, chr_pos == cpg_sig_mass$chr_pos[i]), aes(x = mass_dif_scl, y = scale(delta_meth))) + 
+      geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" body mass"), y = expression("z-transformed "*Delta*" methylation"),
+                      title = paste0("Estimate = ", round(cpg_sig_mass$parameter_estimate[i], 2), ", q-value = ", round(cpg_sig_mass$parameter_qval[i], 4))) +
+                                        geom_abline(intercept=cpg_sig_mass$intercept[i], slope = cpg_sig_mass$parameter_estimate[i], 
+                                          color=clrs_hunting[2], linewidth=1)+
+                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+    list_plot_mass[[i]] <- plot   
+   }
+
+cowplot::plot_grid(list_plot_mass[[1]], list_plot_mass[[2]], list_plot_mass[[3]], list_plot_mass[[4]], list_plot_mass[[5]], 
+list_plot_mass[[6]], list_plot_mass[[7]], list_plot_mass[[8]], 
+        labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_mass
+
+
+ggsave(plots_mass, file = paste0("plots/model_out/rawdata_plot_mass.png"), width=14, height=22)
 
 ### microf
 list_plot_microf <- list()
@@ -470,8 +489,8 @@ cowplot::plot_grid(list_plot_trypa[[11]], list_plot_trypa[[12]], list_plot_trypa
                     list_plot_trypa[[17]], list_plot_trypa[[18]], list_plot_trypa[[19]], list_plot_trypa[[20]],list_plot_trypa[[21]],
         labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa_b
 
-ggsave(plots_trypa_a, file = paste0("plots/model_out/rawdata_plot_trypa_a.png"), width=14, height=20)
-ggsave(plots_trypa_b, file = paste0("plots/model_out/rawdata_plot_trypa_b.png"), width=14, height=20)
+ggsave(plots_trypa_a, file = paste0("plots/model_out/rawdata_plot_trypa_a.png"), width=14, height=22)
+ggsave(plots_trypa_b, file = paste0("plots/model_out/rawdata_plot_trypa_b.png"), width=14, height=22)
 
 ### igg
 list_plot_igg <- list()
@@ -512,5 +531,5 @@ cowplot::plot_grid(list_plot_hct[[11]], list_plot_hct[[12]], list_plot_hct[[13]]
                     list_plot_hct[[17]], list_plot_hct[[18]], list_plot_hct[[19]], list_plot_hct[[20]],list_plot_hct[[21]],
         labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_hct_b
 
-ggsave(plots_hct_a, file = paste0("plots/model_out/rawdata_plot_hct_a.png"), width=14, height=20)
-ggsave(plots_hct_b, file = paste0("plots/model_out/rawdata_plot_hct_b.png"), width=14, height=20)
+ggsave(plots_hct_a, file = paste0("plots/model_out/rawdata_plot_hct_a.png"), width=14, height=22)
+ggsave(plots_hct_b, file = paste0("plots/model_out/rawdata_plot_hct_b.png"), width=14, height=24)
