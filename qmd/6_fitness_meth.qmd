@@ -41,6 +41,14 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ## Functon to run the model
 
+Below you'll find the full function to run the model per CpG site, where two models are run:
+
+One for annual mating success (AMS):
+`glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)`
+
+And one for survival:
+`glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")`
+
 ```{r function, eval=F}
 #| code-fold: true
 # function to run the model
@@ -186,7 +194,7 @@ delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
 ## Results
 
-There are 266 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.
+There are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.
 
 ![Volcano plot fitness](../plots/model_out/volcano_fitness.png)
 
@@ -194,7 +202,9 @@ There are 266 significant CpG sites for AMS but none for survival. Below you can
 
 ### Overlapping CpGs previous analyses
 
-Interestingly, two of the significant CpG sites are the same CpG sites that are significantly associated with changes in *Trypanosoma spp.*. Below, I plot the relationship between delta *Trypanosoma spp* and delta methylation (left) and the relationship between delta methylation and AMS (right) for the first (top) and second (bottom) CpG site.
+Interestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18). 
+
+Below, I will plot both associations for a subset of these CpG sites
 
 ![Raw data overlapping CpG sites](../plots/model_out/rawdata_plot_trypa_delta_AMS.png)
 

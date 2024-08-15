@@ -20,7 +20,7 @@ pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats,
                parallel, performance, lmerTest, tidystats, insight, rptR)
 
 ### load epi data
-load(file = "data/processed/methylkit_prepost_long_onlyvar_min0.75.RData") 
+load(file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group.RData") 
 
 ### load phenotype data 
 load("data/phenotypes/fulldata_complete_epi_withdates.RData")
@@ -44,6 +44,12 @@ data <- prepost_long %>% group_split(chr_pos)
 ```
 
 ## Function to run the model
+
+Below you will find the full model used to 1) run the model in parallel per CpG site and 2) collect the output in a dataframe. Most importantly, this is the formula run for the model:
+
+```
+lme4::glmer(cbind(numC, numT) ~ prepost + (1|id), family = "binomial")
+```
 
 ```{r function, eval=F}
 #| code-fold: true
@@ -69,7 +75,7 @@ function_model_glmer <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   # model
-  model <- lme4::glmer(cbind(numC, numT) ~ prepost + (1|site/id), family = "binomial", df)
+  model <- lme4::glmer(cbind(numC, numT) ~ prepost + (1|id), family = "binomial", df)
   
   #fixed effects
   prepost_estimate <- summary(model)$coefficients[2,1]
@@ -90,8 +96,16 @@ function_model_glmer <- function(df){tryCatch({
   dispersion.pval <- overdisp.lmer_fun(model)[1,4]
   
   isSingular <- isSingular(model)
+
+  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- NA
+  }
+
+  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- summary(model)$optinfo$conv$lme4$messages
+  }
   
-  icc_id_site <- icc(model, by_group = TRUE, tolerance = 0)[1,2]
+  icc_id <- icc(model, by_group = TRUE, tolerance = 0)[1,2]
   
   return(data.frame(chr_pos=chr_pos, 
                     prepost_estimate = prepost_estimate,
@@ -107,14 +121,16 @@ function_model_glmer <- function(df){tryCatch({
                     dispersion.rdf = dispersion.rdf,
                     dispersion.pval = dispersion.pval,
                     isSingular = isSingular,
-                    icc_id_site = icc_id_site
+                    convergence = convergence,
+                    icc_id = icc_id
                     ))
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
-
 ```
 
 ## Run the model
+
+Here, we run the model in parallel, and next exclude CpG sites where there was overdispersion or convergence errors. After this filter step, we apply an FDR multiple-testing correction.
 
 ```{r run_model, echo=T, eval=F}
 
@@ -122,21 +138,73 @@ function_model_glmer <- function(df){tryCatch({
 out_glmer <- parallel::mclapply(data, function_model_glmer, mc.cores=4)
 out_glmer <- do.call(rbind.data.frame, out_glmer)
 
+### exclude overdispersion and convergence issues
+out_glmer <- subset(out_glmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) 
+
 ### apply a FDR multiple-testing correction
 out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
-out_glmer <- subset(out_glmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+```
 
-save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+A "changing CpG site" is then defined as a CpG site with a significant effect of time period (FDR-corrected q-value < 0.05) and an absolute beta estimate of 0.1 (similar to needing at least a 10% methylation difference between groups).
 
+```{r subset, echo=T, eval = F}
 ### only select CpG sites with significant effects of pre/post
 
-sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & dispersion.ratio < 1.1 & dispersion.pval > 0.05 & abs(prepost_estimate >= 0.1))
-# N = 3,418
+sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(prepost_estimate >= 0.1))
 
 ```
 
-A total of 3,418 CpG sites significantly change across the lekking period.
+A total of 3,563 CpG sites significantly change across the lekking period.
+
+## Plotting
+
+### Volcano plot
+
+Next, we make a volcano plot to see the results.
+
+```{r volcano, echo=T, eval= F}
+load(file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+
+out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(as.numeric(prepost_estimate)) > 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+
+clrs <- viridisLite::viridis(6)
+
+ggplot(out_glmer, aes(x = as.numeric(prepost_estimate), y = -log10(as.numeric(prepost_qval)))) + geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
+    labs(x = "Estimate time period", y = "-log10(q-value)") +
+    scale_color_manual(values=c("grey60", clrs[4])) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(legend.position="none") -> volcano_change
+
+```
+![Volcano plot changing CpG sites](../plots/model_out/volcano_change.png){width="450" fig-align="left"}
+
+Interestingly, there seems to more CpG sites that decrease in methylation over time (negative beta estimates) compared to CpG sites that increase in methylation over time (positive beta estimates).
+
+### Raw data
+
+To assess whether the models performed well, I also plotted the raw data of the five most significantly changing CpG sites.
+
+```{r raw plots, echo=T, eval=F}
+# raw plot for the 1st significant CpG site, repeat for the other 4 and combine with cowplot
+
+out_glmer <- out_glmer %>% arrange(prepost_qval)
+
+subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
+  arrange(id, year) %>%
+  ggplot(., aes(x = prepost, y = methperc))+
+  geom_boxplot(linewidth=1, outlier.shape=NA) + 
+  geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[1]) +
+  theme(legend.position="none") -> plot_top_cpg_1
+
+```
+
+![Raw data top 5 significantly changing CpG sites](../plots/model_out/plot_top_change_cpg.png){width="350" fig-align="left"}
+
 
 ## Note on LMM vs GLMM
 
-
+I also executed a similar model to above but using a lmer where the response variable is the methylation % rather than nC, nT. Using the same filtering steps, I only found 199 significantly changing CpG sites, where 103 were also included in the glmer output.

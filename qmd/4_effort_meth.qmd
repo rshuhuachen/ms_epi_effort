@@ -8,13 +8,13 @@ format:
 
 **Which changes in CpG site methylation are associated with reproductive effort?**
 
-We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
+We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
 
 Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.
 
 First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).
 
-## Delta methylation 
+## Delta methylation
 
 ```{r delta_meth, echo=T, eval=F}
 
@@ -73,7 +73,12 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ```
 
+
 ## Function to run the model
+
+You can find the full function below, but importantly this is the LMM formula I run for each CpG site for each trait:
+
+`lmgerTest::lmer(scale(delta_meth) ~ scale(trait) + age + scale(methperc_pre) + (1|site/id))`
 
 ```{r function, eval=F}
 #| code-fold: true
@@ -235,16 +240,17 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 ```
 
+Again, we have excluded CpG sites with convergence errors or significant overdispersion issues.
+
 ## Results
 
-There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting. 
+There are 7 significant CpG sites for centrality, 3 for attendance, but and 35 for fighting rate.
 
 Below you can find the volcano plots.
 
-![Volcano plot reproductive effort](../plots/model_out/volcano_effort.png){width=350 fig-align="left"}
+![Volcano plot reproductive effort](../plots/model_out/volcano_effort.png){width="350" fig-align="left"}
 
-
-We can plot the raw data here:
+We can plot the raw data here per trait:
 
 ### Attendance
 
@@ -253,3 +259,11 @@ We can plot the raw data here:
 ### Centrality
 
 ![Raw data centrality](../plots/model_out/rawdata_plot_dist.png)
+
+### Fight
+
+![Raw data fighting rate a](../plots/model_out/rawdata_plot_fight_a.png)
+![Raw data fighting rate b](../plots/model_out/rawdata_plot_fight_b.png)
+![Raw data fighting rate c](../plots/model_out/rawdata_plot_fight_c.png)
+![Raw data fighting rate d](../plots/model_out/rawdata_plot_fight_d.png)
+

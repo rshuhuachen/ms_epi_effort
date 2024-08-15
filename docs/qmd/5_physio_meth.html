@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in black grouse - 6&nbsp; Physio-associated CpG sites</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 6&nbsp; Physio-associated CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -66,6 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../qmd/6_fitness_meth.html" rel="next">
 <link href="../qmd/4_effort_meth.html" rel="prev">
+<link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -106,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Epigenetic changes associated with reproductive investment in black grouse</span>
+    <span class="navbar-title">Epigenetic changes associated with reproductive investment in a lekking bird</span>
     </a>
   </div>
         <div class="quarto-navbar-tools ms-auto">
@@ -142,7 +143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Epigenetic changes associated with reproductive investment in a lekking bird</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -261,6 +262,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="functon-to-run-the-model" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="functon-to-run-the-model"><span class="header-section-number">6.2</span> Functon to run the model</h2>
+<p>Below you’ll find the full function ran per trait per CpG site, where the LMM ran follows this structure:</p>
+<p><code>lmerTest::lmer(scale(delta_meth) ~ scale(delta_trait) + age + scale(methperc_pre) + (1|site/id))</code></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -463,13 +466,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="../plots/model_out/volcano_physio.png" class="img-fluid figure-img" width="350"></p>
 </figure>
 </div>
-<p>After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta <em>Microfilaria spp</em>, 29 for delta <em>Trypanosoma spp.</em>, 3 for delta HCT and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.</p>
+<p>After also subsetting for at least an (absolute) estimate of 0.1, there are 12 significant CpGs for delta <em>Microfilaria spp</em>, 21 for delta <em>Trypanosoma spp.</em>, 23 for delta HCT and 5 for delta IgG, but no significant ones for body mass. Below you’ll find the raw data plots for each trait and CpG site.</p>
 <section id="microfilaria-spp." class="level3" data-number="6.4.1">
 <h3 data-number="6.4.1" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">6.4.1</span> Microfilaria spp.</h3>
-<div class="quarto-figure quarto-figure-left">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Microfilaria</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_microf_dif_cpg_1.png" class="img-fluid figure-img" width="300"></p>
+<figcaption class="figure-caption">Raw data delta Microfilaria a</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_microf_a.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta Microfilaria b</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_microf_b.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
@@ -477,8 +486,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="6.4.2" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">6.4.2</span> Trypanosoma spp.</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Trypanosoma top CpGs</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_trypa_dif_cpg_top.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Raw data delta Trypanosoma a</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_trypa_a.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta Trypanosoma b</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_trypa_b.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
@@ -486,20 +501,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="6.4.3" class="anchored" data-anchor-id="igg"><span class="header-section-number">6.4.3</span> IgG</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta IgG top CpGs</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_igg_dif_cpg_top.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Raw data delta IgG</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_igg.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
 <section id="hct" class="level3" data-number="6.4.4">
 <h3 data-number="6.4.4" class="anchored" data-anchor-id="hct"><span class="header-section-number">6.4.4</span> HCT</h3>
-<div class="quarto-figure quarto-figure-left">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta HCT top CpGs</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_hct_dif.png" class="img-fluid figure-img" width="300"></p>
+<figcaption class="figure-caption">Raw data delta HCT a</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_hct_a.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<p>It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data delta HCT b</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_hct_b.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 
 
 </section>

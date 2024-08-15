@@ -25,9 +25,9 @@ ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
 
 Where `files` = the list of 116 file locations and `ids` = the list of the 116 ID's of those files.
 
-## Filter data 
+## Pre-filter data 
 
-Next, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile 
+Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile 
 
 ```{r filter, echo=T, eval=F}
 
@@ -36,26 +36,60 @@ ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
 
 ```
 
-Next, we unite the strands while only keeping CpG sites that are covered in at least 75% of all individuals.
+Next, we unite the strands. We do not filter yet for sites that are covered in at least X individuals as we will perform this filtering steps later in the script. 
 
 ```{r unite, echo=T, eval=F}
 
-ltet_meth_unite_0.75 <- methylKit::unite(ltet_meth, destrand = TRUE, 
-                                    min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)
+ltet_meth_unite <- methylKit::unite(ltet_meth, destrand = TRUE, 
+                                    min.per.group = 1L, mc.cores = 8)
 
 ```
 
+At this stage, we have a data set consisting of 1,559,800 partially filtered CpG sites.
+
 ## Convert data
 
-The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual
-and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.
+The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. 
+
+We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the formula. Right now I have used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, I think this is more correct and will allow the models to make more accurate estimates and will only include CpG sites with more variation in methylation %.
 
 ```{r convert, echo=T, eval=F}
 
 source("scripts/function_convert_methfile.R")
 
-prepost_long <- convert_meth(methfile = ltet_meth_unite_0.75, novar = "remove") 
+prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) 
 
-#Out of 274,197 CpG sites, kept 274,188 which is 1% removed due to invariance
+#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
 
 ```
+
+## Post-filtering
+
+Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59  pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.
+
+```{r postfilter, echo=T, eval=F}
+
+#count number of individuals per CpG per time point
+n_per_prepost <- prepost_long %>% 
+  group_by(chr_pos, prepost) %>% 
+  summarise(count=n())
+
+n_per_prepost_wide <-  spread(n_per_prepost, key=prepost,value=count)
+
+colnames(n_per_prepost_wide)[2] <- "n_post"
+colnames(n_per_prepost_wide)[3] <- "n_pre"
+
+#keep only if CpG site is covered in at least 50% of samples at both time points
+thres = 0.5
+n_per_prepost_wide <- n_per_prepost_wide %>% mutate(keep = as.factor(case_when(n_pre  > thres*(118*0.5) & n_post > thres*(118*0.5) ~ "keep")))
+
+summary(n_per_prepost_wide$keep) # 354,649 CpG sites to keep
+
+prepost_long_clean <- left_join(prepost_long, n_per_prepost_wide, by = c("chr_pos"))
+
+prepost_long_clean <- subset(prepost_long_clean, keep == "keep")
+
+```
+
+Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes). 
+

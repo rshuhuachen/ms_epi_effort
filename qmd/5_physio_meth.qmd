@@ -48,6 +48,10 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ## Functon to run the model
 
+Below you'll find the full function ran per trait per CpG site, where the LMM ran follows this structure:
+
+`lmerTest::lmer(scale(delta_meth) ~ scale(delta_trait) + age + scale(methperc_pre) + (1|site/id))`
+
 ```{r function, eval=F}
 #| code-fold: true
 # function to run the model
@@ -247,20 +251,30 @@ delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeri
 
 Below we can see the volcano plots of all five physiological traits.
 
-![Volcano plot physiological change](../plots/model_out/volcano_physio.png){width=350 fig-align="left"}
+![Volcano plot physiological change](../plots/model_out/volcano_physio.png){width="350" fig-align="left"}
 
-After also subsetting for at least an (absolute) estimate of 0.1, there is one significant CpG for delta *Microfilaria spp*, 29 for delta *Trypanosoma spp.*, 3 for delta HCT and 13 for delta IgG. As there are so many, I will only show the plots of the three most significant ones, also because not all raw data plots are as convincing.
+After also subsetting for at least an (absolute) estimate of 0.1, there are 12 significant CpGs for delta *Microfilaria spp*, 21 for delta *Trypanosoma spp.*, 23 for delta HCT and 5 for delta IgG, but 8 significant ones for delta body mass. Below you'll find the raw data plots for each trait and CpG site.
 
 ### Microfilaria spp.
-![Raw data delta Microfilaria](../plots/model_out/rawdata_plot_microf_dif_cpg_1.png){width=300 fig-align="left"}
+
+![Raw data delta Microfilaria a](../plots/model_out/rawdata_plot_microf_a.png)
+
+![Raw data delta Microfilaria b](../plots/model_out/rawdata_plot_microf_b.png)
 
 ### Trypanosoma spp.
-![Raw data delta Trypanosoma top CpGs](../plots/model_out/rawdata_plot_trypa_dif_cpg_top.png) 
 
-### IgG 
-![Raw data delta IgG top CpGs ](../plots/model_out/rawdata_plot_igg_dif_cpg_top.png) 
+![Raw data delta Trypanosoma a](../plots/model_out/rawdata_plot_trypa_a.png)
 
-### HCT 
-![Raw data delta HCT top CpGs ](../plots/model_out/rawdata_plot_hct_dif.png){width=300 fig-align="left"}
+![Raw data delta Trypanosoma b](../plots/model_out/rawdata_plot_trypa_b.png)
 
-It seems like most associations are shaped by a few outliers and that most CpG sites do not actually change (delta meth = 0).
+### IgG
+
+![Raw data delta IgG](../plots/model_out/rawdata_plot_igg.png)
+
+### HCT
+
+![Raw data delta HCT a](../plots/model_out/rawdata_plot_hct_a.png)
+
+![Raw data delta HCT b](../plots/model_out/rawdata_plot_hct_b.png)
+
+

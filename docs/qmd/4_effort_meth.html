@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in black grouse - 5&nbsp; Effort-associated CpG sites</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 5&nbsp; Effort-associated CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -66,6 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <link href="../qmd/5_physio_meth.html" rel="next">
 <link href="../qmd/3_changing_meth.html" rel="prev">
+<link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -106,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../index.html">
-    <span class="navbar-title">Epigenetic changes associated with reproductive investment in black grouse</span>
+    <span class="navbar-title">Epigenetic changes associated with reproductive investment in a lekking bird</span>
     </a>
   </div>
         <div class="quarto-navbar-tools ms-auto">
@@ -142,7 +143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Epigenetic changes associated with reproductive investment in a lekking bird</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -199,6 +200,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#attendance" id="toc-attendance" class="nav-link" data-scroll-target="#attendance"><span class="header-section-number">5.5.1</span> Attendance</a></li>
   <li><a href="#centrality" id="toc-centrality" class="nav-link" data-scroll-target="#centrality"><span class="header-section-number">5.5.2</span> Centrality</a></li>
+  <li><a href="#fight" id="toc-fight" class="nav-link" data-scroll-target="#fight"><span class="header-section-number">5.5.3</span> Fight</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -224,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p><strong>Which changes in CpG site methylation are associated with reproductive effort?</strong></p>
-<p>We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test for which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.</p>
+<p>We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.</p>
 <p>Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.</p>
 <p>First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).</p>
 <section id="delta-methylation" class="level2" data-number="5.1">
@@ -284,6 +286,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="function-to-run-the-model" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">5.3</span> Function to run the model</h2>
+<p>You can find the full function below, but importantly this is the LMM formula I run for each CpG site for each trait:</p>
+<p><code>lmgerTest::lmer(scale(delta_meth) ~ scale(trait) + age + scale(methperc_pre) + (1|site/id))</code></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -443,10 +447,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>delta_out_all[<span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">25</span>, <span class="dv">27</span>,<span class="dv">28</span>)] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(delta_out_all[<span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">25</span>, <span class="dv">27</span><span class="sc">:</span><span class="dv">28</span>)], as.numeric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<p>Again, we have excluded CpG sites with convergence errors or significant overdispersion issues.</p>
 </section>
 <section id="results" class="level2" data-number="5.5">
 <h2 data-number="5.5" class="anchored" data-anchor-id="results"><span class="header-section-number">5.5</span> Results</h2>
-<p>There are 2 significant CpG sites for centrality and 6 for attendance, but none for fighting.</p>
+<p>There are 7 significant CpG sites for centrality, 3 for attendance, but and 35 for fighting rate.</p>
 <p>Below you can find the volcano plots.</p>
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
@@ -454,7 +459,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="../plots/model_out/volcano_effort.png" class="img-fluid figure-img" width="350"></p>
 </figure>
 </div>
-<p>We can plot the raw data here:</p>
+<p>We can plot the raw data here per trait:</p>
 <section id="attendance" class="level3" data-number="5.5.1">
 <h3 data-number="5.5.1" class="anchored" data-anchor-id="attendance"><span class="header-section-number">5.5.1</span> Attendance</h3>
 <div class="quarto-figure quarto-figure-center">
@@ -472,6 +477,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="../plots/model_out/rawdata_plot_dist.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+</section>
+<section id="fight" class="level3" data-number="5.5.3">
+<h3 data-number="5.5.3" class="anchored" data-anchor-id="fight"><span class="header-section-number">5.5.3</span> Fight</h3>
+<p><img src="../plots/model_out/rawdata_plot_fight_a.png" class="img-fluid" alt="Raw data fighting rate a"> <img src="../plots/model_out/rawdata_plot_fight_b.png" class="img-fluid" alt="Raw data fighting rate b"> <img src="../plots/model_out/rawdata_plot_fight_c.png" class="img-fluid" alt="Raw data fighting rate c"> <img src="../plots/model_out/rawdata_plot_fight_d.png" class="img-fluid" alt="Raw data fighting rate d"></p>
 
 
 </section>

@@ -193,8 +193,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link active" data-scroll-target="#prepare-data"><span class="header-section-number">2.1</span> Prepare data</a></li>
-  <li><a href="#filter-data" id="toc-filter-data" class="nav-link" data-scroll-target="#filter-data"><span class="header-section-number">2.2</span> Filter data</a></li>
+  <li><a href="#pre-filter-data" id="toc-pre-filter-data" class="nav-link" data-scroll-target="#pre-filter-data"><span class="header-section-number">2.2</span> Pre-filter data</a></li>
   <li><a href="#convert-data" id="toc-convert-data" class="nav-link" data-scroll-target="#convert-data"><span class="header-section-number">2.3</span> Convert data</a></li>
+  <li><a href="#post-filtering" id="toc-post-filtering" class="nav-link" data-scroll-target="#post-filtering"><span class="header-section-number">2.4</span> Post-filtering</a></li>
   </ul>
 </nav>
     </div>
@@ -231,29 +232,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Where <code>files</code> = the list of 116 file locations and <code>ids</code> = the list of the 116 ID’s of those files.</p>
 </section>
-<section id="filter-data" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="filter-data"><span class="header-section-number">2.2</span> Filter data</h2>
-<p>Next, we perform a set of filtering steps. First, we filter by coverage, setting the minimum to 10X and a maximum of the 99.9 percentile</p>
+<section id="pre-filter-data" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="pre-filter-data"><span class="header-section-number">2.2</span> Pre-filter data</h2>
+<p>Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">filterByCoverage</span>(ltet_meth,<span class="at">lo.count=</span><span class="dv">10</span>,<span class="at">lo.perc=</span><span class="cn">NULL</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">hi.count=</span><span class="cn">NULL</span>,<span class="at">hi.perc=</span><span class="fl">99.9</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, we unite the strands while only keeping CpG sites that are covered in at least 75% of all individuals.</p>
+<p>Next, we unite the strands. We do not filter yet for sites that are covered in at least X individuals as we will perform this filtering steps later in the script.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltet_meth_unite_0<span class="fl">.75</span> <span class="ot">&lt;-</span> methylKit<span class="sc">::</span><span class="fu">unite</span>(ltet_meth, <span class="at">destrand =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">min.per.group =</span> <span class="fu">as.integer</span>(<span class="fl">0.75</span><span class="sc">*</span><span class="fu">length</span>(ids)), <span class="at">mc.cores =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltet_meth_unite <span class="ot">&lt;-</span> methylKit<span class="sc">::</span><span class="fu">unite</span>(ltet_meth, <span class="at">destrand =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">min.per.group =</span> 1L, <span class="at">mc.cores =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>At this stage, we have a data set consisting of 1,559,800 partially filtered CpG sites.</p>
 </section>
 <section id="convert-data" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="convert-data"><span class="header-section-number">2.3</span> Convert data</h2>
-<p>The next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. This dataframe can be used for fitting models.</p>
+<p>The next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated.</p>
+<p>We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the formula. Right now I have used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, I think this is more correct and will allow the models to make more accurate estimates and will only include CpG sites with more variation in methylation %.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/function_convert_methfile.R"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prepost_long <span class="ot">&lt;-</span> <span class="fu">convert_meth</span>(<span class="at">methfile =</span> ltet_meth_unite_0<span class="fl">.75</span>, <span class="at">novar =</span> <span class="st">"remove"</span>) </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prepost_long <span class="ot">&lt;-</span> <span class="fu">convert_meth</span>(<span class="at">methfile =</span> ltet_meth_unite, <span class="at">novar =</span> <span class="st">"remove"</span>, <span class="at">threshold =</span> <span class="fl">0.3</span>) </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 274,197 CpG sites, kept 274,188 which is 1% removed due to invariance</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="post-filtering" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="post-filtering"><span class="header-section-number">2.4</span> Post-filtering</h2>
+<p>Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59 pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#count number of individuals per CpG per time point</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_per_prepost <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr_pos, prepost) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span>  <span class="fu">spread</span>(n_per_prepost, <span class="at">key=</span>prepost,<span class="at">value=</span>count)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"n_post"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">"n_pre"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#keep only if CpG site is covered in at least 50% of samples at both time points</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>thres <span class="ot">=</span> <span class="fl">0.5</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span> n_per_prepost_wide <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">keep =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(n_pre  <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">&amp;</span> n_post <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">~</span> <span class="st">"keep"</span>)))</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(n_per_prepost_wide<span class="sc">$</span>keep) <span class="co"># 354,649 CpG sites to keep</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">left_join</span>(prepost_long, n_per_prepost_wide, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"chr_pos"</span>))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">subset</span>(prepost_long_clean, keep <span class="sc">==</span> <span class="st">"keep"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes).</p>
 
 
 </section>

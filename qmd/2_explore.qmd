@@ -78,9 +78,7 @@ summary[,-1] %>% kbl() %>%
 
 ```
 
-
 Below you can find the histograms of the parameters calculated (mean methylation etc.)
-
 
 ![Summary statistics methylation](../plots/explore/hist_summary_stats_cov_meth.png)
 
