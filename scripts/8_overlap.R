@@ -186,7 +186,7 @@ cowplot::plot_grid(list_plot_mass_a[[1]], list_plot_mass_b[[1]], list_plot_mass_
     list_plot_mass_a[[3]], list_plot_mass_b[[3]],
     labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_mass_ams
 
-ggsave(plots_mass_ams, file = "plots/model_out/rawdata_plot_overlap_mass_AMS.png", width=14, height=12)                                
+ggsave(plots_mass_ams, file = "plots/model_out/rawdata_plot_overlap_mass_AMS.png", width=14, height=18)                                
 
 ### Delta HCT 
 
@@ -220,7 +220,7 @@ cowplot::plot_grid(list_plot_hct_a[[1]], list_plot_hct_b[[1]], list_plot_hct_a[[
     list_plot_hct_a[[9]], list_plot_hct_b[[9]],
     labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_hct_ams
 
-ggsave(plots_hct_ams, file = "plots/model_out/rawdata_plot_overlap_hct_AMS.png", width=14, height=24)                                
+ggsave(plots_hct_ams, file = "plots/model_out/rawdata_plot_overlap_hct_AMS.png", width=14, height=28)                                
 
 ### delta IgG
 
@@ -314,7 +314,7 @@ cowplot::plot_grid(list_plot_trypa_a[[1]], list_plot_trypa_b[[1]], list_plot_try
                    list_plot_trypa_a[[3]], list_plot_trypa_b[[3]], 
                    labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_trypa_ams
 
-ggsave(plots_trypa_ams, file = "plots/model_out/rawdata_plot_overlap_trypa_AMS.png", width=14, height=20)                                
+ggsave(plots_trypa_ams, file = "plots/model_out/rawdata_plot_overlap_trypa_AMS.png", width=14, height=22)                                
 
 #### Highlighted CpG sites ####
 
@@ -397,5 +397,5 @@ ggplot(subset(delta_meth, chr_pos == "ScEsiA3_16870__HRSCAF_19426_63522502"), ae
 cowplot::plot_grid(plot_cpg2_trypa, plot_cpg2_hct, plot_cpg2_ams, 
                    labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_cpg2
 
-ggsave(plots_cpg2, file = "plots/model_out/rawdata_plot_overlap_highlight_CpG_2.png", width=14, height=20)                                
+ggsave(plots_cpg2, file = "plots/model_out/rawdata_plot_overlap_highlight_CpG_2.png", width=14, height=16)                                
 
