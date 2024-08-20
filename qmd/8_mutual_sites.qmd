@@ -14,3 +14,41 @@ It would be interesting to see whether a CpG site is both associated with reprod
 
 I checked whether there are mutual significant CpG sites among models, and find the following:
 
+8 CpG sites are both significant for reproductive effort and annual mating success
+15 CpG sites are both significant for physiological changes and annual mating success
+No CpG sites are both significant for reproductive effort and physiological changes
+
+I plotted the raw data below, where on the left panels you can see the relationship between the effort / physiological trait and delta methylation, and on the right side the relationship between delta methylation and AMS for the same CpG site.
+
+## Raw data
+
+### Reproductive effort vs AMS
+
+![Raw data mutual significant CpG site attendance and AMS](../plots/model_out/rawdata_plot_overlap_attend_AMS.png)
+
+![Raw data mutual significant CpG site fight rate and AMS](../plots/model_out/rawdata_plot_overlap_fight_AMS.png)
+
+![Raw data mutual significant CpG site centrality and AMS](../plots/model_out/rawdata_plot_overlap_dist_AMS.png)
+### Physiological changes
+
+![Raw data mutual significant CpG site delta mass and AMS](../plots/model_out/rawdata_plot_overlap_mass_AMS.png)
+
+![Raw data mutual significant CpG site delta HCT and AMS](../plots/model_out/rawdata_plot_overlap_hct_AMS.png)
+
+![Raw data mutual significant CpG site delta IgG and AMS](../plots/model_out/rawdata_plot_overlap_igg_AMS.png)
+
+![Raw data mutual significant CpG site delta Trypanosoma spp. and AMS](../plots/model_out/rawdata_plot_overlap_trypa_AMS.png)
+
+![Raw data mutual significant CpG site delta Microfilaria spp. and AMS](../plots/model_out/rawdata_plot_overlap_microf_AMS.png)
+
+## Highlight
+
+Furthermore, there are two extra-interesting CpG sites whose DNA methylation change is associated with multiple phenotypic trait as well as AMS. 
+
+ScEsiA3_16759__HRSCAF_19053_458 (interesting CpG site 1) is affected by delta mass, delta IgG and delta HCT and also explains variation in AMS. ScEsiA3_16870__HRSCAF_19426_63522502 (interesting CpG site 2) is affected by delta Trypanosoma spp. and delta HCT and also explains variation in AMS.
+
+Below you can find the plots for each of those two CpG sites.
+
+![Raw data interesting CpG site 1](../plots/model_out/rawdata_plot_overlap_highlight_CpG_1.png)
+
+![Raw data interesting CpG site 2](../plots/model_out/rawdata_plot_overlap_highlight_CpG_2.png)
