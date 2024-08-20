@@ -43,11 +43,9 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 Below you'll find the full function to run the model per CpG site, where two models are run:
 
-One for annual mating success (AMS):
-`glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)`
+One for annual mating success (AMS): `glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)`
 
-And one for survival:
-`glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")`
+And one for survival: `glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")`
 
 ```{r function, eval=F}
 #| code-fold: true
@@ -202,7 +200,7 @@ There are 481 significant CpG sites for AMS but none for survival. Below you can
 
 ### Overlapping CpGs previous analyses
 
-Interestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18). 
+Interestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18).
 
 Below, I will plot both associations for a subset of these CpG sites
 

@@ -1,0 +1,7 @@
+GO Term	Description	P-value	FDR q-value	Enrichment	N	B	n	b	Genes
+GO:0035589	G protein-coupled purinergic nucleotide receptor signaling pathway	3.21E-6	4.65E-2	92.77	11256	7	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
+GO:0035588	G protein-coupled purinergic receptor signaling pathway	2.57E-5	1.86E-1	49.95	11256	13	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
+GO:0035590	purinergic nucleotide receptor signaling pathway	3.27E-5	1.57E-1	46.38	11256	14	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
+GO:0035587	purinergic receptor signaling pathway	1E-4	3.63E-1	32.47	11256	20	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
+GO:0050982	detection of mechanical stimulus	4.6E-4	1E0	19.68	11256	33	52	3	[ASIC2  -  acid-sensing (proton-gated) ion channel 2, JUP  -  junction plakoglobin, DFNB31  -  deafness, autosomal recessive 31]
+GO:0045091	regulation of single stranded viral RNA replication via double stranded DNA intermediate	5.76E-4	1E0	54.12	11256	8	52	2	[SETDB1  -  set domain, bifurcated 1, TOP2A  -  topoisomerase (dna) ii alpha 170kda]

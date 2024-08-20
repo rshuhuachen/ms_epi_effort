@@ -147,14 +147,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/1_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
+  <a href="../qmd/1_explore.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/2_explore.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
+  <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -250,6 +250,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="functon-to-run-the-model" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="functon-to-run-the-model"><span class="header-section-number">7.2</span> Functon to run the model</h2>
+<p>Below you’ll find the full function to run the model per CpG site, where two models are run:</p>
+<p>One for annual mating success (AMS): <code>glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)</code></p>
+<p>And one for survival: <code>glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")</code></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -395,7 +398,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="results" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="results"><span class="header-section-number">7.4</span> Results</h2>
-<p>There are 266 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.</p>
+<p>There are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Volcano plot fitness</figcaption>
@@ -410,7 +413,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="overlapping-cpgs-previous-analyses" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="overlapping-cpgs-previous-analyses"><span class="header-section-number">7.4.1</span> Overlapping CpGs previous analyses</h3>
-<p>Interestingly, two of the significant CpG sites are the same CpG sites that are significantly associated with changes in <em>Trypanosoma spp.</em>. Below, I plot the relationship between delta <em>Trypanosoma spp</em> and delta methylation (left) and the relationship between delta methylation and AMS (right) for the first (top) and second (bottom) CpG site.</p>
+<p>Interestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18).</p>
+<p>Below, I will plot both associations for a subset of these CpG sites</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Raw data overlapping CpG sites</figcaption>

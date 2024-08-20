@@ -1,0 +1,8 @@
+GO Term	Description	P-value	FDR q-value	Enrichment	N	B	n	b	Genes
+GO:0018395	peptidyl-lysine hydroxylation to 5-hydroxy-L-lysine	4.44E-4	1E0	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
+GO:0070078	histone H3-R2 demethylation	4.44E-4	1E0	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
+GO:0070079	histone H4-R3 demethylation	4.44E-4	1E0	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
+GO:0070077	histone arginine demethylation	4.44E-4	1E0	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
+GO:1904636	response to ionomycin	8.88E-4	1E0	1,125.60	11256	2	5	1	[ZC3H12A  -  zinc finger ccch-type containing 12a]
+GO:1904637	cellular response to ionomycin	8.88E-4	1E0	1,125.60	11256	2	5	1	[ZC3H12A  -  zinc finger ccch-type containing 12a]
+GO:0000294	nuclear-transcribed mRNA catabolic process, endonucleolytic cleavage-dependent decay	8.88E-4	1E0	1,125.60	11256	2	5	1	[ZC3H12A  -  zinc finger ccch-type containing 12a]
