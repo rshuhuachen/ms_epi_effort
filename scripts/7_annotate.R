@@ -129,15 +129,46 @@ all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
                                   sig_up, sig_threeUTR,  sig_fiveUTR)
 
 summary(as.factor(all_models_sig_annotated$region))
+
 save(all_models_sig_annotated, file="results/annotated/annotated_modeloutput_sig_annotated.RData")
 
 sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
 names(sum_annotated) <- c("region", "model", "n")
+
+sum_annotated$model <- gsub("all", "All", sum_annotated$model)
 sum_annotated$model <- gsub("AMS", "Annual mating success", sum_annotated$model)
 sum_annotated$model <- gsub("attend", "Attendance", sum_annotated$model)
 sum_annotated$model <- gsub("dist", "Centrality", sum_annotated$model)
 sum_annotated$model <- gsub("fight", "Fighting rate", sum_annotated$model)
 sum_annotated$model <- gsub("time_period", "Time period", sum_annotated$model)
+
+sum_annotated$region <- gsub("downstream", "Downstream", sum_annotated$region)
+sum_annotated$region <- gsub("upstream", "Upstream", sum_annotated$region)
+sum_annotated$region <- gsub("exon", "Exon", sum_annotated$region)
+sum_annotated$region <- gsub("fiveUTR", "5' UTR", sum_annotated$region)
+sum_annotated$region <- gsub("gene", "Gene body", sum_annotated$region)
+sum_annotated$region <- gsub("intron", "Intron", sum_annotated$region)
+sum_annotated$region <- gsub("promoter", "Promoter", sum_annotated$region)
+sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
+
+sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
+
+# add total sig CpGs
+sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
+  model == "All" ~ 354649,
+  model == "Annual mating success" ~ nrow(cpg_ams),
+  model == "Attendance" ~ nrow(subset(cpg_effort, parameter == "attend")),
+  model == "Centrality" ~ nrow(subset(cpg_effort, parameter == "dist")),
+  model == "Fighting rate" ~ nrow(subset(cpg_effort, parameter == "fight")),
+  model == "Time period" ~ nrow(cpg_change),
+  model == "Delta body mass" ~ nrow(subset(cpg_physio, parameter == "Delta body mass")),
+  model == "Delta HCT" ~ nrow(subset(cpg_physio, parameter == "Delta HCT")),
+  model == "Delta IgG" ~ nrow(subset(cpg_physio, parameter == "Delta IgG")),
+  model == "Delta Microfilaria spp." ~ nrow(subset(cpg_physio, parameter == "Delta Microfilaria spp.")),
+  model == "Delta Trypanosoma spp." ~ nrow(subset(cpg_physio, parameter == "Delta Trypanosoma spp."))
+))
+
+sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 
 write.csv(sum_annotated, file="results/tables/summary_regions_sig_cpgs_all.csv", row.names=F, quote=F)
 
@@ -145,6 +176,11 @@ source("scripts/plotting_theme.R")
 ggplot(sum_annotated, aes(x = region, y = n)) + geom_bar(stat="identity") + 
   facet_wrap(~model, ncol=2, scales="free") + coord_flip() -> num_region_cpg
 ggsave(num_region_cpg, file="plots/summary/n_sig_cpg_per_region.png", width=10, height=18)
+
+ggplot(sum_annotated, aes(x = region, y = perc)) + geom_bar(stat="identity") + ylim(0,100)+
+  facet_wrap(~model, ncol=2,) + coord_flip() -> perc_region_cpg
+
+ggsave(perc_region_cpg, file="plots/summary/perc_sig_cpg_per_region.png", width=10, height=18)
 
 #### Based on chicken liftover ####
 ### load annotation data

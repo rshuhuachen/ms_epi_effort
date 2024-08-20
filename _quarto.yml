@@ -10,8 +10,8 @@ book:
   cover-image: img/grouse.jpeg
   chapters:
       - index.qmd
-      - qmd/1_filter.qmd
-      - qmd/2_explore.qmd
+      - qmd/1_explore.qmd
+      - qmd/2_filter.qmd
       - qmd/3_changing_meth.qmd
       - qmd/4_effort_meth.qmd
       - qmd/5_physio_meth.qmd

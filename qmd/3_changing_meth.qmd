@@ -128,7 +128,7 @@ function_model_glmer <- function(df){tryCatch({
 }
 ```
 
-## Run the model
+## Run the model {#sec-changingcpg}
 
 Here, we run the model in parallel, and next exclude CpG sites where there was overdispersion or convergence errors. After this filter step, we apply an FDR multiple-testing correction.
 

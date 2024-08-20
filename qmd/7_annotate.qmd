@@ -1,0 +1,151 @@
+---
+title: "Annotation"
+format: 
+  html:
+    link-external-newwindow: true
+    fig-cap-location: top
+    fig-width: 100
+    fig-height: 100
+---
+
+Next, we annotate the significant CpG sites (are they located in a promoter region or gene body?) and run a GO analysis to identify potentially important GO terms associated with the process. We repeat the same steps for all models run, where first I report the number of CpG sites across gene regions looking at all filtered CpG sites and then those that were significant in that specific model. Then, I annotated all the significant CpG sites for that model and using lifted over chicken genome, I report the genes that contain at least one significant CpG site. Then, I conduct a GO analysis, either by comparing the list of genes with a significant CpG site to the list of all genes with a filtered CpG site (if there are enough genes) or by inputting the ordered list of genes (ordered by significance, if there are only a few genes/CpG sites).
+
+## Changing CpG sites
+
+First, we look at the CpG sites that significantly change across the lekking season (@sec-changingcpg).
+
+```{r plot_setup, echo=F}
+pacman::p_load(tidyverse, EnvStats, kableExtra)
+sum_annotated <- read.csv(file="../results/tables/summary_regions_sig_cpgs_all.csv")
+source("../scripts/plotting_theme.R")
+sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
+
+```
+
+```{r plot_changing, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Time period")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+The total number of CpG sites that significantly change across the lekking period was `r sum_annotated$n_total[which(sum_annotated$model == "Time period")][1]`. It appears that changing CpG sites are present in functional regions more than expected.
+
+```{r sig_genes_changing}
+table_genes_changing <- read.csv("../results/tables/sig_genes_ids_time_period.csv")
+
+table_genes_changing %>% kbl() %>%
+  kable_classic_2() 
+```
+
+## CpG sites associated with reproductive effort
+
+We can do the same with the CpG sites significantly associated with reproductive effort (lek attendance, fighting rate and lek centrality).
+
+```{r plot_attend, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Attendance")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with lek attendance were `r sum_annotated$n_total[which(sum_annotated$model == "Attendance")][1]`.
+
+```{r plot_fight, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Fighting rate")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with fighting rate were `r sum_annotated$n_total[which(sum_annotated$model == "Fighting rate")][1]`.
+
+```{r plot_dist, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Centrality")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with lek centrality were `r sum_annotated$n_total[which(sum_annotated$model == "Centrality")][1]`.
+
+## CpG sites associated with changing physiology
+
+Below you can find similar plots for CpG sites significantly associated with changes in physiology (mass, HCT, IgG, Microfilaria, Trypanosoma)
+
+```{r plot_mass, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Delta body mass")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with changing body mass were `r sum_annotated$n_total[which(sum_annotated$model == "Delta body mass")][1]`.
+
+```{r plot_hct, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Delta HCT")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with delta HCT were `r sum_annotated$n_total[which(sum_annotated$model == "Delta HCT")][1]`.
+
+```{r plot_igg, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Delta IgG")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with delta IgG were `r sum_annotated$n_total[which(sum_annotated$model == "Delta IgG")][1]`.
+
+```{r plot_microf, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Delta Microfilaria spp.")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with delta Microfilaria were `r sum_annotated$n_total[which(sum_annotated$model == "Delta Microfilaria spp.")][1]`.
+
+```{r plot_trypa, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Delta Trypanosoma spp.")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with delta Trypanosoma were `r sum_annotated$n_total[which(sum_annotated$model == "Delta Trypanosoma spp.")][1]`.
+
+## CpG sites associated with AMS
+
+Lastly, here you can find the plots for CpG sites significantly associated with annual mating success (AMS)
+
+```{r plot_mass, echo=T, warning=F}
+sub <- subset(sum_annotated, model == "All" | model == "Annual mating success")
+ggplot(sub, aes(x = region, y = perc)) + 
+    geom_bar(stat="identity", fill = clrs[4]) + 
+    facet_wrap(~model, ncol=2) + ylim(0,100) + geom_text(label=paste0(round(sub$perc,1), " %"), hjust=-0.2, family = "Arial", size = 4) +
+    labs(x = "Region", y = "Percentage CpG sites") + coord_flip()
+
+```
+
+The total number of changing CpG sites that were significantly associated with AMS were `r sum_annotated$n_total[which(sum_annotated$model == "Annual mating success")][1]`.
