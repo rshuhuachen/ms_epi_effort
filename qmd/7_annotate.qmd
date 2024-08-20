@@ -37,7 +37,9 @@ table_genes_changing <- read.csv("../results/tables/sig_genes_ids_time_period.cs
 
 table_genes_changing %>% kbl() %>%
   kable_classic_2() 
+
 ```
+
 
 ## CpG sites associated with reproductive effort
 

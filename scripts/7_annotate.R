@@ -280,8 +280,8 @@ sig_up_chicken_df <- unique(data.frame(chr_pos = sig_up_chicken$chr_pos,
 
 
 all_models_sig_annotated_chicken <- rbind(sig_promoter_chicken_df, sig_gene_chicken_df,
-                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_intron_chicken_df, sig_down_chicken_df,
-                                  sig_up_chicken_df)
+                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_down_chicken_df,
+                                  sig_up_chicken_df) # left out intron due to error
 
 all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
                                            !is.na(gene_id) &
@@ -302,11 +302,21 @@ subset(all_models_sig_annotated_chicken, parameter == "dist" & region != "exon")
 subset(all_models_sig_annotated_chicken, parameter == "attend" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_attend.csv", quote=F, row.names=F, col.names = F)
 
-subset(all_models_sig_annotated_chicken, parameter == "hct" & region != "exon") %>% arrange(parameter_qval) %>%
+subset(all_models_sig_annotated_chicken, parameter == "fight" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_fight.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_chicken, parameter == "Delta HCT" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_htc.csv", quote=F, row.names=F, col.names = F)
 
-subset(all_models_sig_annotated_chicken, parameter == "ig" & region != "exon") %>% arrange(parameter_qval) %>%
+subset(all_models_sig_annotated_chicken, parameter == "Delta IgG" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_igg.csv", quote=F, row.names=F, col.names = F)
 
-subset(all_models_sig_annotated_chicken, parameter == "trypa" & region != "exon") %>% arrange(parameter_qval) %>%
+subset(all_models_sig_annotated_chicken, parameter == "Delta Trypanosoma spp." & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_trypa.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_chicken, parameter == "Delta Microfilaria spp." & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_microf.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_chicken, parameter == "Delta body mass" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_mass.csv", quote=F, row.names=F, col.names = F)
+
