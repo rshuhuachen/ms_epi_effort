@@ -36,7 +36,7 @@ nrow(subset(cpg_effort, chr_pos %in% cpg_sig_ams$chr_pos))  # 8
 nrow(subset(cpg_physio, chr_pos %in% cpg_sig_ams$chr_pos))  # 18
 nrow(subset(cpg_effort, chr_pos %in% cpg_physio$chr_pos))  # 0
 
-
+cpg_sig_ams$intercept_ams <- as.numeric(cpg_sig_ams$intercept_ams)
 ### Merge the data of those #####
 
 ### effort and AMS
@@ -85,7 +85,8 @@ for (i in 1:nrow(overlap_attend_ams)){
                       title = paste0("Estimate = ", round(overlap_attend_ams$ams_delta_meth_estimate[i], 2),
                                         ", q-value = ", round(overlap_attend_ams$ams_delta_meth_qval[i], 2)), 
                       subtitle = overlap_attend_ams$chr_pos[i]) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_abline(intercept = overlap_attend_ams$intercept_ams[i],
+                                        slope = overlap_attend_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
     list_plot_attend_b[[i]] <- plot_b}
 
@@ -115,7 +116,8 @@ for (i in 1:nrow(overlap_fight_ams)){
                                                     title = paste0("Estimate = ", round(overlap_fight_ams$ams_delta_meth_estimate[i], 2),
                                                                    ", q-value = ", round(overlap_fight_ams$ams_delta_meth_qval[i], 2)), 
                                                     subtitle = overlap_fight_ams$chr_pos[i]) +
-    geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    geom_abline(intercept = overlap_fight_ams$intercept_ams[i],
+                                        slope = overlap_fight_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
     geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
   list_plot_fight_b[[i]] <- plot_b}
 
@@ -147,7 +149,8 @@ for (i in 1:nrow(overlap_dist_ams)){
                                                     title = paste0("Estimate = ", round(overlap_dist_ams$ams_delta_meth_estimate[i], 2),
                                                                    ", q-value = ", round(overlap_dist_ams$ams_delta_meth_qval[i], 2)), 
                                                     subtitle = overlap_dist_ams$chr_pos[i]) +
-    geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    geom_abline(intercept = overlap_dist_ams$intercept_ams[i],
+                                        slope = overlap_dist_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
     geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
   list_plot_dist_b[[i]] <- plot_b}
 
@@ -178,7 +181,8 @@ for (i in 1:nrow(overlap_mass_ams)){
     geom_point(fill=clrs_hunting[1], size=3) + labs(y = "AMS", x = expression("z-trans "*Delta*" methylation"),subtitle = overlap_mass_ams$chr_pos[i],
                       title = paste0("Estimate = ", round(overlap_mass_ams$ams_delta_meth_estimate[i], 2),
                                         ", q-value = ", round(overlap_mass_ams$ams_delta_meth_qval[i], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_abline(intercept = overlap_mass_ams$intercept_ams[i],
+                                        slope = overlap_mass_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
     list_plot_mass_b[[i]] <- plot_b}
 
@@ -209,7 +213,8 @@ for (i in 1:nrow(overlap_hct)){
     geom_point(fill=clrs_hunting[1], size=3) + labs(y = "AMS", x = expression("z-trans "*Delta*" methylation"),subtitle = overlap_hct$chr_pos[i],
                       title = paste0("Estimate = ", round(overlap_hct$ams_delta_meth_estimate[i], 2),
                                         ", q-value = ", round(overlap_hct$ams_delta_meth_qval[i], 2))) +
-                                        geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+                                        geom_abline(intercept = overlap_hct$intercept_ams[i],
+                                        slope = overlap_hct$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
     list_plot_hct_b[[i]] <- plot_b}
 
@@ -244,7 +249,8 @@ for (i in 1:nrow(overlap_igg_ams)){
                                                     subtitle = overlap_igg_ams$chr_pos[i],
                                                     title = paste0("Estimate = ", round(overlap_igg_ams$ams_delta_meth_estimate[i], 2),
                                                                    ", q-value = ", round(overlap_igg_ams$ams_delta_meth_qval[i], 2))) +
-    geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    geom_abline(intercept = overlap_igg_ams$intercept_ams[i],
+                                        slope = overlap_igg_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
     geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
   list_plot_igg_b[[i]] <- plot_b}
 
@@ -275,7 +281,8 @@ for (i in 1:nrow(overlap_microf_ams)){
                                                     subtitle = overlap_microf_ams$chr_pos[i],
                                                     title = paste0("Estimate = ", round(overlap_microf_ams$ams_delta_meth_estimate[i], 2),
                                                                    ", q-value = ", round(overlap_microf_ams$ams_delta_meth_qval[i], 2))) +
-    geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    geom_abline(intercept = overlap_microf_ams$intercept_ams[i],
+                                        slope = overlap_microf_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
     geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
   list_plot_microf_b[[i]] <- plot_b}
 
@@ -306,7 +313,8 @@ for (i in 1:nrow(overlap_trypa_ams)){
                                                     subtitle = overlap_trypa_ams$chr_pos[i],
                                                     title = paste0("Estimate = ", round(overlap_trypa_ams$ams_delta_meth_estimate[i], 2),
                                                                    ", q-value = ", round(overlap_trypa_ams$ams_delta_meth_qval[i], 2))) +
-    geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+    geom_abline(intercept = overlap_trypa_ams$intercept_ams[i],
+                                        slope = overlap_trypa_ams$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
     geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_b
   list_plot_trypa_b[[i]] <- plot_b}
 
@@ -355,7 +363,8 @@ ggplot(subset(delta_meth, chr_pos == "ScEsiA3_16759__HRSCAF_19053_458"), aes(x =
                                                #   subtitle = "ScEsiA3_16759__HRSCAF_19053_458",
                                                   title = paste0("Estimate = ", round(cpg1$ams_delta_meth_estimate[1], 2),
                                                                  ", q-value = ", round(cpg1$ams_delta_meth_qval[1], 2))) +
-  geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+  geom_abline(intercept = cpg1$intercept_ams[i],
+                                        slope = cpg1$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
   geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_cpg1_ams
 
 
@@ -391,7 +400,8 @@ ggplot(subset(delta_meth, chr_pos == "ScEsiA3_16870__HRSCAF_19426_63522502"), ae
                                                  # subtitle = "ScEsiA3_16870__HRSCAF_19426_63522502",
                                                   title = paste0("Estimate = ", round(cpg2$ams_delta_meth_estimate[1], 2),
                                                                  ", q-value = ", round(cpg2$ams_delta_meth_qval[1], 2))) +
-  geom_smooth(method="lm", color=clrs_hunting[2], linewidth=1) +
+  geom_abline(intercept = cpg2$intercept_ams[i],
+                                        slope = cpg2$ams_delta_meth_estimate[i], color=clrs_hunting[2], linewidth=1) +
   geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1) -> plot_cpg2_ams
 
 cowplot::plot_grid(plot_cpg2_trypa, plot_cpg2_hct, plot_cpg2_ams, 

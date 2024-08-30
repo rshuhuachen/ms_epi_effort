@@ -161,8 +161,8 @@ delta_out_surv$surv_pre_qval <- p.adjust(delta_out_surv$surv_pre_pval, method = 
 delta_out_ams$chr_pos <- as.factor(delta_out_ams$chr_pos)
 delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
 
-delta_out_ams <- delta_out_ams %>% select(c(chr_pos, ams_icc_id_site:ams_message, ams_delta_meth_qval))
-delta_out_surv <- delta_out_surv %>% select(c(chr_pos, surv_icc_id_site:surv_message, surv_delta_meth_qval))
+delta_out_ams <- delta_out_ams %>% select(c(chr_pos, intercept_ams:ams_message, ams_delta_meth_qval))
+delta_out_surv <- delta_out_surv %>% select(c(chr_pos, intercept_surv:surv_message, surv_delta_meth_qval))
 
 save(delta_out_ams, file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
 save(delta_out_surv, file="results/modeloutput/surv_deltameth_modeloutput_filtered.RData")
@@ -215,18 +215,19 @@ cpg_sig_surv <- subset(delta_out_surv, surv_delta_meth_qval < 0.05) #0
 ### plotting
 
 source("scripts/plotting_theme.R")
-
+cpg_sig_ams$intercept_ams <- as.numeric(cpg_sig_ams$intercept_ams)
 cpg_sig_ams <- cpg_sig_ams %>% arrange(ams_delta_meth_qval)
 
 list_plot_ams <- list()
-for (i in 1:nrow(cpg_sig_ams)){
+for (i in 1:21){
     ggplot(subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[i]), aes(x = scale(delta_meth), y = MS)) + 
       geom_point(fill=clrs_hunting[1], size=3) + labs(x = expression("z-transformed "*Delta*" methylation"), 
-      y = "Annual mating success"),
-                      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[i], 2), ", q-value = ", round(cpg_sig_ams$ams_delta_meth_qval[i], 4))) +
-                                        geom_abline(intercept=cpg_sig_ams$intercept[i], slope = cpg_sig_ams$ams_delta_meth_estimate[i], 
-                                          color=clrs_hunting[2], linewidth=1)+
-                                        geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
+      y = "Annual mating success",
+      title = paste0("Estimate = ", round(cpg_sig_ams$ams_delta_meth_estimate[i], 2), ", q-value = ", 
+      round(cpg_sig_ams$ams_delta_meth_qval[i], 4))) +
+       geom_abline(intercept=cpg_sig_ams$intercept_ams[i], slope = cpg_sig_ams$ams_delta_meth_estimate[i], 
+       color=clrs_hunting[2], linewidth=1)+
+       geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
     list_plot_ams[[i]] <- plot   
    }
 
@@ -234,7 +235,7 @@ cowplot::plot_grid(list_plot_ams[[1]], list_plot_ams[[2]], list_plot_ams[[3]], l
                     list_plot_ams[[7]], list_plot_ams[[8]], list_plot_ams[[9]], list_plot_ams[[10]],
         labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams_a
 
-cowplot::plot_grid(list_plot_ams[[11]], list_pllist_plot_amsot_hct[[12]], list_plot_ams[[13]], list_plot_ams[[14]], list_plot_ams[[15]], list_plot_ams[[16]], 
+cowplot::plot_grid(list_plot_ams[[11]], list_plot_ams[[12]], list_plot_ams[[13]], list_plot_ams[[14]], list_plot_ams[[15]], list_plot_ams[[16]], 
                     list_plot_ams[[17]], list_plot_ams[[18]], list_plot_ams[[19]], list_plot_ams[[20]],list_plot_ams[[21]],
         labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_ams_b
 
