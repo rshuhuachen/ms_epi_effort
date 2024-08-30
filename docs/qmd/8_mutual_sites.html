@@ -172,8 +172,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#raw-data" id="toc-raw-data" class="nav-link active" data-scroll-target="#raw-data"><span class="header-section-number">9.1</span> Raw data</a>
   <ul class="collapse">
   <li><a href="#reproductive-effort-vs-ams" id="toc-reproductive-effort-vs-ams" class="nav-link" data-scroll-target="#reproductive-effort-vs-ams"><span class="header-section-number">9.1.1</span> Reproductive effort vs AMS</a></li>
+  <li><a href="#physiological-changes" id="toc-physiological-changes" class="nav-link" data-scroll-target="#physiological-changes"><span class="header-section-number">9.1.2</span> Physiological changes</a></li>
+  <li><a href="#highlight" id="toc-highlight" class="nav-link" data-scroll-target="#highlight"><span class="header-section-number">9.1.3</span> Highlight</a></li>
   </ul></li>
-  <li><a href="#highlight" id="toc-highlight" class="nav-link" data-scroll-target="#highlight"><span class="header-section-number">9.2</span> Highlight</a></li>
   </ul>
 </nav>
     </div>
@@ -200,7 +201,11 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Are there CpG sites that are significant in multiple models?</strong></p>
 <p>It would be interesting to see whether a CpG site is both associated with reproductive effort as well as mating success, with physiological changes and mating success, or with both reproductive effort and physiological changes. For example, a CpG site could be significantly associated with fighting rate and the change in methylation might also be associated with reproductive success.</p>
 <p>I checked whether there are mutual significant CpG sites among models, and find the following:</p>
-<p>8 CpG sites are both significant for reproductive effort and annual mating success 15 CpG sites are both significant for physiological changes and annual mating success No CpG sites are both significant for reproductive effort and physiological changes</p>
+<ul>
+<li><p>8 CpG sites are both significant for reproductive effort and annual mating success</p></li>
+<li><p>15 CpG sites are both significant for physiological changes and annual mating success</p></li>
+<li><p>No CpG sites are both significant for reproductive effort and physiological changes</p></li>
+</ul>
 <p>I plotted the raw data below, where on the left panels you can see the relationship between the effort / physiological trait and delta methylation, and on the right side the relationship between delta methylation and AMS for the same CpG site.</p>
 <section id="raw-data" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">9.1</span> Raw data</h2>
@@ -218,7 +223,15 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="../plots/model_out/rawdata_plot_overlap_fight_AMS.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<p><img src="../plots/model_out/rawdata_plot_overlap_dist_AMS.png" class="img-fluid" alt="Raw data mutual significant CpG site centrality and AMS"> ### Physiological changes</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site centrality and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_dist_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="physiological-changes" class="level3" data-number="9.1.2">
+<h3 data-number="9.1.2" class="anchored" data-anchor-id="physiological-changes"><span class="header-section-number">9.1.2</span> Physiological changes</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Raw data mutual significant CpG site delta mass and AMS</figcaption>
@@ -250,9 +263,8 @@ ul.task-list li input[type="checkbox"] {
 </figure>
 </div>
 </section>
-</section>
-<section id="highlight" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="highlight"><span class="header-section-number">9.2</span> Highlight</h2>
+<section id="highlight" class="level3" data-number="9.1.3">
+<h3 data-number="9.1.3" class="anchored" data-anchor-id="highlight"><span class="header-section-number">9.1.3</span> Highlight</h3>
 <p>Furthermore, there are two extra-interesting CpG sites whose DNA methylation change is associated with multiple phenotypic trait as well as AMS.</p>
 <p>ScEsiA3_16759__HRSCAF_19053_458 (interesting CpG site 1) is affected by delta mass, delta IgG and delta HCT and also explains variation in AMS. ScEsiA3_16870__HRSCAF_19426_63522502 (interesting CpG site 2) is affected by delta Trypanosoma spp. and delta HCT and also explains variation in AMS.</p>
 <p>Below you can find the plots for each of those two CpG sites.</p>
@@ -270,6 +282,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
