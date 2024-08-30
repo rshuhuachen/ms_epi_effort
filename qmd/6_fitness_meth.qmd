@@ -198,16 +198,4 @@ There are 481 significant CpG sites for AMS but none for survival. Below you can
 
 ![Raw data AMS top CpG](../plots/model_out/rawdata_plot_AMS_cpg_top.png)
 
-### Overlapping CpGs previous analyses
 
-Interestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18).
-
-Below, I will plot both associations for a subset of these CpG sites
-
-![Raw data overlapping CpG sites](../plots/model_out/rawdata_plot_trypa_delta_AMS.png)
-
-The first CpG site is located in a gene body, intron and downstream region whereas the second CpG site was unannotated (located in an intergenic region) based on the black grouse genome annotation. Neither CpG was annotated based on the lifted over chicken genome annotation.
-
-## Annotation
-
-I annotated all CpG sites from this analysis as well as the previous ones and have lists of genes (based on the chicken genome). Inputting the list of genes in GOrilla shows that cell fate determination is a significant GO term for AMS, but that is the only significant output.
