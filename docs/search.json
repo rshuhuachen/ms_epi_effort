@@ -186,7 +186,7 @@
     "href": "qmd/6_fitness_meth.html#results",
     "title": "7  Fitness effects",
     "section": "7.4 Results",
-    "text": "7.4 Results\nThere are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.\n\n\nVolcano plot fitness\n\n\n\n\n\nRaw data AMS top CpG\n\n\n\n\n7.4.1 Overlapping CpGs previous analyses\nInterestingly, there is some overlap between changing CpG sites that are significantly associated with reproductive effort as well as with AMS (N = 8), changing CpG sites that are associated with changing physiology as well as with AMS (N = 15) and changing CpG sites that are associated with reproductive effort and changing physiology (N = 18).\nBelow, I will plot both associations for a subset of these CpG sites\n\n\nRaw data overlapping CpG sites\n\n\n\nThe first CpG site is located in a gene body, intron and downstream region whereas the second CpG site was unannotated (located in an intergenic region) based on the black grouse genome annotation. Neither CpG was annotated based on the lifted over chicken genome annotation."
+    "text": "7.4 Results\nThere are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.\n\n\nVolcano plot fitness\n\n\n\n\n\nRaw data AMS top 10 CpGs a\n\n\n\n\n\nRaw data AMS top 10 CpGs b"
   },
   {
     "objectID": "qmd/6_fitness_meth.html#annotation",
