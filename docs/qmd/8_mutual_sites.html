@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in a lekking bird - 3&nbsp; Filtering</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 9&nbsp; Mutual CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -64,8 +30,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../qmd/3_changing_meth.html" rel="next">
-<link href="../qmd/1_explore.html" rel="prev">
+<link href="../qmd/7_annotate.html" rel="prev">
 <link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -120,7 +85,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/2_filter.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/8_mutual_sites.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -154,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link active">
+  <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
@@ -190,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link">
+  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
   </div>
 </li>
@@ -204,10 +169,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link active" data-scroll-target="#prepare-data"><span class="header-section-number">3.1</span> Prepare data</a></li>
-  <li><a href="#pre-filter-data" id="toc-pre-filter-data" class="nav-link" data-scroll-target="#pre-filter-data"><span class="header-section-number">3.2</span> Pre-filter data</a></li>
-  <li><a href="#convert-data" id="toc-convert-data" class="nav-link" data-scroll-target="#convert-data"><span class="header-section-number">3.3</span> Convert data</a></li>
-  <li><a href="#post-filtering" id="toc-post-filtering" class="nav-link" data-scroll-target="#post-filtering"><span class="header-section-number">3.4</span> Post-filtering</a></li>
+  <li><a href="#raw-data" id="toc-raw-data" class="nav-link active" data-scroll-target="#raw-data"><span class="header-section-number">9.1</span> Raw data</a>
+  <ul class="collapse">
+  <li><a href="#reproductive-effort-vs-ams" id="toc-reproductive-effort-vs-ams" class="nav-link" data-scroll-target="#reproductive-effort-vs-ams"><span class="header-section-number">9.1.1</span> Reproductive effort vs AMS</a></li>
+  </ul></li>
+  <li><a href="#highlight" id="toc-highlight" class="nav-link" data-scroll-target="#highlight"><span class="header-section-number">9.2</span> Highlight</a></li>
   </ul>
 </nav>
     </div>
@@ -216,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></h1>
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></h1>
 </div>
 
 
@@ -231,70 +197,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p><strong>Preparing and filtering the data</strong></p>
-<p>Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis).</p>
-<p>First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.</p>
-<section id="prepare-data" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="prepare-data"><span class="header-section-number">3.1</span> Prepare data</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">methRead</span>(files, <span class="at">pipeline =</span> <span class="st">"bismarkCytosineReport"</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sample.id =</span> ids, <span class="at">assembly =</span> <span class="st">"ltet"</span>, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">treatment =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="at">each =</span><span class="fu">length</span>(ids))), <span class="at">context =</span> <span class="st">"CpG"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Are there CpG sites that are significant in multiple models?</strong></p>
+<p>It would be interesting to see whether a CpG site is both associated with reproductive effort as well as mating success, with physiological changes and mating success, or with both reproductive effort and physiological changes. For example, a CpG site could be significantly associated with fighting rate and the change in methylation might also be associated with reproductive success.</p>
+<p>I checked whether there are mutual significant CpG sites among models, and find the following:</p>
+<p>8 CpG sites are both significant for reproductive effort and annual mating success 15 CpG sites are both significant for physiological changes and annual mating success No CpG sites are both significant for reproductive effort and physiological changes</p>
+<p>I plotted the raw data below, where on the left panels you can see the relationship between the effort / physiological trait and delta methylation, and on the right side the relationship between delta methylation and AMS for the same CpG site.</p>
+<section id="raw-data" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">9.1</span> Raw data</h2>
+<section id="reproductive-effort-vs-ams" class="level3" data-number="9.1.1">
+<h3 data-number="9.1.1" class="anchored" data-anchor-id="reproductive-effort-vs-ams"><span class="header-section-number">9.1.1</span> Reproductive effort vs AMS</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site attendance and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_attend_AMS.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
-<p>Where <code>files</code> = the list of 116 file locations and <code>ids</code> = the list of the 116 ID’s of those files.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site fight rate and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_fight_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p><img src="../plots/model_out/rawdata_plot_overlap_dist_AMS.png" class="img-fluid" alt="Raw data mutual significant CpG site centrality and AMS"> ### Physiological changes</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site delta mass and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_mass_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site delta HCT and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_hct_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site delta IgG and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_igg_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site delta Trypanosoma spp. and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_trypa_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data mutual significant CpG site delta Microfilaria spp. and AMS</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_microf_AMS.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </section>
-<section id="pre-filter-data" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="pre-filter-data"><span class="header-section-number">3.2</span> Pre-filter data</h2>
-<p>Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">filterByCoverage</span>(ltet_meth,<span class="at">lo.count=</span><span class="dv">10</span>,<span class="at">lo.perc=</span><span class="cn">NULL</span>,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">hi.count=</span><span class="cn">NULL</span>,<span class="at">hi.perc=</span><span class="fl">99.9</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Next, we unite the strands. We do not filter yet for sites that are covered in at least X individuals as we will perform this filtering steps later in the script.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltet_meth_unite <span class="ot">&lt;-</span> methylKit<span class="sc">::</span><span class="fu">unite</span>(ltet_meth, <span class="at">destrand =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">min.per.group =</span> 1L, <span class="at">mc.cores =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>At this stage, we have a data set consisting of 1,559,800 partially filtered CpG sites.</p>
 </section>
-<section id="convert-data" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="convert-data"><span class="header-section-number">3.3</span> Convert data</h2>
-<p>The next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated.</p>
-<p>We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the formula. Right now I have used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, I think this is more correct and will allow the models to make more accurate estimates and will only include CpG sites with more variation in methylation %.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/function_convert_methfile.R"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prepost_long <span class="ot">&lt;-</span> <span class="fu">convert_meth</span>(<span class="at">methfile =</span> ltet_meth_unite, <span class="at">novar =</span> <span class="st">"remove"</span>, <span class="at">threshold =</span> <span class="fl">0.3</span>) </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="highlight" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="highlight"><span class="header-section-number">9.2</span> Highlight</h2>
+<p>Furthermore, there are two extra-interesting CpG sites whose DNA methylation change is associated with multiple phenotypic trait as well as AMS.</p>
+<p>ScEsiA3_16759__HRSCAF_19053_458 (interesting CpG site 1) is affected by delta mass, delta IgG and delta HCT and also explains variation in AMS. ScEsiA3_16870__HRSCAF_19426_63522502 (interesting CpG site 2) is affected by delta Trypanosoma spp. and delta HCT and also explains variation in AMS.</p>
+<p>Below you can find the plots for each of those two CpG sites.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data interesting CpG site 1</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_highlight_CpG_1.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
-</section>
-<section id="post-filtering" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="post-filtering"><span class="header-section-number">3.4</span> Post-filtering</h2>
-<p>Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59 pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#count number of individuals per CpG per time point</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_per_prepost <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr_pos, prepost) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span>  <span class="fu">spread</span>(n_per_prepost, <span class="at">key=</span>prepost,<span class="at">value=</span>count)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"n_post"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">"n_pre"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#keep only if CpG site is covered in at least 50% of samples at both time points</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>thres <span class="ot">=</span> <span class="fl">0.5</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span> n_per_prepost_wide <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">keep =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(n_pre  <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">&amp;</span> n_post <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">~</span> <span class="st">"keep"</span>)))</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(n_per_prepost_wide<span class="sc">$</span>keep) <span class="co"># 354,649 CpG sites to keep</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">left_join</span>(prepost_long, n_per_prepost_wide, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"chr_pos"</span>))</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">subset</span>(prepost_long_clean, keep <span class="sc">==</span> <span class="st">"keep"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data interesting CpG site 2</figcaption>
+<p><img src="../plots/model_out/rawdata_plot_overlap_highlight_CpG_2.png" class="img-fluid figure-img"></p>
+</figure>
 </div>
-<p>Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes).</p>
 
 
 </section>
@@ -549,14 +522,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../qmd/1_explore.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span>
+      <a href="../qmd/7_annotate.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Annotation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../qmd/3_changing_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

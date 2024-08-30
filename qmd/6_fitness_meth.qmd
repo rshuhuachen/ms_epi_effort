@@ -39,7 +39,7 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ```
 
-## Functon to run the model
+## Function to run the model
 
 Below you'll find the full function to run the model per CpG site, where two models are run:
 
