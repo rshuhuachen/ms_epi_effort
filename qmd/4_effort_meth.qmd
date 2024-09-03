@@ -44,7 +44,15 @@ delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
 delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
 ```
 
-Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. In addition to delta methylation, we also control for pre-methylation level (as this determines the potential for methylation change) and age as fixed effects.
+Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. 
+
+## Pre-methylation vs delta methylation
+
+We expect that pre-lekking methylation levels affect delta methylation %. If pre-lekking methylation is 0%, there is potential for +100% change, but if pre-lekking methylation is 100%, there is potential for -100% change. On the other hand, if pre-lekking methylation is 50%, there is only potential for -50% and +50% change. Thus, we expect a U-shaped relationship between pre-lekking and absolute delta methylation. I plot the empirical data for this, based on only the CpG sites that significantly change across the lekking period. The red line in the left plot is the (linear) regression while correcting for id as a random effect (so a lmer output).
+
+![Pre-lekking vs delta lekking methylation %](../plots/explore/pre_vs_delta.png)
+
+There does seem to be some association between the two. However, we cannot statistically correct for this because of the following:
 
 ## Prepare the data
 

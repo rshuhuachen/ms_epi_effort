@@ -201,14 +201,48 @@ for (i in 1:length(out_glmer)){
 
 out_glmer <- out_glmer[-errors_cols]
 
-out_glmer <- do.call(rbind.data.frame, out_glmer)
-save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75_raw.RData")
+out_glmer_raw <- do.call(rbind.data.frame, out_glmer)
+save(out_glmer_raw, file="results/modeloutput/prepost_modeloutput_glmer_min0.75_raw.RData")
+
+## explore dispersion ratio
+summary(out_glmer_raw$dispersion.ratio)
+ggplot(out_glmer_raw, aes(x = dispersion.ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted") +
+scale_y_log10()-> hist_glmer_disp_ratio
+ggsave(hist_glmer_disp_ratio, file = "plots/model_out/changing_histogram_dispersion_glmer_raw.png", width = 10, height = 10)
+
+## qqplot without filtering for overdispersion
+pacman::p_load(gaston)
+
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_raw.png", width = 1000, height = 1000)
+qqplot.pvalues(out_glmer_raw$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
 
 ### apply a FDR multiple-testing correction
-out_glmer <- subset(out_glmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 168720, 179311 with cov not nT
-out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
 
-save(out_glmer, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
+## two options: dispersion filter by ratio < 1.1 (threshold)
+out_glmer_threshold <- subset(out_glmer_raw, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 168720, 179311 with cov not nT
+out_glmer_threshold$prepost_qval <- p.adjust(out_glmer_threshold$prepost_pval, method = "fdr", n = nrow(out_glmer_threshold))
+
+nrow(out_glmer_threshold)/nrow(out_glmer_raw) # = 0.53
+nrow(subset(out_glmer_threshold, prepost_qval < 0.05)) # N = 3563
+
+# qq plot
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_threshold.png", width = 1000, height = 1000)
+qqplot.pvalues(out_glmer_threshold$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
+
+## second option: within the 90% quantiles
+out_glmer_perc <- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.95)) & dispersion.ratio > as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.05)))
+out_glmer_perc$prepost_qval <- p.adjust(out_glmer_perc$prepost_pval, method = "fdr", n = nrow(out_glmer_perc))
+nrow(out_glmer_perc)/nrow(out_glmer_raw) # = 0.90 (obvs)
+nrow(subset(out_glmer_perc, prepost_qval < 0.05)) # N = 19110
+
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png", width = 1000, height = 1000)
+qqplot.pvalues(out_glmer_perc$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
+
+## save the one we choose: threshold
+save(out_glmer_threshold, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
 
 ## lmer
 out_lmer <- parallel::mclapply(data, function_model_lmer, mc.cores=4) #274188
@@ -234,21 +268,64 @@ for (i in 1:length(out_lmer)){
 
 out_lmer <- out_lmer[-errors]
 out_lmer <- out_lmer[-errors_cols]
-out_lmer <- do.call(rbind.data.frame, out_lmer)
-save(out_lmer, file="results/modeloutput/prepost_modeloutput_lmer_min0.75_raw.RData")
+out_lmer_raw <- do.call(rbind.data.frame, out_lmer)
+save(out_lmer_raw, file="results/modeloutput/prepost_modeloutput_lmer_min0.75_raw.RData")
+
+# qq plot raw data
+png(file = "plots/model_out/qqplot_changing_qqplot_lmer_raw.png", width = 1000, height = 1000)
+qqplot.pvalues(out_lmer_raw$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
+
+# quite some overdispersion but not as much
 
 ### apply a FDR multiple-testing correction
-out_lmer <- subset(out_lmer, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 151449
-out_lmer$prepost_qval <- p.adjust(out_lmer$prepost_pval, method = "fdr", n = nrow(out_lmer))
 
-save(out_lmer, file="results/modeloutput/prepost_modeloutput_lmer_min0.75.RData")
+## two options: dispersion filter by ratio < 1.1 (threshold)
+out_lmer_threshold <- subset(out_lmer_raw, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 168720, 179311 with cov not nT
+out_lmer_threshold$prepost_qval <- p.adjust(out_lmer_threshold$prepost_pval, method = "fdr", n = nrow(out_lmer_threshold))
+
+nrow(out_lmer_threshold)/nrow(out_lmer_raw) # = 0.60
+nrow(subset(out_lmer_threshold, prepost_qval < 0.05)) # N = 347
+
+# qq plot
+png(file = "plots/model_out/qqplot_changing_qqplot_lmer_threshold.png", width = 1000, height = 1000)
+qqplot.pvalues(out_lmer_threshold$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
+
+## second option: within the 90% quantiles
+out_lmer_perc <- subset(out_lmer_raw, dispersion.ratio < as.vector(quantile(out_lmer_raw$dispersion.ratio, 0.975)) & dispersion.ratio > as.vector(quantile(out_lmer_raw$dispersion.ratio, 0.025)))
+out_lmer_perc$prepost_qval <- p.adjust(out_lmer_perc$prepost_pval, method = "fdr", n = nrow(out_lmer_perc))
+nrow(out_lmer_perc)/nrow(out_lmer_raw) # = 0.90 (obvs)
+nrow(subset(out_lmer_perc, prepost_qval < 0.05)) # N = 337
+
+png(file = "plots/model_out/qqplot_changing_qqplot_lmer_90percentile.png", width = 1000, height = 1000)
+qqplot.pvalues(out_lmer_perc$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+dev.off()
+
+## after filtering, quite some underdispersion?
+
+#### Filter for mean delta methylation ####
+
+load(file = "results/modeloutput/all_sites_deltameth.RData")
+
+### Calculate average delta_meth per CpG site
+
+mean_delta_meth <- delta_meth %>% group_by(chr_pos) %>% summarise_at(vars(delta_meth), funs(mean(., na.rm=TRUE)))
+names(mean_delta_meth)[2] <- "mean_delta_meth"
+
+out_glmer <- left_join(out_glmer_threshold, mean_delta_meth, by = "chr_pos")
+out_lmer <- left_join(out_lmer_threshold, mean_delta_meth, by = "chr_pos")
+
+### Filter min absolute mean methylation of 10%
 
 ## save the epi data only from cpg's that are sig
-sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(prepost_estimate) >= 0.1)
-# N = 3563
+sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
+# N = 3563 but with 10% mean difference only 434
 
-sub_lmer_prepost <- subset(out_lmer, prepost_qval < 0.05 & abs(prepost_estimate) >= 0.1)
-# N = 199 of which 103 in glmer
+sub_lmer_prepost <- subset(out_lmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
+# N = 204 
+nrow(subset(sub_glmer_prepost, chr_pos %in% sub_lmer_prepost$chr_pos)) #105
+nrow(subset(sub_lmer_prepost, chr_pos %in% sub_glmer_prepost$chr_pos)) #105
 
 changing_cpg <- subset(prepost_long, chr_pos %in% sub_glmer_prepost$chr_pos)
 save(changing_cpg, file="results/modeloutput/subset_sites_sig_prepost.RData")
@@ -259,12 +336,12 @@ save(changing_cpg_lmer, file="results/modeloutput/subset_sites_sig_prepost_lmer.
 ### volcano plot
 source("scripts/plotting_theme.R")
 
-load(file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
-out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(as.numeric(prepost_estimate)) > 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
 
 clrs <- viridisLite::viridis(6)
-ggplot(out_glmer, aes(x = as.numeric(prepost_estimate), y = -log10(as.numeric(prepost_qval)))) + geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
-    labs(x = "Estimate time period", y = "-log10(q-value)") +
+ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
+    geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
+    labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
     #xlim(-1, 1)+
     scale_color_manual(values=c("grey60", clrs[4])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -304,7 +381,8 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[1]) +
-  theme(legend.position="none") -> plot_top_cpg_1
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_1
 
 
 subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
@@ -314,7 +392,8 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[2]) +
-  theme(legend.position="none") -> plot_top_cpg_2
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_2
 
 subset(changing_cpg, chr_pos == out_glmer$chr_pos[3]) %>%
   arrange(id, year) %>%
@@ -323,7 +402,8 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[3]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[3]) +
-  theme(legend.position="none") -> plot_top_cpg_3
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_3
 
 subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   arrange(id, year) %>%
@@ -332,7 +412,8 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[4]) +
-  theme(legend.position="none") -> plot_top_cpg_4
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_4
 
   subset(changing_cpg, chr_pos == out_glmer$chr_pos[5]) %>%
   arrange(id, year) %>%
@@ -341,16 +422,18 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[5]) +
-  theme(legend.position="none") -> plot_top_cpg_5
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_5
 
-  subset(changing_cpg, chr_pos == out_glmer$chr_pos[6]) %>%
+subset(changing_cpg, chr_pos == out_glmer$chr_pos[6]) %>%
   arrange(id, year) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[6]) +
-  theme(legend.position="none") -> plot_top_cpg_6
+  theme(legend.position="none") +
+  ylim(0,1)-> plot_top_cpg_6
 
 cowplot::plot_grid(plot_top_cpg_1, plot_top_cpg_2, plot_top_cpg_3, plot_top_cpg_4, 
                     plot_top_cpg_5, plot_top_cpg_6, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_change
