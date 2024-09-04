@@ -1,0 +1,95 @@
+---
+title: "Ongoing discussion"
+format: 
+  html:
+    link-external-newwindow: true
+---
+
+This page is dedicated to dump several aspects that we're still discussing.
+
+## Testing sensitivity to filtering parameters
+
+TBD: here we want to test if the same CpG sites turn significant and to what extent our results differ if we use more or less strict (post-)filtering decisions (@sec-postfilter).
+
+## Filtering for overdispersion
+
+We can exclude CpG site models that suffer from significant over (or under) dispersion using several methods. I tested what the difference is if we exclude CpG site models that have a dispersion ratio over a certain threshold (the "threshold method"; dispersion ratio should be < 1.1 and dispersion should not be significant) or if we exclude CpG site models that have a dispersion ratio outside of a specific quantile (the "quantile method").
+
+We run a series of models in the manuscript (e.g. first we look for sites that change across the lekking period (@sec-change) and then we look for CpG sites whose change in DNA methylation is associated with reproductive effort (@sec-effort) and physiological changes (@sec-physio)) and the dispersion profile can differ between models.
+
+### Dispersion profile for changing sites (@sec-change)
+
+Without applying any filters, I plotted the distribution of the dispersion ratio and the QQ-plot based on all CpG site models tested (>300,000).
+
+![Histogram dispersion ratio changing CpG sites](../plots/model_out/changing_histogram_dispersion_glmer_raw.png)
+![QQ-plot changing CpG sites](../plots/model_out/qqplot_changing_qqplot_glmer_raw.png)
+
+There seems to be quite some overdispersion so we definitely have to filter out CpG sit emodels. I filter for sites using both methods and look at the resulting QQ-plot.
+
+![QQ-plot changing CpG sites threshold method](../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png)
+![QQ-plot changing CpG sites 90 percentile](../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png)
+
+I chose to filter for the 90 percentile rather than 95 because there is a lot of overdispersion. There is a big difference in how many sites models we exclude: with the threshold model this is about half, whereas with the percentile method we (by definition) exclude about 10% only.
+
+I think the threshold method QQ plot looks better so I think we should maybe go with that? Since there seems to be a huge overdispersion still when we filter for the 90% percentile.
+
+### Dispersion profile for sites associated with reproductive effort (@sec-effort)
+
+To start with, I only compared the models fitted for lek centrality and not the other traits. After only filtering out models that did not converge, I plotted the distribution of the dispersion ratio and the QQ-plot.
+
+![Histogram dispersion ratio sites associated with centrality](../plots/model_out/hist_dist_dispersion_ratio_raw.png)
+![QQ-plot sites associated with centrality](../plots/model_out/qqplot_dist_raw.png)
+
+There seems to be a lot less overdispersion than in the model for changing sites. There seems to be no model with a dispersion ratio > 1.1 so filtering for the threshold here won't change anything. I think it's more suitable here to exclude models with a dispersion ratio outside of the 95 percentile. But if we do this, the QQ-plot looks suboptimal and we actually exclude previously significant CpG sites. So maybe we should not filter for overdispersion here (since there is not really any overdispersion?).
+
+
+![QQ-plot sites associated with centrality 95 percentile](../plots/model_out/qqplot_dist_95quantile.png)
+
+#### My suggestion
+I'd suggest we filter for dispersion ratio < 1.1 & dispersion p-value > 0.05 for the 'changing CpG site model' and we observe the QQ plot of the the reproductive effort / physiology / fitness models separately. Only if there is visible overdispersion we would exclude sites based on the 95 percentile.
+
+## Defining a 'significantly changing CpG site'
+
+As suggested I filtered for CpG sites that have an average change in methylation (between samples) of at least 10% between pre- and post-lekking to define a 'significantly changing CpG site' (as well as having a FDR-corrected q-value < 0.05, of course). The resulting volcano plot looks at follows (pretty cool!)
+
+![Volcano plot changing CpG sites](../plots/model_out/volcano_change.png)
+
+Whereas we previously identified >3000 significantly changing sites (based on the beta estimate), when we filter for at least 10% methylation difference (positive or negative), we end up with 437 significant CpG sites. 
+
+#### My suggestion
+I'd argue we apply this 10% methylation filter to be more conservative.
+
+## Including pre-lekking methylation levels in the models
+
+We expect that pre-lekking methylation levels affect delta methylation %. If pre-lekking methylation is 0%, there is potential for +100% change, but if pre-lekking methylation is 100%, there is potential for -100% change. On the other hand, if pre-lekking methylation is 50%, there is only potential for -50% and +50% change. Thus, we expect a U-shaped relationship between pre-lekking and absolute delta methylation. 
+
+In the reproductive effort, physiology and fitness models I had so far included pre-lekking methylation levels. Here we explore a bit more in depth if we should or should not do this.
+
+### Relationship pre and delta methylation
+
+I plot the empirical data for the relationship, based on only the CpG sites that significantly change across the lekking period (as these are the CpG sites used in the subsequent models and otherwise delta methylation will be around 0). The red line in the left plot is the (linear) regression while correcting for id as a random effect (so a lmer output).
+
+![Pre-lekking vs delta lekking methylation %](../plots/explore/pre_vs_delta.png)
+
+There does seem to be some association between the two but not very strong. 
+
+### Building a DAG
+
+I want to understand better if we should or should not control for pre-lekking using a conceptual framework which will help us identify our expectations and identify 'good' controlling variables and 'bad' ones. For this, I tried to create a DAG (directed acyclic graph) which sketches out our causal expectations. I think this is quite tricky but should be done. This is what I came up with:
+
+![DAG lekking and epigenetic changes](../img/DAG_epigenetics_lekking.png)
+
+As a recap, our models look like this:
+
+`delta_meth ~ trait + pre_lekking + (1|site/id)`
+
+I have to check with some of my colleagues, but because we expect a relationship between pre-lekking methylation and body condition, we want to 'block' this pathway when we try to understand the relationship between e.g. reproductive effort and methylation changes (we want to close the 'backdoor' following McElreath's 'Statistical rethinking'; see  [https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06] or other summaries on 'the haunted DAG & the causal terror' chapter). 
+
+This would then be the case for all models (including those for fitness). I'm finding this really difficult though so I'm not sure what the most correct decision is.
+
+### Including lek (site) as a random factor
+
+So far, I include ID nested within site as a random effect. However, the distribution of samples across leks is very uneven; we have samples from 5 leks (118 samples in total). The lowest number of samples for a site is 6, with the highest being 30. However for the models that use delta methylation, these sample sizes are divided by 2. 
+
+### My suggestion
+Based on the distribution, I think it's probably better to leave out lek site. Of course we should correct for the structure in our data where possible, but considering I actually get quite some errors due to not having enough samples within each site/id combination in the models, we might be trying to overfit our data. This might also explain the weird volcano plots (only a few very significant CpG sites)?

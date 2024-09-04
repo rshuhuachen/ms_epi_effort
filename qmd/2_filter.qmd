@@ -63,7 +63,7 @@ prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", thres
 
 ```
 
-## Post-filtering
+## Post-filtering {#sec-postfilter}
 
 Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59  pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.
 

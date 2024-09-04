@@ -6,7 +6,7 @@ format:
     fig-cap-location: top
 ---
 
-**Which changes in CpG site methylation are associated with changes in physiology?**
+**Which changes in CpG site methylation are associated with changes in physiology?**{#sec-physio}
 
 Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT.
 

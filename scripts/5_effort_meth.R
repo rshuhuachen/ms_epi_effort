@@ -175,7 +175,7 @@ function_model_delta <- function(df, parameter, pre){tryCatch({
                     convergence = convergence
                     
   ))
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(chr_pos, ": " conditionMessage(e))})
+}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(chr_pos, " ", conditionMessage(e)))})
 }
 
 ### run the model per trait
@@ -258,11 +258,12 @@ delta_out_dist_pre <- do.call(rbind.data.frame, delta_out_dist_pre_raw) #n = 422
 
 ### no pre
 # convert to numeric
+delta_out_dist_nopre$dispersion.ratio <- as.numeric(delta_out_dist_nopre$dispersion.ratio)
 delta_out_dist_nopre$parameter_pval <- as.numeric(delta_out_dist_nopre$parameter_pval)
 
 # plot dispersion
 
-ggplot(delta_out_dist_nopre, aes(dispersion.ratio)) + geom_histogram() -> hist_dist_nopre
+ggplot(delta_out_dist_nopre, aes(x=dispersion.ratio)) + geom_histogram() -> hist_dist_nopre
 ggsave(hist_dist_nopre, file = "plots/model_out/hist_dist_dispersion_ratio_nopremeth.png", width=10, height=10)
 
 # qq plot
@@ -271,8 +272,13 @@ qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB =
 dev.off()
 
 # exclude those with overdispersion
-delta_out_dist_nopre <- subset(delta_out_dist_nopre, as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.975)) & 
-dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025)))
+delta_out_dist_nopre <- subset(delta_out_dist_nopre, as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.975, na.rm=T)) & 
+dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025, na.rm=T)))
+
+# qq plot
+png(file = "plots/model_out/qqplot_dist_95percentile_nopremeth.png", width = 1000, height = 1000)
+qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
+dev.off()
 
 # exclude those with convergence error
 #delta_out_dist_nopre <- subset(delta_out_dist_nopre, dispersion.ratio < 1.1 & dispersion.pval > 0.05) # 379
@@ -283,25 +289,30 @@ delta_out_dist_nopre$parameter_qval <- p.adjust(delta_out_dist_nopre$parameter_p
 
 ### with pre
 # convert to numeric
-delta_out_attend <- subset(delta_out_attend, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
+delta_out_dist_pre <- subset(delta_out_dist_pre, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
 
 delta_out_dist_pre$parameter_pval <- as.numeric(delta_out_dist_pre$parameter_pval)
 
 # plot dispersion
 
 ggplot(delta_out_dist_pre, aes(dispersion.ratio)) + geom_histogram() -> hist_dist_pre
-ggsave(hist_dist_pre, file = "plots/model_out/hist_dist_dispersion_ratio.png", width=10, height=10)
+ggsave(hist_dist_pre, file = "plots/model_out/hist_dist_dispersion_ratio_raw.png", width=10, height=10)
 
 # qq plot
 png(file = "plots/model_out/qqplot_dist_raw.png", width = 1000, height = 1000)
-qqplot.pvalues(delta_out_dist_pre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)  -> qq_dist_pre
+qqplot.pvalues(delta_out_dist_pre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
 # exclude those with overdispersion
-out_glmer_perc <- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.95)) & dispersion.ratio > as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.05)))
-
+## 95% percentile
 delta_out_dist_pre <- subset(delta_out_dist_pre, as.vector(quantile(delta_out_dist_pre$dispersion.ratio, 0.975)) & 
 dispersion.ratio > as.vector(quantile(delta_out_dist_pre$dispersion.ratio, 0.025)))
+
+# qq plot
+png(file = "plots/model_out/qqplot_dist_95quantile.png", width = 1000, height = 1000)
+qqplot.pvalues(delta_out_dist_pre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)  
+dev.off()
+
 delta_out_dist_pre <- subset(delta_out_dist_pre, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
 
 # FDR correction
