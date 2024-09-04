@@ -58,6 +58,7 @@ table_go_process_changing <- read_excel("../results/tables/go_time_period_proces
 table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_process_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
 ```
+
 ## CpG sites associated with reproductive effort
 
 ### Regions
@@ -124,7 +125,7 @@ table_genes_dist %>% kbl() %>%
 
 ## CpG sites associated with changing physiology
 
-### Regions 
+### Regions
 
 Below you can find similar plots for CpG sites significantly associated with changes in physiology (mass, HCT, IgG, Microfilaria, Trypanosoma)
 
@@ -184,7 +185,6 @@ ggplot(sub, aes(x = region, y = perc)) +
 The total number of changing CpG sites that were significantly associated with delta Trypanosoma were `r sum_annotated$n_total[which(sum_annotated$model == "Delta Trypanosoma spp.")][1]`.
 
 ### Genes
-
 
 Which genes are these significant CpG sites located in?
 

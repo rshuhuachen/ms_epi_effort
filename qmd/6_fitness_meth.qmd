@@ -199,5 +199,3 @@ There are 481 significant CpG sites for AMS but none for survival. Below you can
 ![Raw data AMS top 10 CpGs a](../plots/model_out/rawdata_plot_AMS_cpg_top10.png)
 
 ![Raw data AMS top 10 CpGs b](../plots/model_out/rawdata_plot_AMS_cpg_top20.png)
-
-

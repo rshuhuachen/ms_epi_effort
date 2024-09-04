@@ -82,11 +82,13 @@ As a recap, our models look like this:
 
 `delta_meth ~ trait + pre_lekking + (1|site/id)`
 
-I have to check with some of my colleagues, but because we expect a relationship between pre-lekking methylation and body condition, we want to 'block' this pathway when we try to understand the relationship between e.g. reproductive effort and methylation changes (we want to close the 'backdoor' following McElreath's 'Statistical rethinking'; see \[https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06\] or other summaries on 'the haunted DAG & the causal terror' chapter).
+Because we expect a relationship between pre-lekking methylation and body condition, we want to 'block' this pathway when we try to understand the relationship between e.g. reproductive effort and methylation changes (the blue line). In Mc.Elreath's words, "we want to close the 'backdoor'", see e.g. \[https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06\] or other summaries on his 'the haunted DAG & the causal terror' chapter in "Statistical Rethinking").
 
-This would then be the case for all models (including those for fitness). I'm finding this really difficult though so I'm not sure what the most correct decision is.
+This would then be the case for all models excluding those for fitness. The one for fitness is tricky, in theory if we want to isolate just the effect of delta methylation on MS, we should control for all the other things (i.e. reproductive effort, parasites, etc.) but I think that's not really what we want to do, and just see if there is an association between delta methylation (which is affected by many different processes) and e.g. mating success and survival. 
 
-Furthermore, when trying to think of this DAG I also realized that the relationship between reproductive effort, physiological changes and parasites is complex, and I wonder if the way I modelled things (separately) is the best approach. I would say yes, as long as we describe this complex relationship well (e.g. a male fights a lot, loses body weight, is more susceptible to parasite infection, gets 'ill', stops investing in reproduction but in immune response instead, reduced fighting rate). 
+Note that this conclusion is based on if we all agree on this diagram, which I'm not 100% about!
+
+Furthermore, when trying to think of this DAG, constructing it highlighted the complex relationship between reproductive effort, physiological changes and parasites. I wonder if the way I modeled things (separately, one model for each trait) is the best approach? I would still say yes, as long as we describe this complex relationship well (e.g. a male fights a lot, loses body weight, is more susceptible to parasite infection, gets 'ill', stops investing in reproduction but in immune response instead, reduced fighting rate). 
 
 Alternatively, we could only build one model with all variables as predictors (reproductive effort, physiology, parasites) but I think this would overfit our model and we have too little data for this, so I still think it's okay to do it the way we did, but describe it in a way that we cannot outrule the possibility that even though we find a CpG site significantly affected by fighting rate, it's also possible that other factors are into play here that affect fighting rate and thus methylation changes indirectly.
 
