@@ -72,7 +72,7 @@ In the reproductive effort, physiology and fitness models I had so far included 
 
 ### Relationship pre and delta methylation
 
-I plot the empirical data for the relationship, based on only the CpG sites that significantly change across the lekking period (as these are the CpG sites used in the subsequent models and otherwise delta methylation will be around 0). The red line in the left plot is the (linear) regression while correcting for id as a random effect (so a lmer output).
+I plot the empirical data for the relationship, based on only the CpG sites that significantly change across the lekking period (as these are the CpG sites used in the subsequent models and otherwise delta methylation will be around 0). The red line in the left plot is the (linear) regression while correcting for id as a random effect (so a lmer output). The blue line in the right plot is an automatically generated regression line with ggplot.
 
 ![Pre-lekking vs delta lekking methylation %](../plots/explore/pre_vs_delta.png)
 
@@ -88,7 +88,7 @@ As a recap, our models look like this:
 
 `delta_meth ~ trait + pre_lekking + (1|site/id)`
 
-Because we expect a relationship between pre-lekking methylation and body condition, we want to 'block' this pathway when we try to understand the relationship between e.g. reproductive effort and methylation changes (the blue line). In Mc.Elreath's words, "we want to close the 'backdoor'", see e.g. \[https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06\] or other summaries on his 'the haunted DAG & the causal terror' chapter in "Statistical Rethinking").
+Because we expect a relationship between pre-lekking methylation and body condition, we want to 'block' this pathway when we try to understand the relationship between e.g. reproductive effort and methylation changes (the blue line). In Mc.Elreath's words, "we want to close the 'backdoor'", see e.g. [this youtube lecture](https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06) or other summaries on his 'the haunted DAG & the causal terror' chapter in "Statistical Rethinking"). I am quite confident that that means we should include pre-lekking DNA methylation in the models after all.
 
 This would then be the case for all models excluding those for fitness. The one for fitness is tricky, in theory if we want to isolate just the effect of delta methylation on MS, we should control for all the other things (i.e. reproductive effort, parasites, etc.) but I think that's not really what we want to do, and just see if there is an association between delta methylation (which is affected by many different processes) and e.g. mating success and survival. 
 
