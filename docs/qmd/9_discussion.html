@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in a lekking bird - 9&nbsp; Mutual CpG sites</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 10&nbsp; Ongoing discussion</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../qmd/9_discussion.html" rel="next">
-<link href="../qmd/7_annotate.html" rel="prev">
+<link href="../qmd/8_mutual_sites.html" rel="prev">
 <link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -86,7 +85,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/8_mutual_sites.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/9_discussion.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -156,13 +155,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link active">
+  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link">
+  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span></a>
   </div>
 </li>
@@ -176,11 +175,21 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#raw-data" id="toc-raw-data" class="nav-link active" data-scroll-target="#raw-data"><span class="header-section-number">9.1</span> Raw data</a>
+  <li><a href="#testing-sensitivity-to-filtering-parameters" id="toc-testing-sensitivity-to-filtering-parameters" class="nav-link active" data-scroll-target="#testing-sensitivity-to-filtering-parameters"><span class="header-section-number">10.1</span> Testing sensitivity to filtering parameters</a></li>
+  <li><a href="#filtering-for-overdispersion" id="toc-filtering-for-overdispersion" class="nav-link" data-scroll-target="#filtering-for-overdispersion"><span class="header-section-number">10.2</span> Filtering for overdispersion</a>
   <ul class="collapse">
-  <li><a href="#reproductive-effort-vs-ams" id="toc-reproductive-effort-vs-ams" class="nav-link" data-scroll-target="#reproductive-effort-vs-ams"><span class="header-section-number">9.1.1</span> Reproductive effort vs AMS</a></li>
-  <li><a href="#physiological-changes" id="toc-physiological-changes" class="nav-link" data-scroll-target="#physiological-changes"><span class="header-section-number">9.1.2</span> Physiological changes</a></li>
-  <li><a href="#highlight" id="toc-highlight" class="nav-link" data-scroll-target="#highlight"><span class="header-section-number">9.1.3</span> Highlight</a></li>
+  <li><a href="#dispersion-profile-for-changing-sites-sec-change" id="toc-dispersion-profile-for-changing-sites-sec-change" class="nav-link" data-scroll-target="#dispersion-profile-for-changing-sites-sec-change"><span class="header-section-number">10.2.1</span> Dispersion profile for changing sites (<span>Section&nbsp;4.1</span>)</a></li>
+  <li><a href="#dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" id="toc-dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" class="nav-link" data-scroll-target="#dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort"><span class="header-section-number">10.2.2</span> Dispersion profile for sites associated with reproductive effort (<span>Section&nbsp;5.3</span>)</a></li>
+  </ul></li>
+  <li><a href="#defining-a-significantly-changing-cpg-site" id="toc-defining-a-significantly-changing-cpg-site" class="nav-link" data-scroll-target="#defining-a-significantly-changing-cpg-site"><span class="header-section-number">10.3</span> Defining a ‘significantly changing CpG site’</a></li>
+  <li><a href="#including-pre-lekking-methylation-levels-in-the-models" id="toc-including-pre-lekking-methylation-levels-in-the-models" class="nav-link" data-scroll-target="#including-pre-lekking-methylation-levels-in-the-models"><span class="header-section-number">10.4</span> Including pre-lekking methylation levels in the models</a>
+  <ul class="collapse">
+  <li><a href="#relationship-pre-and-delta-methylation" id="toc-relationship-pre-and-delta-methylation" class="nav-link" data-scroll-target="#relationship-pre-and-delta-methylation"><span class="header-section-number">10.4.1</span> Relationship pre and delta methylation</a></li>
+  <li><a href="#building-a-dag" id="toc-building-a-dag" class="nav-link" data-scroll-target="#building-a-dag"><span class="header-section-number">10.4.2</span> Building a DAG</a></li>
+  </ul></li>
+  <li><a href="#including-lek-site-as-a-random-factor" id="toc-including-lek-site-as-a-random-factor" class="nav-link" data-scroll-target="#including-lek-site-as-a-random-factor"><span class="header-section-number">10.5</span> Including lek (site) as a random factor</a>
+  <ul class="collapse">
+  <li><a href="#my-suggestion-2" id="toc-my-suggestion-2" class="nav-link" data-scroll-target="#my-suggestion-2"><span class="header-section-number">10.5.1</span> My suggestion</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -190,7 +199,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></h1>
 </div>
 
 
@@ -205,91 +214,94 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p><strong>Are there CpG sites that are significant in multiple models?</strong></p>
-<p>It would be interesting to see whether a CpG site is both associated with reproductive effort as well as mating success, with physiological changes and mating success, or with both reproductive effort and physiological changes. For example, a CpG site could be significantly associated with fighting rate and the change in methylation might also be associated with reproductive success.</p>
-<p>I checked whether there are mutual significant CpG sites among models, and find the following:</p>
-<ul>
-<li><p>8 CpG sites are both significant for reproductive effort and annual mating success</p></li>
-<li><p>15 CpG sites are both significant for physiological changes and annual mating success</p></li>
-<li><p>No CpG sites are both significant for reproductive effort and physiological changes</p></li>
-</ul>
-<p>I plotted the raw data below, where on the left panels you can see the relationship between the effort / physiological trait and delta methylation, and on the right side the relationship between delta methylation and AMS for the same CpG site.</p>
-<section id="raw-data" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">9.1</span> Raw data</h2>
-<section id="reproductive-effort-vs-ams" class="level3" data-number="9.1.1">
-<h3 data-number="9.1.1" class="anchored" data-anchor-id="reproductive-effort-vs-ams"><span class="header-section-number">9.1.1</span> Reproductive effort vs AMS</h3>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site attendance and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_attend_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site fight rate and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_fight_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site centrality and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_dist_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<p>This page is dedicated to dump several aspects that we’re still discussing.</p>
+<section id="testing-sensitivity-to-filtering-parameters" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="testing-sensitivity-to-filtering-parameters"><span class="header-section-number">10.1</span> Testing sensitivity to filtering parameters</h2>
+<p>TBD: here we want to test if the same CpG sites turn significant and to what extent our results differ if we use more or less strict (post-)filtering decisions (<a href="2_filter.html#sec-postfilter"><span>Section&nbsp;3.4</span></a>).</p>
 </section>
-<section id="physiological-changes" class="level3" data-number="9.1.2">
-<h3 data-number="9.1.2" class="anchored" data-anchor-id="physiological-changes"><span class="header-section-number">9.1.2</span> Physiological changes</h3>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site delta mass and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_mass_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site delta HCT and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_hct_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site delta IgG and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_igg_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site delta Trypanosoma spp. and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_trypa_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data mutual significant CpG site delta Microfilaria spp. and AMS</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_microf_AMS.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
+<section id="filtering-for-overdispersion" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="filtering-for-overdispersion"><span class="header-section-number">10.2</span> Filtering for overdispersion</h2>
+<p>We can exclude CpG site models that suffer from significant over (or under) dispersion using several methods. I tested what the difference is if we exclude CpG site models that have a dispersion ratio over a certain threshold (the “threshold method”; dispersion ratio should be &lt; 1.1 and dispersion should not be significant) or if we exclude CpG site models that have a dispersion ratio outside of a specific quantile (the “quantile method”).</p>
+<p>We run a series of models in the manuscript (e.g.&nbsp;first we look for sites that change across the lekking period (<a href="3_changing_meth.html#sec-change"><span>Section&nbsp;4.1</span></a>) and then we look for CpG sites whose change in DNA methylation is associated with reproductive effort (<a href="4_effort_meth.html#sec-effort"><span>Section&nbsp;5.3</span></a>) and physiological changes (<a href="5_physio_meth.html#sec-physio"><span>Section&nbsp;6.1</span></a>)) and the dispersion profile can differ between models.</p>
+<section id="dispersion-profile-for-changing-sites-sec-change" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="dispersion-profile-for-changing-sites-sec-change"><span class="header-section-number">10.2.1</span> Dispersion profile for changing sites (<a href="3_changing_meth.html#sec-change"><span>Section&nbsp;4.1</span></a>)</h3>
+<p>Without applying any filters, I plotted the distribution of the dispersion ratio and the QQ-plot based on all CpG site models tested (&gt;300,000).</p>
+<p><img src="../plots/model_out/changing_histogram_dispersion_glmer_raw.png" class="img-fluid" alt="Histogram dispersion ratio changing CpG sites"> <img src="../plots/model_out/qqplot_changing_qqplot_glmer_raw.png" class="img-fluid" alt="QQ-plot changing CpG sites"></p>
+<p>There seems to be quite some overdispersion so we definitely have to filter out CpG site models. I filter for sites using both methods and look at the resulting QQ-plot.</p>
+<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png" class="img-fluid" alt="QQ-plot changing CpG sites threshold method"> <img src="../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png" class="img-fluid" alt="QQ-plot changing CpG sites 90 percentile"></p>
+<p>I chose to filter for the 90 percentile rather than 95 because there is a lot of overdispersion. There is a big difference in how many sites models we exclude: with the threshold method this is about half, whereas with the percentile method we (by definition) exclude about 10% only.</p>
+<p>I think the threshold method QQ plot looks better so I think we should maybe go with that? Since there seems to be a huge overdispersion still when we filter for the 90% percentile.</p>
 </section>
-<section id="highlight" class="level3" data-number="9.1.3">
-<h3 data-number="9.1.3" class="anchored" data-anchor-id="highlight"><span class="header-section-number">9.1.3</span> Highlight</h3>
-<p>Furthermore, there are two extra-interesting CpG sites whose DNA methylation change is associated with multiple phenotypic trait as well as AMS.</p>
-<ul>
-<li><p>ScEsiA3_16759__HRSCAF_19053_458 (interesting CpG site 1) is affected by delta mass, delta IgG and delta HCT and also explains variation in AMS.</p></li>
-<li><p>ScEsiA3_16870__HRSCAF_19426_63522502 (interesting CpG site 2) is affected by delta Trypanosoma spp. and delta HCT and also explains variation in AMS.</p></li>
-</ul>
-<p>Below you can find the plots for each of those two CpG sites.</p>
+<section id="dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort"><span class="header-section-number">10.2.2</span> Dispersion profile for sites associated with reproductive effort (<a href="4_effort_meth.html#sec-effort"><span>Section&nbsp;5.3</span></a>)</h3>
+<p>To start with, I only compared the models fitted for lek centrality and not the other traits. After only filtering out models that did not converge, I plotted the distribution of the dispersion ratio and the QQ-plot.</p>
+<p><img src="../plots/model_out/hist_dist_dispersion_ratio_raw.png" class="img-fluid" alt="Histogram dispersion ratio sites associated with centrality"> <img src="../plots/model_out/qqplot_dist_raw.png" class="img-fluid" alt="QQ-plot sites associated with centrality"></p>
+<p>There seems to be a lot less overdispersion than in the model for changing sites. There seems to be no model with a dispersion ratio &gt; 1.1 so filtering for the threshold here won’t change anything. I think it’s more suitable here to exclude models with a dispersion ratio outside of the 95 percentile. But if we do this, the QQ-plot looks suboptimal and we actually exclude previously significant CpG sites. So maybe we should not filter for overdispersion here (since there is not really any overdispersion?).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data interesting CpG site 1</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_highlight_CpG_1.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">QQ-plot sites associated with centrality 95 percentile</figcaption>
+<p><img src="../plots/model_out/qqplot_dist_95quantile.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+<section id="my-suggestion" class="level4" data-number="10.2.2.1">
+<h4 data-number="10.2.2.1" class="anchored" data-anchor-id="my-suggestion"><span class="header-section-number">10.2.2.1</span> My suggestion</h4>
+<p>I’d suggest we filter for dispersion ratio &lt; 1.1 &amp; dispersion p-value &gt; 0.05 for the ‘changing CpG site model’ and we observe the QQ plot of the the reproductive effort / physiology / fitness models separately. Only if there is visible overdispersion we would exclude sites based on the 95 percentile.</p>
+</section>
+</section>
+</section>
+<section id="defining-a-significantly-changing-cpg-site" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="defining-a-significantly-changing-cpg-site"><span class="header-section-number">10.3</span> Defining a ‘significantly changing CpG site’</h2>
+<p>As suggested I filtered for CpG sites that have an average change in methylation (between samples) of at least 10% between pre- and post-lekking to define a ‘significantly changing CpG site’ (as well as having a FDR-corrected q-value &lt; 0.05, of course). The resulting volcano plot looks at follows (pretty cool!)</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data interesting CpG site 2</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_overlap_highlight_CpG_2.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Volcano plot changing CpG sites</figcaption>
+<p><img src="../plots/model_out/volcano_change.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+<p>Whereas we previously identified &gt;3000 significantly changing sites (based on the beta estimate), when we filter for at least 10% methylation difference (positive or negative), we end up with 437 significant CpG sites.</p>
+<section id="my-suggestion-1" class="level4" data-number="10.3.0.1">
+<h4 data-number="10.3.0.1" class="anchored" data-anchor-id="my-suggestion-1"><span class="header-section-number">10.3.0.1</span> My suggestion</h4>
+<p>I’d argue we apply this 10% methylation filter to be more conservative.</p>
+</section>
+</section>
+<section id="including-pre-lekking-methylation-levels-in-the-models" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="including-pre-lekking-methylation-levels-in-the-models"><span class="header-section-number">10.4</span> Including pre-lekking methylation levels in the models</h2>
+<p>We expect that pre-lekking methylation levels affect delta methylation %. If pre-lekking methylation is 0%, there is potential for +100% change, but if pre-lekking methylation is 100%, there is potential for -100% change. On the other hand, if pre-lekking methylation is 50%, there is only potential for -50% and +50% change. Thus, we expect a U-shaped relationship between pre-lekking and absolute delta methylation.</p>
+<p>In the reproductive effort, physiology and fitness models I had so far included pre-lekking methylation levels. Here we explore a bit more in depth if we should or should not do this.</p>
+<section id="relationship-pre-and-delta-methylation" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="relationship-pre-and-delta-methylation"><span class="header-section-number">10.4.1</span> Relationship pre and delta methylation</h3>
+<p>I plot the empirical data for the relationship, based on only the CpG sites that significantly change across the lekking period (as these are the CpG sites used in the subsequent models and otherwise delta methylation will be around 0). The red line in the left plot is the (linear) regression while correcting for id as a random effect (so a lmer output).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Pre-lekking vs delta lekking methylation %</figcaption>
+<p><img src="../plots/explore/pre_vs_delta.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>There does seem to be some association between the two but not very strong.</p>
+</section>
+<section id="building-a-dag" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="building-a-dag"><span class="header-section-number">10.4.2</span> Building a DAG</h3>
+<p>I want to understand better if we should or should not control for pre-lekking using a conceptual framework which will help us identify our expectations and identify ‘good’ controlling variables and ‘bad’ ones. For this, I tried to create a DAG (directed acyclic graph) which sketches out our causal expectations. I think this is quite tricky but should be done. This is what I came up with:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">DAG lekking and epigenetic changes</figcaption>
+<p><img src="../img/DAG_epigenetics_lekking.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>As a recap, our models look like this:</p>
+<p><code>delta_meth ~ trait + pre_lekking + (1|site/id)</code></p>
+<p>I have to check with some of my colleagues, but because we expect a relationship between pre-lekking methylation and body condition, we want to ‘block’ this pathway when we try to understand the relationship between e.g.&nbsp;reproductive effort and methylation changes (we want to close the ‘backdoor’ following McElreath’s ‘Statistical rethinking’; see [https://speakerdeck.com/rmcelreath/statistical-rethinking-2023-lecture-06] or other summaries on ‘the haunted DAG &amp; the causal terror’ chapter).</p>
+<p>This would then be the case for all models (including those for fitness). I’m finding this really difficult though so I’m not sure what the most correct decision is.</p>
+<p>Furthermore, when trying to think of this DAG I also realized that the relationship between reproductive effort, physiological changes and parasites is complex, and I wonder if the way I modelled things (separately) is the best approach. I would say yes, as long as we describe this complex relationship well (e.g.&nbsp;a male fights a lot, loses body weight, is more susceptible to parasite infection, gets ‘ill’, stops investing in reproduction but in immune response instead, reduced fighting rate).</p>
+<p>Alternatively, we could only build one model with all variables as predictors (reproductive effort, physiology, parasites) but I think this would overfit our model and we have too little data for this, so I still think it’s okay to do it the way we did, but describe it in a way that we cannot outrule the possibility that even though we find a CpG site significantly affected by fighting rate, it’s also possible that other factors are into play here that affect fighting rate and thus methylation changes indirectly.</p>
+</section>
+</section>
+<section id="including-lek-site-as-a-random-factor" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="including-lek-site-as-a-random-factor"><span class="header-section-number">10.5</span> Including lek (site) as a random factor</h2>
+<p>So far, I include ID nested within site as a random effect. However, the distribution of samples across leks is very uneven; we have samples from 5 leks (118 samples in total). The lowest number of samples for a site is 6, with the highest being 30. However for the models that use delta methylation, these sample sizes are divided by 2.</p>
+<section id="my-suggestion-2" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="my-suggestion-2"><span class="header-section-number">10.5.1</span> My suggestion</h3>
+<p>Based on the distribution, I think it’s probably better to leave out lek site. Of course we should correct for the structure in our data where possible, but considering I actually get quite some errors due to not having enough samples within each site/id combination in the models, we might be trying to overfit our data. This might also explain the weird volcano plots (only a few very significant CpG sites)?</p>
 
 
 </section>
@@ -545,14 +557,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../qmd/7_annotate.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Annotation</span></span>
+      <a href="../qmd/8_mutual_sites.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../qmd/9_discussion.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

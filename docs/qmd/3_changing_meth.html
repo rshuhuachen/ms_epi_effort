@@ -194,6 +194,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -204,15 +210,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">4.1</span> Prepare the data</a></li>
+  <li><a href="#sec-change" id="toc-sec-change" class="nav-link active" data-scroll-target="#sec-change"><span class="header-section-number">4.1</span> Prepare the data</a></li>
   <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">4.2</span> Function to run the model</a></li>
   <li><a href="#sec-changingcpg" id="toc-sec-changingcpg" class="nav-link" data-scroll-target="#sec-changingcpg"><span class="header-section-number">4.3</span> Run the model</a></li>
-  <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting"><span class="header-section-number">4.4</span> Plotting</a>
+  <li><a href="#explore-and-filter-for-under--and-overdispersion" id="toc-explore-and-filter-for-under--and-overdispersion" class="nav-link" data-scroll-target="#explore-and-filter-for-under--and-overdispersion"><span class="header-section-number">4.4</span> Explore and filter for under- and overdispersion</a></li>
+  <li><a href="#filter-for-average-methylation-differences" id="toc-filter-for-average-methylation-differences" class="nav-link" data-scroll-target="#filter-for-average-methylation-differences"><span class="header-section-number">4.5</span> Filter for average methylation % differences</a></li>
+  <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting"><span class="header-section-number">4.6</span> Plotting</a>
   <ul class="collapse">
-  <li><a href="#volcano-plot" id="toc-volcano-plot" class="nav-link" data-scroll-target="#volcano-plot"><span class="header-section-number">4.4.1</span> Volcano plot</a></li>
-  <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data"><span class="header-section-number">4.4.2</span> Raw data</a></li>
+  <li><a href="#volcano-plot" id="toc-volcano-plot" class="nav-link" data-scroll-target="#volcano-plot"><span class="header-section-number">4.6.1</span> Volcano plot</a></li>
+  <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data"><span class="header-section-number">4.6.2</span> Raw data</a></li>
   </ul></li>
-  <li><a href="#note-on-lmm-vs-glmm" id="toc-note-on-lmm-vs-glmm" class="nav-link" data-scroll-target="#note-on-lmm-vs-glmm"><span class="header-section-number">4.5</span> Note on LMM vs GLMM</a></li>
+  <li><a href="#note-on-lmm-vs-glmm" id="toc-note-on-lmm-vs-glmm" class="nav-link" data-scroll-target="#note-on-lmm-vs-glmm"><span class="header-section-number">4.7</span> Note on LMM vs GLMM</a></li>
   </ul>
 </nav>
     </div>
@@ -238,8 +246,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><strong>Identifying CpG sites that change over the lekking season</strong></p>
 <p>Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. Moreover, as there are multiple samples for each individual, we correct for the non-independence of samples by including ID as a random effect. The response variables in these models are both the number of methylated and number of unmethylated C’s, using the <code>cbind</code> function.</p>
-<section id="prepare-the-data" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="prepare-the-data"><span class="header-section-number">4.1</span> Prepare the data</h2>
+<section id="sec-change" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sec-change"><span class="header-section-number">4.1</span> Prepare the data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, matrixStats, </span>
@@ -357,41 +365,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model in parallel per CpG site (list item)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(data, function_model_glmer, <span class="at">mc.cores=</span><span class="dv">4</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, out_glmer)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">### exclude overdispersion and convergence issues</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(convergence)) </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">### apply a FDR multiple-testing correction</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>out_glmer<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, out_glmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>A “changing CpG site” is then defined as a CpG site with a significant effect of time period (FDR-corrected q-value &lt; 0.05) and an absolute beta estimate of 0.1 (similar to needing at least a 10% methylation difference between groups).</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">### only select CpG sites with significant effects of pre/post</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sub_glmer_prepost <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(prepost_estimate <span class="sc">&gt;=</span> <span class="fl">0.1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>A total of 3,563 CpG sites significantly change across the lekking period.</p>
 </section>
-<section id="plotting" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="plotting"><span class="header-section-number">4.4</span> Plotting</h2>
-<section id="volcano-plot" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="volcano-plot"><span class="header-section-number">4.4.1</span> Volcano plot</h3>
+<section id="explore-and-filter-for-under--and-overdispersion" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="explore-and-filter-for-under--and-overdispersion"><span class="header-section-number">4.4</span> Explore and filter for under- and overdispersion</h2>
+<p>We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is under/overdispersion and how to best filter for it.</p>
+<p><img src="../plots/model_out/changing_histogram_dispersion_glmer_raw.png" class="img-fluid" alt="Histogram dispersion ratio"> <img src="../plots/model_out/changing_qqplot_glmer.png" class="img-fluid" alt="QQ plot model changing CpG sites"></p>
+<p>Next, we explore how to best filter for overdispersion: using a dispersion ratio threshold of 1.1 or by filtering for the percentile.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>out_glmer_threshold <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer_raw, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">is.na</span>(convergence)) <span class="co"># 168720, 179311 with cov not nT</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>out_glmer_threshold<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer_threshold<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer_threshold))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(out_glmer_threshold)<span class="sc">/</span><span class="fu">nrow</span>(out_glmer_raw) <span class="co"># = 0.53</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">subset</span>(out_glmer_threshold, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="co"># N = 3563</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="do">## second option: within the 90% quantiles (not 95% because too much overdispersion)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>out_glmer_perc <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer_raw, dispersion.ratio <span class="sc">&lt;</span> <span class="fu">as.vector</span>(<span class="fu">quantile</span>(out_glmer_raw<span class="sc">$</span>dispersion.ratio, <span class="fl">0.95</span>)) <span class="sc">&amp;</span> dispersion.ratio <span class="sc">&gt;</span> <span class="fu">as.vector</span>(<span class="fu">quantile</span>(out_glmer_raw<span class="sc">$</span>dispersion.ratio, <span class="fl">0.05</span>)))</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>out_glmer_perc<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer_perc<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer_perc))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(out_glmer_perc)<span class="sc">/</span><span class="fu">nrow</span>(out_glmer_raw) <span class="co"># = 0.90 (obvs but as sanity check)</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">subset</span>(out_glmer_perc, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="co"># N = 19110</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This is what the qqplot looks like (plotting the FDR-corrected q-values, not p-values).</p>
+<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png" class="img-fluid" alt="QQ-plot when filtering for ratio < 1.1"> <img src="../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png" class="img-fluid" alt="QQ-plot when filtering for 90% percentile of the ratio"></p>
+<p>Since there is still alot of overdispersion when filtering for the 90% quantile of the dispersion ratio, let’s filter for the ratio instead (absolute cut-off at &lt; 1.1 and p-value &gt; 0.05)</p>
+</section>
+<section id="filter-for-average-methylation-differences" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="filter-for-average-methylation-differences"><span class="header-section-number">4.5</span> Filter for average methylation % differences</h2>
+<p>A “changing CpG site” is then defined as a CpG site with a significant effect of time period (FDR-corrected q-value &lt; 0.05) and mean delta methylation % (across individuals) of at least -10% or 10%.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Filter for mean delta methylation ####</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">"results/modeloutput/all_sites_deltameth.RData"</span>) <span class="co"># this file contains per CpG site the delta methylation levels</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">### Calculate average delta_meth per CpG site</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>mean_delta_meth <span class="ot">&lt;-</span> delta_meth <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(chr_pos) <span class="sc">%&gt;%</span> <span class="fu">summarise_at</span>(<span class="fu">vars</span>(delta_meth), <span class="fu">funs</span>(<span class="fu">mean</span>(., <span class="at">na.rm=</span><span class="cn">TRUE</span>)))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mean_delta_meth)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"mean_delta_meth"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">left_join</span>(out_glmer_threshold, mean_delta_meth, <span class="at">by =</span> <span class="st">"chr_pos"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">### Filter min absolute mean methylation of 10%</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">## save the epi data only from cpg's that are sig</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>sub_glmer_prepost <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer, prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">abs</span>(mean_delta_meth) <span class="sc">&gt;=</span> <span class="fl">0.1</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>changing_cpg <span class="ot">&lt;-</span> <span class="fu">subset</span>(prepost_long, chr_pos <span class="sc">%in%</span> sub_glmer_prepost<span class="sc">$</span>chr_pos)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(changing_cpg, <span class="at">file=</span><span class="st">"results/modeloutput/subset_sites_sig_prepost.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A total of 434 CpG sites significantly change across the lekking period.</p>
+</section>
+<section id="plotting" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="plotting"><span class="header-section-number">4.6</span> Plotting</h2>
+<section id="volcano-plot" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="volcano-plot"><span class="header-section-number">4.6.1</span> Volcano plot</h3>
 <p>Next, we make a volcano plot to see the results.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">"results/modeloutput/prepost_modeloutput_glmer_min0.75.RData"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> out_glmer <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">sig =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(<span class="fu">abs</span>(<span class="fu">as.numeric</span>(prepost_estimate)) <span class="sc">&gt;</span> <span class="fl">0.1</span> <span class="sc">&amp;</span> prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">~</span> <span class="st">"sig"</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"nonsig"</span>)))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>clrs <span class="ot">&lt;-</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">6</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(out_glmer, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">as.numeric</span>(prepost_estimate), <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fu">as.numeric</span>(prepost_qval)))) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">4</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(sig))) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Estimate time period"</span>, <span class="at">y =</span> <span class="st">"-log10(q-value)"</span>) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"grey60"</span>, clrs[<span class="dv">4</span>])) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>), <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) <span class="ot">-&gt;</span> volcano_change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> out_glmer <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sig =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(<span class="fu">abs</span>(mean_delta_meth) <span class="sc">&gt;=</span> <span class="fl">0.1</span> <span class="sc">&amp;</span> prepost_qval <span class="sc">&lt;</span> <span class="fl">0.05</span> <span class="sc">~</span> <span class="st">"sig"</span>, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"nonsig"</span>)))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>clrs <span class="ot">&lt;-</span> viridisLite<span class="sc">::</span><span class="fu">viridis</span>(<span class="dv">6</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(out_glmer, <span class="fu">aes</span>(<span class="at">x =</span> mean_delta_meth, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fu">as.numeric</span>(prepost_qval)))) <span class="sc">+</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">4</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="fu">aes</span>(<span class="at">col =</span> <span class="fu">as.factor</span>(sig))) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(<span class="st">"Mean "</span><span class="sc">*</span>Delta<span class="sc">*</span><span class="st">" methylation %"</span>), <span class="at">y =</span> <span class="st">"-log10(q-value)"</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"grey60"</span>, clrs[<span class="dv">4</span>])) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(<span class="fl">0.05</span>), <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.1</span>, <span class="at">col =</span> <span class="st">"darkred"</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) <span class="ot">-&gt;</span> volcano_change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
@@ -399,24 +440,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption class="figure-caption">Volcano plot changing CpG sites</figcaption>
 </figure>
 </div>
-<p>Interestingly, there seems to more CpG sites that decrease in methylation over time (negative beta estimates) compared to CpG sites that increase in methylation over time (positive beta estimates).</p>
+<p>Interestingly, there seems to more CpG sites that increase in methylation over time compared to CpG sites that increase in methylation over time.</p>
 </section>
-<section id="raw-data" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">4.4.2</span> Raw data</h3>
+<section id="raw-data" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">4.6.2</span> Raw data</h3>
 <p>To assess whether the models performed well, I also plotted the raw data of the five most significantly changing CpG sites.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># raw plot for the 1st significant CpG site, repeat for the other 4 and combine with cowplot</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> out_glmer <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(prepost_qval)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(changing_cpg, chr_pos <span class="sc">==</span> out_glmer<span class="sc">$</span>chr_pos[<span class="dv">1</span>]) <span class="sc">%&gt;%</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(id, year) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> prepost, <span class="at">y =</span> methperc))<span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">linewidth=</span><span class="dv">1</span>, <span class="at">outlier.shape=</span><span class="cn">NA</span>) <span class="sc">+</span> </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">group =</span> id_year), <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"grey60"</span>, <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3922</span>)) <span class="sc">+</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">size=</span>cov), <span class="at">col =</span> clrs[<span class="dv">4</span>], <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3922</span>)) <span class="sc">+</span> </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time period"</span>, <span class="at">y =</span> <span class="st">"Methylation percentage"</span>, <span class="at">subtitle =</span> out_glmer<span class="sc">$</span>chr_pos[<span class="dv">1</span>]) <span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) <span class="ot">-&gt;</span> plot_top_cpg_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># raw plot for the 1st significant CpG site, repeat for the other 4 and combine with cowplot</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> out_glmer <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(prepost_qval)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">subset</span>(changing_cpg, chr_pos <span class="sc">==</span> out_glmer<span class="sc">$</span>chr_pos[<span class="dv">1</span>]) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(id, year) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(., <span class="fu">aes</span>(<span class="at">x =</span> prepost, <span class="at">y =</span> methperc))<span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">linewidth=</span><span class="dv">1</span>, <span class="at">outlier.shape=</span><span class="cn">NA</span>) <span class="sc">+</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">group =</span> id_year), <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"grey60"</span>, <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3922</span>)) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">size=</span>cov), <span class="at">col =</span> clrs[<span class="dv">4</span>], <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>, <span class="at">seed =</span> <span class="dv">3922</span>)) <span class="sc">+</span> </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Time period"</span>, <span class="at">y =</span> <span class="st">"Methylation percentage"</span>, <span class="at">subtitle =</span> out_glmer<span class="sc">$</span>chr_pos[<span class="dv">1</span>]) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) <span class="sc">+</span> <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
@@ -426,9 +467,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="note-on-lmm-vs-glmm" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="note-on-lmm-vs-glmm"><span class="header-section-number">4.5</span> Note on LMM vs GLMM</h2>
-<p>I also executed a similar model to above but using a lmer where the response variable is the methylation % rather than nC, nT. Using the same filtering steps, I only found 199 significantly changing CpG sites, where 103 were also included in the glmer output.</p>
+<section id="note-on-lmm-vs-glmm" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="note-on-lmm-vs-glmm"><span class="header-section-number">4.7</span> Note on LMM vs GLMM</h2>
+<p>I also executed a similar model to above but using a lmer where the response variable is the methylation % rather than nC, nT. Using the same filtering steps, I found a less CpG sites (203 vs 434 sites) with limited overlap between the two models (105 mutual sites).</p>
 
 
 </section>

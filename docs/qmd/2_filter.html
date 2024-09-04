@@ -194,6 +194,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -207,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link active" data-scroll-target="#prepare-data"><span class="header-section-number">3.1</span> Prepare data</a></li>
   <li><a href="#pre-filter-data" id="toc-pre-filter-data" class="nav-link" data-scroll-target="#pre-filter-data"><span class="header-section-number">3.2</span> Pre-filter data</a></li>
   <li><a href="#convert-data" id="toc-convert-data" class="nav-link" data-scroll-target="#convert-data"><span class="header-section-number">3.3</span> Convert data</a></li>
-  <li><a href="#post-filtering" id="toc-post-filtering" class="nav-link" data-scroll-target="#post-filtering"><span class="header-section-number">3.4</span> Post-filtering</a></li>
+  <li><a href="#sec-postfilter" id="toc-sec-postfilter" class="nav-link" data-scroll-target="#sec-postfilter"><span class="header-section-number">3.4</span> Post-filtering</a></li>
   </ul>
 </nav>
     </div>
@@ -270,8 +276,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="post-filtering" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="post-filtering"><span class="header-section-number">3.4</span> Post-filtering</h2>
+<section id="sec-postfilter" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-postfilter"><span class="header-section-number">3.4</span> Post-filtering</h2>
 <p>Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59 pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#count number of individuals per CpG per time point</span></span>

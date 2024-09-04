@@ -6,13 +6,13 @@ format:
     fig-cap-location: top
 ---
 
-**Which changes in CpG site methylation are associated with changes in physiology?**{#sec-physio}
+**Which changes in CpG site methylation are associated with changes in physiology?**
 
 Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT.
 
 Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.
 
-## Prepare the data
+## Prepare the data {#sec-physio}
 
 ```{r delta_meth, echo=T, eval=F}
 
@@ -276,5 +276,3 @@ After also subsetting for at least an (absolute) estimate of 0.1, there are 12 s
 ![Raw data delta HCT a](../plots/model_out/rawdata_plot_hct_a.png)
 
 ![Raw data delta HCT b](../plots/model_out/rawdata_plot_hct_b.png)
-
-

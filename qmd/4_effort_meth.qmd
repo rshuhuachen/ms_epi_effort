@@ -6,7 +6,7 @@ format:
     fig-cap-location: top
 ---
 
-**Which changes in CpG site methylation are associated with reproductive effort?**{#sec-effort}
+**Which changes in CpG site methylation are associated with reproductive effort?**
 
 We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
 
@@ -14,7 +14,7 @@ Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA 
 
 First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).
 
-## Delta methylation
+## Delta methylation 
 
 ```{r delta_meth, echo=T, eval=F}
 
@@ -44,7 +44,7 @@ delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
 delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
 ```
 
-Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model. 
+Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model.
 
 ## Pre-methylation vs delta methylation
 
@@ -54,7 +54,7 @@ We expect that pre-lekking methylation levels affect delta methylation %. If pre
 
 There does seem to be some association between the two. However, we cannot statistically correct for this because of the following:
 
-## Prepare the data
+## Prepare the data {#sec-effort}
 
 ```{r model, echo=T, eval=F}
 
@@ -80,7 +80,6 @@ delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ```
-
 
 ## Function to run the model
 
@@ -270,8 +269,4 @@ We can plot the raw data here per trait:
 
 ### Fight
 
-![Raw data fighting rate a](../plots/model_out/rawdata_plot_fight_a.png)
-![Raw data fighting rate b](../plots/model_out/rawdata_plot_fight_b.png)
-![Raw data fighting rate c](../plots/model_out/rawdata_plot_fight_c.png)
-![Raw data fighting rate d](../plots/model_out/rawdata_plot_fight_d.png)
-
+![Raw data fighting rate a](../plots/model_out/rawdata_plot_fight_a.png) ![Raw data fighting rate b](../plots/model_out/rawdata_plot_fight_b.png) ![Raw data fighting rate c](../plots/model_out/rawdata_plot_fight_c.png) ![Raw data fighting rate d](../plots/model_out/rawdata_plot_fight_d.png)

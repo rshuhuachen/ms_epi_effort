@@ -18,6 +18,7 @@ book:
       - qmd/6_fitness_meth.qmd
       - qmd/7_annotate.qmd
       - qmd/8_mutual_sites.qmd
+      - qmd/9_discussion.qmd
   navbar:
     search: true
   favicon: img/grouse_silhouette.png

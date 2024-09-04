@@ -194,6 +194,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -204,7 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">6.1</span> Prepare the data</a></li>
+  <li><a href="#sec-physio" id="toc-sec-physio" class="nav-link active" data-scroll-target="#sec-physio"><span class="header-section-number">6.1</span> Prepare the data</a></li>
   <li><a href="#functon-to-run-the-model" id="toc-functon-to-run-the-model" class="nav-link" data-scroll-target="#functon-to-run-the-model"><span class="header-section-number">6.2</span> Functon to run the model</a></li>
   <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</a></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">6.4</span> Results</a>
@@ -240,8 +246,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Which changes in CpG site methylation are associated with changes in physiology?</strong></p>
 <p>Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (<em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>), body mass, IgG and HCT.</p>
 <p>Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.</p>
-<section id="prepare-the-data" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="prepare-the-data"><span class="header-section-number">6.1</span> Prepare the data</h2>
+<section id="sec-physio" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-physio"><span class="header-section-number">6.1</span> Prepare the data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, matrixStats, </span>
