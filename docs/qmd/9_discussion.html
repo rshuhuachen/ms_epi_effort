@@ -180,8 +180,12 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#dispersion-profile-for-changing-sites-sec-change" id="toc-dispersion-profile-for-changing-sites-sec-change" class="nav-link" data-scroll-target="#dispersion-profile-for-changing-sites-sec-change"><span class="header-section-number">10.2.1</span> Dispersion profile for changing sites (<span>Section&nbsp;4.1</span>)</a></li>
   <li><a href="#dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" id="toc-dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" class="nav-link" data-scroll-target="#dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort"><span class="header-section-number">10.2.2</span> Dispersion profile for sites associated with reproductive effort (<span>Section&nbsp;5.3</span>)</a></li>
+  <li><a href="#my-suggestion" id="toc-my-suggestion" class="nav-link" data-scroll-target="#my-suggestion"><span class="header-section-number">10.2.3</span> My suggestion</a></li>
   </ul></li>
-  <li><a href="#defining-a-significantly-changing-cpg-site" id="toc-defining-a-significantly-changing-cpg-site" class="nav-link" data-scroll-target="#defining-a-significantly-changing-cpg-site"><span class="header-section-number">10.3</span> Defining a ‘significantly changing CpG site’</a></li>
+  <li><a href="#defining-a-significantly-changing-cpg-site" id="toc-defining-a-significantly-changing-cpg-site" class="nav-link" data-scroll-target="#defining-a-significantly-changing-cpg-site"><span class="header-section-number">10.3</span> Defining a ‘significantly changing CpG site’</a>
+  <ul class="collapse">
+  <li><a href="#my-suggestion-1" id="toc-my-suggestion-1" class="nav-link" data-scroll-target="#my-suggestion-1"><span class="header-section-number">10.3.1</span> My suggestion</a></li>
+  </ul></li>
   <li><a href="#including-pre-lekking-methylation-levels-in-the-models" id="toc-including-pre-lekking-methylation-levels-in-the-models" class="nav-link" data-scroll-target="#including-pre-lekking-methylation-levels-in-the-models"><span class="header-section-number">10.4</span> Including pre-lekking methylation levels in the models</a>
   <ul class="collapse">
   <li><a href="#relationship-pre-and-delta-methylation" id="toc-relationship-pre-and-delta-methylation" class="nav-link" data-scroll-target="#relationship-pre-and-delta-methylation"><span class="header-section-number">10.4.1</span> Relationship pre and delta methylation</a></li>
@@ -276,10 +280,10 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="../plots/model_out/qqplot_dist_95quantile.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
-<section id="my-suggestion" class="level4" data-number="10.2.2.1">
-<h4 data-number="10.2.2.1" class="anchored" data-anchor-id="my-suggestion"><span class="header-section-number">10.2.2.1</span> My suggestion</h4>
-<p>I’d suggest we filter for dispersion ratio &lt; 1.1 &amp; dispersion p-value &gt; 0.05 for the ‘changing CpG site model’ and we observe the QQ plot of the the reproductive effort / physiology / fitness models separately. Only if there is visible overdispersion we would exclude sites based on the 95 percentile.</p>
 </section>
+<section id="my-suggestion" class="level3" data-number="10.2.3">
+<h3 data-number="10.2.3" class="anchored" data-anchor-id="my-suggestion"><span class="header-section-number">10.2.3</span> My suggestion</h3>
+<p>I’d suggest we filter for dispersion ratio &lt; 1.1 &amp; dispersion p-value &gt; 0.05 for the ‘changing CpG site model’ and we observe the QQ plot of the the reproductive effort / physiology / fitness models separately. Only if there is visible overdispersion we would exclude sites based on the 95 percentile.</p>
 </section>
 </section>
 <section id="defining-a-significantly-changing-cpg-site" class="level2" data-number="10.3">
@@ -292,8 +296,8 @@ ul.task-list li input[type="checkbox"] {
 </figure>
 </div>
 <p>Whereas we previously identified &gt;3000 significantly changing sites (based on the beta estimate), when we filter for at least 10% methylation difference (positive or negative), we end up with 437 significant CpG sites.</p>
-<section id="my-suggestion-1" class="level4" data-number="10.3.0.1">
-<h4 data-number="10.3.0.1" class="anchored" data-anchor-id="my-suggestion-1"><span class="header-section-number">10.3.0.1</span> My suggestion</h4>
+<section id="my-suggestion-1" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="my-suggestion-1"><span class="header-section-number">10.3.1</span> My suggestion</h3>
 <p>I’d argue we apply this 10% methylation filter to be more conservative.</p>
 </section>
 </section>

@@ -48,7 +48,7 @@ There seems to be a lot less overdispersion than in the model for changing sites
 
 ![QQ-plot sites associated with centrality 95 percentile](../plots/model_out/qqplot_dist_95quantile.png)
 
-#### My suggestion
+### My suggestion
 
 I'd suggest we filter for dispersion ratio \< 1.1 & dispersion p-value \> 0.05 for the 'changing CpG site model' and we observe the QQ plot of the the reproductive effort / physiology / fitness models separately. Only if there is visible overdispersion we would exclude sites based on the 95 percentile.
 
@@ -60,7 +60,7 @@ As suggested I filtered for CpG sites that have an average change in methylation
 
 Whereas we previously identified \>3000 significantly changing sites (based on the beta estimate), when we filter for at least 10% methylation difference (positive or negative), we end up with 437 significant CpG sites.
 
-#### My suggestion
+### My suggestion
 
 I'd argue we apply this 10% methylation filter to be more conservative.
 
