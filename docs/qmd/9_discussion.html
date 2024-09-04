@@ -226,16 +226,49 @@ ul.task-list li input[type="checkbox"] {
 <section id="dispersion-profile-for-changing-sites-sec-change" class="level3" data-number="10.2.1">
 <h3 data-number="10.2.1" class="anchored" data-anchor-id="dispersion-profile-for-changing-sites-sec-change"><span class="header-section-number">10.2.1</span> Dispersion profile for changing sites (<a href="3_changing_meth.html#sec-change"><span>Section&nbsp;4.1</span></a>)</h3>
 <p>Without applying any filters, I plotted the distribution of the dispersion ratio and the QQ-plot based on all CpG site models tested (&gt;300,000).</p>
-<p><img src="../plots/model_out/changing_histogram_dispersion_glmer_raw.png" class="img-fluid" alt="Histogram dispersion ratio changing CpG sites"> <img src="../plots/model_out/qqplot_changing_qqplot_glmer_raw.png" class="img-fluid" alt="QQ-plot changing CpG sites"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion ratio changing CpG sites</figcaption>
+<p><img src="../plots/model_out/changing_histogram_dispersion_glmer_raw.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">QQ-plot changing CpG sites</figcaption>
+<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_raw.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 <p>There seems to be quite some overdispersion so we definitely have to filter out CpG site models. I filter for sites using both methods and look at the resulting QQ-plot.</p>
-<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png" class="img-fluid" alt="QQ-plot changing CpG sites threshold method"> <img src="../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png" class="img-fluid" alt="QQ-plot changing CpG sites 90 percentile"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">QQ-plot changing CpG sites threshold method</figcaption>
+<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">QQ-plot changing CpG sites 90 percentile</figcaption>
+<p><img src="../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 <p>I chose to filter for the 90 percentile rather than 95 because there is a lot of overdispersion. There is a big difference in how many sites models we exclude: with the threshold method this is about half, whereas with the percentile method we (by definition) exclude about 10% only.</p>
 <p>I think the threshold method QQ plot looks better so I think we should maybe go with that? Since there seems to be a huge overdispersion still when we filter for the 90% percentile.</p>
 </section>
 <section id="dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort" class="level3" data-number="10.2.2">
 <h3 data-number="10.2.2" class="anchored" data-anchor-id="dispersion-profile-for-sites-associated-with-reproductive-effort-sec-effort"><span class="header-section-number">10.2.2</span> Dispersion profile for sites associated with reproductive effort (<a href="4_effort_meth.html#sec-effort"><span>Section&nbsp;5.3</span></a>)</h3>
 <p>To start with, I only compared the models fitted for lek centrality and not the other traits. After only filtering out models that did not converge, I plotted the distribution of the dispersion ratio and the QQ-plot.</p>
-<p><img src="../plots/model_out/hist_dist_dispersion_ratio_raw.png" class="img-fluid" alt="Histogram dispersion ratio sites associated with centrality"> <img src="../plots/model_out/qqplot_dist_raw.png" class="img-fluid" alt="QQ-plot sites associated with centrality"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion ratio sites associated with centrality</figcaption>
+<p><img src="../plots/model_out/hist_dist_dispersion_ratio_raw.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">QQ-plot sites associated with centrality</figcaption>
+<p><img src="../plots/model_out/qqplot_dist_raw.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 <p>There seems to be a lot less overdispersion than in the model for changing sites. There seems to be no model with a dispersion ratio &gt; 1.1 so filtering for the threshold here won’t change anything. I think it’s more suitable here to exclude models with a dispersion ratio outside of the 95 percentile. But if we do this, the QQ-plot looks suboptimal and we actually exclude previously significant CpG sites. So maybe we should not filter for overdispersion here (since there is not really any overdispersion?).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">

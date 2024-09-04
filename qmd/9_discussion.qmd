@@ -22,11 +22,15 @@ We run a series of models in the manuscript (e.g. first we look for sites that c
 
 Without applying any filters, I plotted the distribution of the dispersion ratio and the QQ-plot based on all CpG site models tested (\>300,000).
 
-![Histogram dispersion ratio changing CpG sites](../plots/model_out/changing_histogram_dispersion_glmer_raw.png) ![QQ-plot changing CpG sites](../plots/model_out/qqplot_changing_qqplot_glmer_raw.png)
+![Histogram dispersion ratio changing CpG sites](../plots/model_out/changing_histogram_dispersion_glmer_raw.png) 
+
+![QQ-plot changing CpG sites](../plots/model_out/qqplot_changing_qqplot_glmer_raw.png)
 
 There seems to be quite some overdispersion so we definitely have to filter out CpG site models. I filter for sites using both methods and look at the resulting QQ-plot.
 
-![QQ-plot changing CpG sites threshold method](../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png) ![QQ-plot changing CpG sites 90 percentile](../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png)
+![QQ-plot changing CpG sites threshold method](../plots/model_out/qqplot_changing_qqplot_glmer_threshold.png) 
+
+![QQ-plot changing CpG sites 90 percentile](../plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png)
 
 I chose to filter for the 90 percentile rather than 95 because there is a lot of overdispersion. There is a big difference in how many sites models we exclude: with the threshold method this is about half, whereas with the percentile method we (by definition) exclude about 10% only.
 
@@ -36,7 +40,9 @@ I think the threshold method QQ plot looks better so I think we should maybe go 
 
 To start with, I only compared the models fitted for lek centrality and not the other traits. After only filtering out models that did not converge, I plotted the distribution of the dispersion ratio and the QQ-plot.
 
-![Histogram dispersion ratio sites associated with centrality](../plots/model_out/hist_dist_dispersion_ratio_raw.png) ![QQ-plot sites associated with centrality](../plots/model_out/qqplot_dist_raw.png)
+![Histogram dispersion ratio sites associated with centrality](../plots/model_out/hist_dist_dispersion_ratio_raw.png) 
+
+![QQ-plot sites associated with centrality](../plots/model_out/qqplot_dist_raw.png)
 
 There seems to be a lot less overdispersion than in the model for changing sites. There seems to be no model with a dispersion ratio \> 1.1 so filtering for the threshold here won't change anything. I think it's more suitable here to exclude models with a dispersion ratio outside of the 95 percentile. But if we do this, the QQ-plot looks suboptimal and we actually exclude previously significant CpG sites. So maybe we should not filter for overdispersion here (since there is not really any overdispersion?).
 
