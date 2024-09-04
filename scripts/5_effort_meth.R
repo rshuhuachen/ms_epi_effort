@@ -267,7 +267,7 @@ ggplot(delta_out_dist_nopre, aes(x=dispersion.ratio)) + geom_histogram() -> hist
 ggsave(hist_dist_nopre, file = "plots/model_out/hist_dist_dispersion_ratio_nopremeth.png", width=10, height=10)
 
 # qq plot
-png(file = "plots/model_out/qqplot_dist_raw_nopremeth.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_dist_raw_nopremeth.png", width = 800, height = 800)
 qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
 dev.off()
 
@@ -276,7 +276,7 @@ delta_out_dist_nopre <- subset(delta_out_dist_nopre, as.vector(quantile(delta_ou
 dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025, na.rm=T)))
 
 # qq plot
-png(file = "plots/model_out/qqplot_dist_95percentile_nopremeth.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_dist_95percentile_nopremeth.png", width = 800, height = 800)
 qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
 dev.off()
 
@@ -296,10 +296,10 @@ delta_out_dist_pre$parameter_pval <- as.numeric(delta_out_dist_pre$parameter_pva
 # plot dispersion
 
 ggplot(delta_out_dist_pre, aes(dispersion.ratio)) + geom_histogram() -> hist_dist_pre
-ggsave(hist_dist_pre, file = "plots/model_out/hist_dist_dispersion_ratio_raw.png", width=10, height=10)
+ggsave(hist_dist_pre, file = "plots/model_out/hist_dist_dispersion_ratio_raw.png", width=8, height=8)
 
 # qq plot
-png(file = "plots/model_out/qqplot_dist_raw.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_dist_raw.png", width = 800, height = 800)
 qqplot.pvalues(delta_out_dist_pre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
@@ -309,7 +309,7 @@ delta_out_dist_pre <- subset(delta_out_dist_pre, as.vector(quantile(delta_out_di
 dispersion.ratio > as.vector(quantile(delta_out_dist_pre$dispersion.ratio, 0.025)))
 
 # qq plot
-png(file = "plots/model_out/qqplot_dist_95quantile.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_dist_95quantile.png", width = 800, height = 800)
 qqplot.pvalues(delta_out_dist_pre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)  
 dev.off()
 
@@ -318,7 +318,7 @@ delta_out_dist_pre <- subset(delta_out_dist_pre, convergence == "boundary (singu
 # FDR correction
 delta_out_dist_pre$parameter_qval <- p.adjust(delta_out_dist_pre$parameter_pval, method = "fdr", n = nrow(delta_out_dist_pre))
 
-sig_dist_pre <- subset(delta_out_dist_pre, parameter_qval < 0.05) #n=2
+sig_dist_pre <- subset(delta_out_dist_pre, parameter_qval < 0.05) #n=0 if filter for overdispersion, n = 5 if not
 sig_dist_nopre <- subset(delta_out_dist_nopre, parameter_qval < 0.05)#n=0
 
 overlap <- subset(sig_dist_pre, chr_pos %in% sig_dist_nopre$chr_pos) #n = 2

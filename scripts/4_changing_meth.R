@@ -208,12 +208,12 @@ save(out_glmer_raw, file="results/modeloutput/prepost_modeloutput_glmer_min0.75_
 summary(out_glmer_raw$dispersion.ratio)
 ggplot(out_glmer_raw, aes(x = dispersion.ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted") +
 scale_y_log10()-> hist_glmer_disp_ratio
-ggsave(hist_glmer_disp_ratio, file = "plots/model_out/changing_histogram_dispersion_glmer_raw.png", width = 10, height = 10)
+ggsave(hist_glmer_disp_ratio, file = "plots/model_out/changing_histogram_dispersion_glmer_raw.png", width = 8, height = 8)
 
 ## qqplot without filtering for overdispersion
 pacman::p_load(gaston)
 
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_raw.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_raw.png", width = 800, height = 800)
 qqplot.pvalues(out_glmer_raw$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
@@ -227,7 +227,7 @@ nrow(out_glmer_threshold)/nrow(out_glmer_raw) # = 0.53
 nrow(subset(out_glmer_threshold, prepost_qval < 0.05)) # N = 3563
 
 # qq plot
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_threshold.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_threshold.png", width = 800, height = 800)
 qqplot.pvalues(out_glmer_threshold$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
@@ -237,7 +237,7 @@ out_glmer_perc$prepost_qval <- p.adjust(out_glmer_perc$prepost_pval, method = "f
 nrow(out_glmer_perc)/nrow(out_glmer_raw) # = 0.90 (obvs)
 nrow(subset(out_glmer_perc, prepost_qval < 0.05)) # N = 19110
 
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png", width = 1000, height = 1000)
+png(file = "plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png", width = 800, height = 800)
 qqplot.pvalues(out_glmer_perc$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
