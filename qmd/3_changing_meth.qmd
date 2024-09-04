@@ -200,7 +200,7 @@ A total of 434 CpG sites significantly change across the lekking period.
 
 ## Plotting
 
-### Volcano plot
+### Volcano and Manhattan plots
 
 Next, we make a volcano plot to see the results.
 
@@ -223,6 +223,10 @@ ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))
 ![Volcano plot changing CpG sites](../plots/model_out/volcano_change.png){width="450" fig-align="left"}
 
 Interestingly, there seems to more CpG sites that increase in methylation over time compared to CpG sites that increase in methylation over time.
+
+We can also look at the distribution of CpG sites across the genome in a Manhattan plot.
+
+![Manhattan plot](../plots/model_out/manhattan_change_glmer.png){fig-align="left"}
 
 ### Raw data
 

@@ -351,20 +351,68 @@ ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))
 
 ggsave(volcano_change, file = "plots/model_out/volcano_change.png", width=10, height=10)    
 
+### manhattan plot
 
+
+# load scaffold numbers
+load("data/scaffold_names_dovetail.RData")
+
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(out_glmer$chr_pos, "_", fixed = TRUE)
+
+# Extract the numbers following HRSCAF=XXX_number
+out_glmer$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2), ";", 
+                             sapply(split_chr_pos, "[", 4), "=",
+                             sapply(split_chr_pos, "[", 5))
+
+out_glmer$pos <- as.numeric(sapply(split_chr_pos, "[", 6))
+
+# join
+out_glmer <- left_join(out_glmer, genome[,c("contig", "scaf_nr")], by = c("chr" = "contig"))
+
+# plot 
 # lmer
-out_lmer <- out_lmer %>% mutate(sig = as.factor(case_when(abs(as.numeric(prepost_estimate)) > 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+test <- sample_n(out_glmer, 100)
+out_glmer <- out_glmer %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
+                                        TRUE ~ "odd"))
 
-ggplot(out_lmer, aes(x = as.numeric(prepost_estimate), y = -log10(as.numeric(prepost_qval)))) + geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
-    labs(x = "Estimate time period", y = "-log10(q-value)") +
+shade <- out_glmer %>%
+  subset(scaf_nr <= 30) %>%
+  group_by(scaf_nr) %>%
+  summarise(min = min(pos), max = max(pos)) %>%
+  mutate(min = case_when(scaf_nr == 2 | scaf_nr == 4 | scaf_nr == 6 | scaf_nr == 8 | scaf_nr == 10 |
+                          scaf_nr == 12 | scaf_nr == 14 | scaf_nr == 16 | scaf_nr == 18 | scaf_nr == 20 |
+                          scaf_nr == 22 | scaf_nr == 24 | scaf_nr == 26 | scaf_nr == 28 | scaf_nr == 30 ~ 0,
+                         TRUE ~ min)) %>%
+  mutate(max = case_when(scaf_nr == 2 | scaf_nr == 4 | scaf_nr == 6 | scaf_nr == 8 | scaf_nr == 10 |
+                          scaf_nr == 12 | scaf_nr == 14 | scaf_nr == 16 | scaf_nr == 18 | scaf_nr == 20 |
+                          scaf_nr == 22 | scaf_nr == 24 | scaf_nr == 26 | scaf_nr == 28 | scaf_nr == 30  ~ 0,
+                         TRUE ~ max))
+                                        
+clrs <- viridisLite::viridis(6)
+out_glmer %>% subset(scaf_nr <= 30) %>% 
+  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
+    geom_point(size=5, alpha=0.5, aes(col = as.factor(col), fill = as.factor(col))) +
+    facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
+    labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+    #geom_rect(data=shade, aes(xmin=min, xmax=max, ymin=0, ymax=-log10(as.numeric(test$prepost_pval))), 
+    #        alpha=0.5, fill = "#eceff4") + # "#f7f7f7" "#eceff4"
     #xlim(-1, 1)+
-    scale_color_manual(values=c("grey60", clrs[4])) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
-    theme(legend.position="none") -> volcano_change_lmer
+    scale_color_manual(values=c(clrs[2], clrs[4])) +
+    scale_fill_manual(values=alpha(c(clrs[2], clrs[4]), 0.5)) +
+    geom_hline(yintercept = -log10(0.05/nrow(out_glmer)), col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(axis.text.x = element_blank(),
+    panel.spacing = unit(0, "lines"),
+    plot.margin = margin(r = 0.5, l = 0.1, b = 0.1, t = 0.1, unit = "cm"),
+    axis.line.x = element_blank(),
+    legend.position="none",
+    axis.title.x = element_text(margin=margin(t=10)),
+    axis.title.y = element_text(margin=margin(r=5)),
+     axis.ticks.x = element_blank()
+    axis.line.y = element_blank()) -> manhattan_change
 
-ggsave(volcano_change_lmer, file = "plots/model_out/volcano_change_lmer.png", width=10, height=10)    
+ggsave(manhattan_change, file = "plots/model_out/manhattan_change_glmer.png", width=26, height=10)    
 
 
 ### plot the raw data of the five most sig cpg sites
