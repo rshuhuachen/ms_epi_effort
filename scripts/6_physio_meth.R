@@ -5,7 +5,7 @@ pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats,
 ### load data
 
 load(file = "results/modeloutput/subset_sites_sig_deltameth.RData")
-
+load(file = "results/modeloutput/subset_sites_sig_prepost.RData")
 ### load phenotypic data
 
 load("data/phenotypes/fulldata_complete_epi_withdates.RData")

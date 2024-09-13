@@ -61,6 +61,12 @@ effort$dist_scl <- scale(effort$dist)
 
 delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "dist", "attend_scl", "fight_scl", "dist_scl")], by = c("id", "year"))
                                            
+## first only select cpg sites with enough data
+# delta_meth_n <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth)) %>% tally()
+# delta_meth_n_min20 <- subset(delta_meth_n, n > 20)
+# 
+# delta_meth_sub <- subset(delta_meth, chr_pos %in% delta_meth_n_min20$chr_pos)
+
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 # function to run the model
@@ -331,7 +337,7 @@ delta_out_dist <- delta_out_dist_pre
 
 ### attendance
 # run model
-delta_out_attend <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="attend",mc.cores=4, pre="control")
+delta_out_attend <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="attend",mc.cores=4, pre="no_control")
 
 # some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
 errors <- NULL
@@ -382,7 +388,7 @@ delta_out_attend$parameter_qval <- p.adjust(delta_out_attend$parameter_pval, met
 
 ### fighting
 # run model
-delta_out_fight <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="fight",mc.cores=4, pre="control")
+delta_out_fight <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="fight",mc.cores=4, pre="no_control")
 
 # some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
 errors <- NULL

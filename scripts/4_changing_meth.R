@@ -208,6 +208,9 @@ save(out_glmer_raw, file="results/modeloutput/prepost_modeloutput_glmer_min0.75_
 summary(out_glmer_raw$dispersion.ratio)
 ggplot(out_glmer_raw, aes(x = dispersion.ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted") +
 scale_y_log10()-> hist_glmer_disp_ratio
+
+ggplot(out_glmer_raw, aes(x = prepost_pval)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted")
+
 ggsave(hist_glmer_disp_ratio, file = "plots/model_out/changing_histogram_dispersion_glmer_raw.png", width = 8, height = 8)
 
 ## qqplot without filtering for overdispersion
