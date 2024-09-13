@@ -235,7 +235,9 @@ qqplot.pvalues(out_glmer_threshold$prepost_qval, col.abline = "red", col.CB = "g
 dev.off()
 
 ## second option: within the 90% quantiles
-out_glmer_perc <- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.95)) & dispersion.ratio > as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.05)))
+out_glmer_perc <- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.95)))
+ggplot(out_glmer_perc, aes(x = prepost_pval)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted")
+
 out_glmer_perc$prepost_qval <- p.adjust(out_glmer_perc$prepost_pval, method = "fdr", n = nrow(out_glmer_perc))
 nrow(out_glmer_perc)/nrow(out_glmer_raw) # = 0.90 (obvs)
 nrow(subset(out_glmer_perc, prepost_qval < 0.05)) # N = 19110

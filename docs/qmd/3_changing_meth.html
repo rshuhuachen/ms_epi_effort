@@ -217,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#filter-for-average-methylation-differences" id="toc-filter-for-average-methylation-differences" class="nav-link" data-scroll-target="#filter-for-average-methylation-differences"><span class="header-section-number">4.5</span> Filter for average methylation % differences</a></li>
   <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting"><span class="header-section-number">4.6</span> Plotting</a>
   <ul class="collapse">
-  <li><a href="#volcano-plot" id="toc-volcano-plot" class="nav-link" data-scroll-target="#volcano-plot"><span class="header-section-number">4.6.1</span> Volcano plot</a></li>
+  <li><a href="#volcano-and-manhattan-plots" id="toc-volcano-and-manhattan-plots" class="nav-link" data-scroll-target="#volcano-and-manhattan-plots"><span class="header-section-number">4.6.1</span> Volcano and Manhattan plots</a></li>
   <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data"><span class="header-section-number">4.6.2</span> Raw data</a></li>
   </ul></li>
   <li><a href="#note-on-lmm-vs-glmm" id="toc-note-on-lmm-vs-glmm" class="nav-link" data-scroll-target="#note-on-lmm-vs-glmm"><span class="header-section-number">4.7</span> Note on LMM vs GLMM</a></li>
@@ -417,8 +417,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plotting" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="plotting"><span class="header-section-number">4.6</span> Plotting</h2>
-<section id="volcano-plot" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="volcano-plot"><span class="header-section-number">4.6.1</span> Volcano plot</h3>
+<section id="volcano-and-manhattan-plots" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="volcano-and-manhattan-plots"><span class="header-section-number">4.6.1</span> Volcano and Manhattan plots</h3>
 <p>Next, we make a volcano plot to see the results.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> out_glmer <span class="sc">%&gt;%</span> </span>
@@ -441,6 +441,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>Interestingly, there seems to more CpG sites that increase in methylation over time compared to CpG sites that increase in methylation over time.</p>
+<p>We can also look at the distribution of CpG sites across the genome in a Manhattan plot.</p>
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="../plots/model_out/manhattan_change_glmer.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Manhattan plot</figcaption>
+</figure>
+</div>
 </section>
 <section id="raw-data" class="level3" data-number="4.6.2">
 <h3 data-number="4.6.2" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">4.6.2</span> Raw data</h3>
