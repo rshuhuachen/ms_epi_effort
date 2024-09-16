@@ -1,11 +1,13 @@
 ### load packages
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, gaston,
-               parallel, performance, lmerTest, tidystats, insight, effects, ggpointdensity)
-
+pacman::p_load(tidyverse, data.table, tibble, performance, gaston,
+               parallel, performance, lmerTest, tidystats, ggpointdensity)
+               
+#insight, effects, matrixStats
 source("scripts/plotting_theme.R")
+
 ### load data
 
-load(file = "results/modeloutput/subset_sites_sig_prepost.RData")
+save(changing_cpg, file="results/modeloutput/changing/changing_sites_glmer.RData")
 
 ### load phenotypic data
 
@@ -38,16 +40,12 @@ ggplot(delta_meth, aes(methperc_pre, abs(delta_meth))) +
 cowplot::plot_grid(cor_pre_delta, cor_pre_delta_abs, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) %>%
   ggsave(file = "plots/explore/pre_vs_delta.png", width=14, height=10)
 
-### subset only sites with significant difference
-
-#Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model.
-
-#combine with site and behaviour info
+### combine delta methylation data with site and behaviour info
 
 delta_meth <- left_join(delta_meth, unique(all_pheno_epi[,c("id", "year", "site", "Core")], by = c("id", "year")))
 
-#z-transform the traits before the model that subsets IDs and years where there is
-#data for that CpG site
+### z-transform the traits before the model that subsets IDs and years where there is
+### data for that CpG site
 
 effort <- all_pheno_epi %>% dplyr::select(c("id", "year", "attend", "fight", "dist", "MS")) %>% filter(!is.na(attend)) %>% unique()
 
@@ -57,141 +55,107 @@ effort$attend_scl <- scale(effort$attend)
 effort$fight_scl <- scale(effort$fight)
 effort$dist_scl <- scale(effort$dist)
 
-#combine effort data with methylation data
+### combine reproductive effort data with methylation data
 
 delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "dist", "attend_scl", "fight_scl", "dist_scl")], by = c("id", "year"))
                                            
-## first only select cpg sites with enough data
-# delta_meth_n <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth)) %>% tally()
-# delta_meth_n_min20 <- subset(delta_meth_n, n > 20)
-# 
-# delta_meth_sub <- subset(delta_meth, chr_pos %in% delta_meth_n_min20$chr_pos)
+### only select cpg sites with enough data
+delta_meth_n <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth)& !is.na(attend)) %>% tally()
+delta_meth_n_min20 <- subset(delta_meth_n, n > 20)
+ 
+delta_meth_sub <- subset(delta_meth, chr_pos %in% delta_meth_n_min20$chr_pos)
+length(unique(delta_meth_sub$chr_pos))
 
-delta_meth_ls <- delta_meth %>% group_split(chr_pos)
+delta_meth_ls <- delta_meth_sub %>% group_split(chr_pos)
 
-# function to run the model
-function_model_delta <- function(df, parameter, pre){tryCatch({
-  chr_pos <- as.character(df[1,1])
-  df <- as.data.frame(df)
-  df$methperc_pre_scl <- scale(df$methperc_pre)
+#### run the model per trait: without pre-lekking ####
+source("scripts/function_models.R")
 
-  if (pre == "control"){
-  formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site/id) "))}
+# centrality 
+## no pre
+m_dist_no_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="dist", pre="no_control", mc.cores=4)
+m_dist_no_pre_out <- function_process_model(m_dist_no_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "dist_no_pre", pretty_name = "Centrality", filter_disp==FALSE)
 
-  if (pre == "no_control"){
-  formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site/id) "))}
-  
-  model <- lmerTest::lmer(formula, data=df)
-  summary <- summary(model)
-  
-  overdisp.lmer_fun <- function(model) {
-    vpars <- function(m) {
-      nrow(m)*(nrow(m)+1)/2
-    }
-    model.df <- sum(sapply(VarCorr(model),vpars))+length(fixef(model))
-    rdf <- nrow(model.frame(model))-model.df
-    rp <- residuals(model,type="pearson")
-    Pearson.chisq <- sum(rp^2)
-    prat <- Pearson.chisq/rdf
-    pval <- pchisq(Pearson.chisq, df=rdf, lower.tail=FALSE)
-    data.frame(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval)
-  }
-  
-  intercept = summary$coefficients["(Intercept)", "Estimate"]
+## with pre
+m_dist_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="dist", pre="control", mc.cores=4)
+m_dist_pre_out <- function_process_model(m_dist_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "dist_with_pre", pretty_name = "Centrality", filter_disp==FALSE)
 
-  #fixed effect
-  parameter_estimate <- summary$coefficients[2,1]
-  parameter_se <- summary$coefficients[2,2]
-  parameter_df <- summary$coefficients[2,3]
-  parameter_tval <- summary$coefficients[2,4]
-  parameter_pval <- summary$coefficients[2,5]
-  
-  #age effect
-#  age_yearling_estimate <- summary$coefficients["ageYearling", "Estimate"]
-#  age_yearling_se <- summary$coefficients["ageYearling", "Std. Error"]
-#  age_yearling_df <- summary$coefficients["ageYearling", "df"]
-#  age_yearling_tval <- summary$coefficients["ageYearling", "t value"]
-#  age_yearling_pval <- summary$coefficients["ageYearling", "Pr(>|t|)"]
-  
-  if (pre == "control"){
-  #premeth effect
-    pre_estimate <- summary$coefficients["methperc_pre", "Estimate"]
-    pre_se <- summary$coefficients["methperc_pre", "Std. Error"]
-    pre_df <- summary$coefficients["methperc_pre", "df"]
-    pre_tval <- summary$coefficients["methperc_pre", "t value"]
-    pre_pval <- summary$coefficients["methperc_pre", "Pr(>|t|)"]
-    }
 
-  if (pre == "no_control"){
-    pre_estimate <- NA
-    pre_se <- NA
-    pre_df <- NA
-    pre_tval <- NA
-    pre_pval <- NA
-    }
-  
-  rsqc <- performance::r2(model)$R2_conditional #fixed plus random parameterects relative to overall variance
-  rsqm <- performance::r2(model)$R2_marginal #fixed parameterects relative to overall variance
-  
-  dispersion.chisq <- overdisp.lmer_fun(model)[1,1]
-  dispersion.ratio <- overdisp.lmer_fun(model)[1,2]
-  dispersion.rdf <- overdisp.lmer_fun(model)[1,3]
-  dispersion.pval <- overdisp.lmer_fun(model)[1,4]
-  
-  isSingular <- isSingular(model)
+# attendance 
+## no pre
+m_attend_no_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="attend", pre="no_control", mc.cores=4)
+m_attend_no_pre_out <- function_process_model(m_attend_no_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "attend_no_pre", pretty_name = "Attendance", filter_disp==FALSE)
 
-  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
-    convergence <- NA
-  }
+## with pre
+m_attend_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="attend", pre="control", mc.cores=4)
+m_attend_pre_out <- function_process_model(m_attend_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "attend_with_pre", pretty_name = "Attendance", filter_disp==FALSE)
 
-  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
-    convergence <- summary(model)$optinfo$conv$lme4$messages
-  }
 
-  icc_id_site <-icc(model, by_group = TRUE, tolerance = 0)[1,2]
-  icc_site <-icc(model, by_group = TRUE, tolerance = 0)[2,2]
-  
-  return(data.frame(chr_pos=as.factor(chr_pos),
-                    parameter = as.factor(parameter),
-                    intercept = as.numeric(intercept),
-                    icc_id_site = as.numeric(icc_id_site),
-                    icc_site = as.numeric(icc_site),
-                    parameter_estimate = as.numeric(parameter_estimate),
-                    parameter_se = as.numeric(parameter_se),
-                    parameter_df = as.numeric(parameter_df),
-                    parameter_tval = as.numeric(parameter_tval),
-                    parameter_pval = as.numeric(parameter_pval),
-               #     age_yearling_estimate = as.numeric(age_yearling_estimate),
-               #     age_yearling_se = as.numeric(age_yearling_se),
-               #     age_yearling_df = as.numeric(age_yearling_df),
-               #     age_yearling_tval = as.numeric(age_yearling_tval),
-               #     age_yearling_pval = as.numeric(age_yearling_pval),
-                    pre_estimate = as.numeric(pre_estimate),
-                    pre_se = as.numeric(pre_se),
-                    pre_df = as.numeric(pre_df),
-                    pre_tval = as.numeric(pre_tval),
-                    pre_pval = as.numeric(pre_pval),
-                    rsqc = as.numeric(rsqc),
-                    rsqm = as.numeric(rsqm),
-                    dispersion.chisq = as.numeric(dispersion.chisq),
-                    dispersion.ratio = as.numeric(dispersion.ratio),
-                    dispersion.rdf = as.numeric(dispersion.rdf),
-                    dispersion.pval = as.numeric(dispersion.pval),
-                    isSingular = as.logical(isSingular),
-                    convergence = convergence
-                    
-  ))
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(chr_pos, " ", conditionMessage(e)))})
-}
+# fighting 
+## no pre
+m_fight_no_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="fight", pre="no_control", mc.cores=4)
+m_fight_no_pre_out <- function_process_model(m_fight_no_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "fight_no_pre", pretty_name = "Fighting", filter_disp==FALSE)
 
-### run the model per trait
+## with pre
+m_fight_pre <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="fight", pre="control", mc.cores=4)
+m_fight_pre_out <- function_process_model(m_fight_pre, dir_plots = "plots/model_out/effort", 
+                                            name_file = "fight_with_pre", pretty_name = "Centrality", filter_disp==FALSE)
 
-### centrality
-# run model
-delta_out_dist_pre_raw <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="dist", pre="control", mc.cores=4)
-delta_out_dist_no_pre_raw <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="dist", pre="no_control", mc.cores=4)
 
-#### no pre
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+#### centrality ####
+
+### run model
+delta_out_dist_no_pre_raw <- parallel::mclapply(delta_meth_ls, function_model_delta_pheno, parameter="dist", pre="no_control", mc.cores=4)
+delta_out_dist_nopre <- do.call(rbind.data.frame, delta_out_dist_no_pre_raw) #n = 420
+
+### no pre
+# convert to numeric
+delta_out_dist_nopre$dispersion.ratio <- as.numeric(delta_out_dist_nopre$dispersion.ratio)
+delta_out_dist_nopre$parameter_pval <- as.numeric(delta_out_dist_nopre$parameter_pval)
+
+# plot dispersion
+
+ggplot(delta_out_dist_nopre, aes(x=dispersion.ratio)) + geom_histogram() -> hist_dist_nopre
+ggsave(hist_dist_nopre, file = "plots/model_out/hist_dist_dispersion_ratio_nopremeth.png", width=10, height=10)
+
+# qq plot
+png(file = "plots/model_out/qqplot_dist_raw_nopremeth.png", width = 800, height = 800)
+qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
+dev.off()
+
+# exclude those with overdispersion
+delta_out_dist_nopre <- subset(delta_out_dist_nopre, as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.975, na.rm=T)) & 
+dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025, na.rm=T)))
+
+# qq plot
+png(file = "plots/model_out/qqplot_dist_95percentile_nopremeth.png", width = 800, height = 800)
+qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
+dev.off()
+
+# exclude those with convergence error
+#delta_out_dist_nopre <- subset(delta_out_dist_nopre, dispersion.ratio < 1.1 & dispersion.pval > 0.05) # 379
+delta_out_dist_nopre <- subset(delta_out_dist_nopre, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
+
+# FDR correction
+delta_out_dist_nopre$parameter_qval <- p.adjust(delta_out_dist_nopre$parameter_pval, method = "fdr", n = nrow(delta_out_dist_nopre))
+
+
+
+
+
+
+
+
+
+
+
 # some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
 errors <- NULL
 for (i in 1:length(delta_out_dist_no_pre_raw)){
@@ -225,73 +189,9 @@ for (i in 1:length(delta_out_dist_no_pre_raw)){
 }
 delta_out_dist_no_pre_raw <- delta_out_dist_no_pre_raw[-errors_cols]
 
-### pre
-# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
-errors <- NULL
-for (i in 1:length(delta_out_dist_pre_raw)){
-  length <- length(delta_out_dist_pre_raw[[i]])
-  if(length != 23){
-    errors <- c(errors, i)
-  }
-}
 
-# some have wrong col names
-errors_cols <- NULL
-names <- names(delta_out_dist_pre_raw[[2]])
-for (i in 1:length(delta_out_dist_pre_raw)){
-  wrongnames <- names == names(delta_out_dist_pre_raw[[i]])
-  if((FALSE %in% wrongnames) == TRUE){
-    errors_cols <- c(errors_cols, i)
-  }
-}
-
-delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors]
-delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors_cols]
-
-# some have wrong col names
-errors_cols <- NULL
-names <- names(delta_out_dist_pre_raw[[1]])
-for (i in 1:length(delta_out_dist_pre_raw)){
-  wrongnames <- names == names(delta_out_dist_pre_raw[[i]])
-  if((FALSE %in% wrongnames) == TRUE){
-    errors_cols <- c(errors_cols, i)
-  }
-}
-delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors_cols]
-
-delta_out_dist_nopre <- do.call(rbind.data.frame, delta_out_dist_no_pre_raw) #n = 420
 delta_out_dist_pre <- do.call(rbind.data.frame, delta_out_dist_pre_raw) #n = 422
 
-### no pre
-# convert to numeric
-delta_out_dist_nopre$dispersion.ratio <- as.numeric(delta_out_dist_nopre$dispersion.ratio)
-delta_out_dist_nopre$parameter_pval <- as.numeric(delta_out_dist_nopre$parameter_pval)
-
-# plot dispersion
-
-ggplot(delta_out_dist_nopre, aes(x=dispersion.ratio)) + geom_histogram() -> hist_dist_nopre
-ggsave(hist_dist_nopre, file = "plots/model_out/hist_dist_dispersion_ratio_nopremeth.png", width=10, height=10)
-
-# qq plot
-png(file = "plots/model_out/qqplot_dist_raw_nopremeth.png", width = 800, height = 800)
-qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-# exclude those with overdispersion
-delta_out_dist_nopre <- subset(delta_out_dist_nopre, as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.975, na.rm=T)) & 
-dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025, na.rm=T)))
-
-# qq plot
-png(file = "plots/model_out/qqplot_dist_95percentile_nopremeth.png", width = 800, height = 800)
-qqplot.pvalues(delta_out_dist_nopre$parameter_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-# exclude those with convergence error
-#delta_out_dist_nopre <- subset(delta_out_dist_nopre, dispersion.ratio < 1.1 & dispersion.pval > 0.05) # 379
-delta_out_dist_nopre <- subset(delta_out_dist_nopre, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
-
-# FDR correction
-delta_out_dist_nopre$parameter_qval <- p.adjust(delta_out_dist_nopre$parameter_pval, method = "fdr", n = nrow(delta_out_dist_nopre))
 
 ### with pre
 # convert to numeric
@@ -431,6 +331,50 @@ nrow(delta_out_fight)#363
 delta_out_fight$parameter_qval <- p.adjust(delta_out_fight$parameter_pval, method = "fdr", n = nrow(delta_out_fight))
 
 delta_out_dist <- delta_out_dist_pre
+
+
+
+
+
+##### Run model per trait with pre-lekking ####
+
+### pre
+delta_out_dist_pre_raw <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="dist", pre="control", mc.cores=4)
+
+# some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
+errors <- NULL
+for (i in 1:length(delta_out_dist_pre_raw)){
+  length <- length(delta_out_dist_pre_raw[[i]])
+  if(length != 23){
+    errors <- c(errors, i)
+  }
+}
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_dist_pre_raw[[2]])
+for (i in 1:length(delta_out_dist_pre_raw)){
+  wrongnames <- names == names(delta_out_dist_pre_raw[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+
+delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors]
+delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors_cols]
+
+# some have wrong col names
+errors_cols <- NULL
+names <- names(delta_out_dist_pre_raw[[1]])
+for (i in 1:length(delta_out_dist_pre_raw)){
+  wrongnames <- names == names(delta_out_dist_pre_raw[[i]])
+  if((FALSE %in% wrongnames) == TRUE){
+    errors_cols <- c(errors_cols, i)
+  }
+}
+delta_out_dist_pre_raw <- delta_out_dist_pre_raw[-errors_cols]
+
+
 delta_out_all <- rbind(delta_out_dist, delta_out_attend, delta_out_fight)
 
 delta_out_all$chr_pos <- as.factor(delta_out_all$chr_pos)

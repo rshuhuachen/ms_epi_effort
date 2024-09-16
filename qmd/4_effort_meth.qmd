@@ -8,43 +8,9 @@ format:
 
 **Which changes in CpG site methylation are associated with reproductive effort?**
 
-We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (ref). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
+We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (Lebigre et al., 2007). Therefore, we expect that the cost associated with high reproductive investment goes at the expense of other costly processess, which can be observed by the up- or downregulation of associated genes.
 
 Similar to before, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with reproductive effort. We quantify reproductive effort using three behavioural traits: lek attendance, fighting rate and lek centrality. For each CpG site for each trait, we build a model that predicts delta methylation, while fitting the behaviour as a fixed effect.
-
-First, we calculate delta methylation per CpG site significantly affected by time period (a changing CpG site).
-
-## Delta methylation 
-
-```{r delta_meth, echo=T, eval=F}
-
-### load packages
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
-               parallel, performance, lmerTest, tidystats, insight)
-
-### load data
-
-load(file="results/modeloutput/subset_sites_sig_prepost.RData")
-
-### load phenotypic data
-
-load("data/phenotypes/fulldata_complete_epi_withdates.RData")
-
-### Calculate delta methylation by matching up pre-post ####
-
-delta_meth <- left_join(subset(changing_cpg, prepost == "pre"),
-                            subset(changing_cpg, prepost == "post")[,c("chr_pos", "lib_id", "epi_nr", "lib", "methperc", "cov", "id", "year", "fulldate")],
-                            by = c("chr_pos", "id", "year"), suffix = c("_pre", "_post"))
-
-delta_meth <- delta_meth %>% dplyr::select(-c(numC, numT, n_sample, prepost))
-delta_meth <- delta_meth %>% relocate(c(id, year, born:age), .before=lib_id_pre)
-
-delta_meth <- delta_meth %>% mutate(delta_meth = methperc_post - methperc_pre, .after =born)
-delta_meth <- delta_meth %>% mutate(diff_date = fulldate_post - fulldate_pre)
-delta_meth$diff_date <- as.numeric(delta_meth$diff_date)
-```
-
-Now, we can use this calculation of delta methylation as a predictor of reproductive effort, and loop over CpG sites with this model.
 
 ## Pre-methylation vs delta methylation
 
@@ -52,18 +18,39 @@ We expect that pre-lekking methylation levels affect delta methylation %. If pre
 
 ![Pre-lekking vs delta lekking methylation %](../plots/explore/pre_vs_delta.png)
 
-There does seem to be some association between the two. However, we cannot statistically correct for this because of the following:
+There does seem to be some association between the two, yet we might mask the effect of delta methylation on the phenotype if we include pre-lekking methylation in the model too. Therefore, we run two models in parallel: one that does include pre-lekking methylation % and one that does not, and then compare the model output / inference based on these two models.
 
 ## Prepare the data {#sec-effort}
 
 ```{r model, echo=T, eval=F}
+#| code-fold: true
+### load packages
+pacman::p_load(tidyverse, data.table, tibble, performance, gaston,
+               parallel, performance, lmerTest, tidystats, ggpointdensity)
+               
+#insight, effects, matrixStats
+source("scripts/plotting_theme.R")
 
-#combine with site and behaviour info
+### load data
+
+save(changing_cpg, file="results/modeloutput/changing/changing_sites_glmer.RData")
+
+### load phenotypic data
+
+load(file = "data/phenotypes/fulldata_complete_epi_withdates.RData")
+
+### methylation difference
+
+load(file = "results/modeloutput/all_sites_deltameth.RData")
+
+delta_meth <- subset(delta_meth, chr_pos %in% changing_cpg$chr_pos)
+
+### combine delta methylation data with site and behaviour info
 
 delta_meth <- left_join(delta_meth, unique(all_pheno_epi[,c("id", "year", "site", "Core")], by = c("id", "year")))
 
-#z-transform the traits before the model that subsets IDs and years where there is
-#data for that CpG site
+### z-transform the traits before the model that subsets IDs and years where there is
+### data for that CpG site
 
 effort <- all_pheno_epi %>% dplyr::select(c("id", "year", "attend", "fight", "dist", "MS")) %>% filter(!is.na(attend)) %>% unique()
 
@@ -73,13 +60,29 @@ effort$attend_scl <- scale(effort$attend)
 effort$fight_scl <- scale(effort$fight)
 effort$dist_scl <- scale(effort$dist)
 
-#combine effort data with methylation data
+### combine reproductive effort data with methylation data
 
 delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "dist", "attend_scl", "fight_scl", "dist_scl")], by = c("id", "year"))
-                                           
+
+```
+
+## Filter for *n* > 20
+
+Although we have filtered for CpG sites that have enough samples in both the pre- and post-lekking time periods, this does not mean that it was the same pair of samples that have data in both time periods. This means that we cannot outrule that we have a low sample size for delta methylation differences that can be associated with phenotypic traits. Therefore, before we run the models, we filter for CpG sites that have at least 20 measures of delta methylation (and the phenotype).
+
+```{r filter_n, echo = T, eval=F}
+
+### only select cpg sites with enough data
+delta_meth_n <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(attend)) %>% tally()
+delta_meth_n_min20 <- subset(delta_meth_n, n > 20)
+ 
+delta_meth_sub <- subset(delta_meth, chr_pos %in% delta_meth_n_min20$chr_pos)
+
 delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 ```
+
+Out of the 1,023 CpG sites, X had enough data and are included in these models.
 
 ## Function to run the model
 
@@ -87,15 +90,21 @@ You can find the full function below, but importantly this is the LMM formula I 
 
 `lmgerTest::lmer(scale(delta_meth) ~ scale(trait) + age + scale(methperc_pre) + (1|site/id))`
 
+Within the function, we can define if we want to include pre-lekking methylation % or not by setting the 'pre' arument to "control" or "no_control" respectively.
+
 ```{r function, eval=F}
 #| code-fold: true
 # function to run the model
-function_model_delta <- function(df, parameter){tryCatch({
+function_model_delta <- function(df, parameter, pre){tryCatch({
   chr_pos <- as.character(df[1,1])
   df <- as.data.frame(df)
   df$methperc_pre_scl <- scale(df$methperc_pre)
 
-  formula <- formula(paste0("scale(delta_meth) ~ ", parameter, "_scl + age + scale(methperc_pre) + (1|site/id) "))
+  if (pre == "control"){
+  formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site/id) "))}
+
+  if (pre == "no_control"){
+  formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site/id) "))}
   
   model <- lmerTest::lmer(formula, data=df)
   summary <- summary(model)
@@ -113,26 +122,31 @@ function_model_delta <- function(df, parameter){tryCatch({
     data.frame(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval)
   }
   
+  intercept = summary$coefficients["(Intercept)", "Estimate"]
+
   #fixed effect
   parameter_estimate <- summary$coefficients[2,1]
   parameter_se <- summary$coefficients[2,2]
   parameter_df <- summary$coefficients[2,3]
   parameter_tval <- summary$coefficients[2,4]
   parameter_pval <- summary$coefficients[2,5]
-  
-  #age effect
-  age_estimate <- summary$coefficients["age", "Estimate"]
-  age_se <- summary$coefficients["age", "Std. Error"]
-  age_df <- summary$coefficients["age", "df"]
-  age_tval <- summary$coefficients["age", "t value"]
-  age_pval <- summary$coefficients["age", "Pr(>|t|)"]
-  
+
+  if (pre == "control"){
   #premeth effect
-  pre_estimate <- summary$coefficients["scale(methperc_pre)", "Estimate"]
-  pre_se <- summary$coefficients["scale(methperc_pre)", "Std. Error"]
-  pre_df <- summary$coefficients["scale(methperc_pre)", "df"]
-  pre_tval <- summary$coefficients["scale(methperc_pre)", "t value"]
-  pre_pval <- summary$coefficients["scale(methperc_pre)", "Pr(>|t|)"]
+    pre_estimate <- summary$coefficients["methperc_pre", "Estimate"]
+    pre_se <- summary$coefficients["methperc_pre", "Std. Error"]
+    pre_df <- summary$coefficients["methperc_pre", "df"]
+    pre_tval <- summary$coefficients["methperc_pre", "t value"]
+    pre_pval <- summary$coefficients["methperc_pre", "Pr(>|t|)"]
+    }
+
+  if (pre == "no_control"){
+    pre_estimate <- NA
+    pre_se <- NA
+    pre_df <- NA
+    pre_tval <- NA
+    pre_pval <- NA
+    }
   
   rsqc <- performance::r2(model)$R2_conditional #fixed plus random parameterects relative to overall variance
   rsqm <- performance::r2(model)$R2_marginal #fixed parameterects relative to overall variance
@@ -143,12 +157,21 @@ function_model_delta <- function(df, parameter){tryCatch({
   dispersion.pval <- overdisp.lmer_fun(model)[1,4]
   
   isSingular <- isSingular(model)
-  
+
+  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- NA
+  }
+
+  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
+    convergence <- summary(model)$optinfo$conv$lme4$messages
+  }
+
   icc_id_site <-icc(model, by_group = TRUE, tolerance = 0)[1,2]
   icc_site <-icc(model, by_group = TRUE, tolerance = 0)[2,2]
   
   return(data.frame(chr_pos=as.factor(chr_pos),
                     parameter = as.factor(parameter),
+                    intercept = as.numeric(intercept),
                     icc_id_site = as.numeric(icc_id_site),
                     icc_site = as.numeric(icc_site),
                     parameter_estimate = as.numeric(parameter_estimate),
@@ -156,11 +179,6 @@ function_model_delta <- function(df, parameter){tryCatch({
                     parameter_df = as.numeric(parameter_df),
                     parameter_tval = as.numeric(parameter_tval),
                     parameter_pval = as.numeric(parameter_pval),
-                    age_estimate = as.numeric(age_estimate),
-                    age_se = as.numeric(age_se),
-                    age_df = as.numeric(age_df),
-                    age_tval = as.numeric(age_tval),
-                    age_pval = as.numeric(age_pval),
                     pre_estimate = as.numeric(pre_estimate),
                     pre_se = as.numeric(pre_se),
                     pre_df = as.numeric(pre_df),
@@ -172,14 +190,16 @@ function_model_delta <- function(df, parameter){tryCatch({
                     dispersion.ratio = as.numeric(dispersion.ratio),
                     dispersion.rdf = as.numeric(dispersion.rdf),
                     dispersion.pval = as.numeric(dispersion.pval),
-                    isSingular = as.logical(isSingular)
+                    isSingular = as.logical(isSingular),
+                    convergence = convergence
                     
   ))
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
+}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(chr_pos, " ", conditionMessage(e)))})
 }
+
 ```
 
-## Run the model per trait
+## Run the model per trait: without pre-lekking
 
 ```{r run_model_example, echo=T, eval=F}
 ### run the model per trait

@@ -3,11 +3,13 @@
 
 ### Packages ####
 #devtools::install_github("mastoffel/rptR", build_vignettes = TRUE)
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
-               parallel, performance, lmerTest, tidystats, insight, rptR)
+pacman::p_load(tidyverse, data.table, tibble, performance,  
+               parallel, performance, lmerTest, tidystats, cowplot, gaston)
+#matrixStats, insight, rptR, 
 
 ### Plotting ###
 source("scripts/plotting_theme.R")
+clrs <- viridisLite::viridis(6)
 
 ### Data ####
 
@@ -34,6 +36,9 @@ prepost_long <- prepost_long %>% mutate(age_year = as.factor(case_when(Core == "
                                                         Core == "Core" & (year - born == 1) ~ "Yearling",
                                                         Core == "No core" ~ "Adult")))
 
+# swap levels
+prepost_long$prepost <- factor(prepost_long$prepost, levels = c("pre", "post"))
+
 ### convert data to a list, one per CpG site
 data <- prepost_long %>% group_split(chr_pos)
 
@@ -53,68 +58,7 @@ overdisp.lmer_fun <- function(model) {
 
 ### build function to run the model
 
-## lmer version
-function_model_lmer <- function(df){tryCatch({
-  chr_pos <- as.character(df[1,1])
-  df <- as.data.frame(df)
-  df$prepost <- as.factor(df$prepost)
-  df$id <- as.factor(df$id)
-  
-  # model
-  model <- lmerTest::lmer(methperc ~ prepost + (1|id), df)
-  
-  #fixed effects
-  prepost_estimate <- summary(model)$coefficients[2,1]
-  prepost_se <- summary(model)$coefficients[2,2]
-  prepost_tval <- summary(model)$coefficients[2,4]
-  prepost_pval <-  summary(model)$coefficients[2,5]
-  
-  #random effects 
-  id_sd <- attributes(VarCorr(model)$id)$stddev
-  id_variance <- data.frame(VarCorr(model), comp="Variance")[1,4]
-  
-  rsqc <- as.vector(performance::r2(model)$R2_conditional) #fixed plus random effects relative to overall variance
-  rsqm <- as.vector(performance::r2(model)$R2_marginal) #fixed effects relative to overall variance
-  
-  dispersion.chisq <- overdisp.lmer_fun(model)[1,1]
-  dispersion.ratio <- overdisp.lmer_fun(model)[1,2]
-  dispersion.rdf <- overdisp.lmer_fun(model)[1,3]
-  dispersion.pval <- overdisp.lmer_fun(model)[1,4]
-  
-  isSingular <- isSingular(model)
-  
-  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
-    convergence <- NA
-  }
-
-  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
-    convergence <- summary(model)$optinfo$conv$lme4$messages
-  }
-  icc_id <- icc(model, by_group = TRUE, tolerance = 0)[1,2]
-  
-  return(data.frame(chr_pos=chr_pos, 
-                    prepost_estimate = prepost_estimate,
-                    prepost_se = prepost_se,
-                    prepost_tval = prepost_tval,
-                    prepost_pval = prepost_pval,
-                    id_sd = id_sd,
-                    id_variance = id_variance,
-                    rsqc = rsqc,
-                    rsqm = rsqm,
-                    dispersion.chisq = dispersion.chisq,
-                    dispersion.ratio = dispersion.ratio,
-                    dispersion.rdf = dispersion.rdf,
-                    dispersion.pval = dispersion.pval,
-                    isSingular = isSingular,
-                    convergence = convergence,
-                    icc_id = icc_id
-                    ))
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
-}
-
-### build function to run the model
-
-## glmer version
+#### glmer version ####
 function_model_glmer <- function(df){tryCatch({
   chr_pos <- as.character(df[1,1])
   df <- as.data.frame(df)
@@ -125,14 +69,14 @@ function_model_glmer <- function(df){tryCatch({
   model <- lme4::glmer(cbind(numC, numT) ~ prepost + (1|id), family = "binomial", df)
   
   #fixed effects
-  prepost_estimate <- summary(model)$coefficients[2,1]
-  prepost_se <- summary(model)$coefficients[2,2]
-  prepost_zval <- summary(model)$coefficients[2,3]
-  prepost_pval <-  summary(model)$coefficients[2,4]
+  prepost_estimate <- summary(model)$coefficients["prepostpost","Estimate"]
+  prepost_se <- summary(model)$coefficients["prepostpost","Std. Error"]
+  prepost_zval <- summary(model)$coefficients["prepostpost","z value"]
+  prepost_pval <-  summary(model)$coefficients["prepostpost","Pr(>|z|)"]
   
   #random effects 
   id_sd <- attributes(VarCorr(model)$id)$stddev
-  id_variance <- data.frame(VarCorr(model), comp="Variance")[1,4]
+  id_variance <- data.frame(VarCorr(model), comp="Variance")[1,"vcov"]
   
   rsqc <- performance::r2(model)$R2_conditional #fixed plus random effects relative to overall variance
   rsqm <- performance::r2(model)$R2_marginal #fixed effects relative to overall variance
@@ -175,7 +119,7 @@ function_model_glmer <- function(df){tryCatch({
 }
 
 ### run the model in parallel per CpG site (list item)
-out_glmer <- parallel::mclapply(data, function_model_glmer, mc.cores=4) #274188
+out_glmer <- parallel::mclapply(data, function_model_glmer, mc.cores=4) 
 
 # some have multiple convergence warnings, exclude them
 errors <- NULL
@@ -204,110 +148,61 @@ out_glmer <- out_glmer[-errors_cols]
 out_glmer_raw <- do.call(rbind.data.frame, out_glmer)
 save(out_glmer_raw, file="results/modeloutput/prepost_modeloutput_glmer_min0.75_raw.RData")
 
-## explore dispersion ratio
-summary(out_glmer_raw$dispersion.ratio)
-ggplot(out_glmer_raw, aes(x = dispersion.ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted") +
-scale_y_log10()-> hist_glmer_disp_ratio
+#### Exclude models that did not converge ####
+out_glmer_raw_conv <- subset(out_glmer_raw, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
+nrow(out_glmer_raw_conv) / nrow(out_glmer_raw) * 100 # retain 97.5%, 345937 out of 354765
 
-ggplot(out_glmer_raw, aes(x = prepost_pval)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted")
+##### Overdispersion raw data #####
 
-ggsave(hist_glmer_disp_ratio, file = "plots/model_out/changing_histogram_dispersion_glmer_raw.png", width = 8, height = 8)
+## explore dispersion ratio and make plots
 
-## qqplot without filtering for overdispersion
-pacman::p_load(gaston)
+summary(out_glmer_raw_conv$dispersion.ratio)
 
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_raw.png", width = 800, height = 800)
-qqplot.pvalues(out_glmer_raw$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+# histogram dispersion ratio raw 
+ggplot(out_glmer_raw_conv, aes(x = dispersion.ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted", linewidth=1) +
+scale_y_log10() + labs(title = "Histogram dispersion ratio", subtitle= "Raw model output changing CpGs") -> hist_glmer_disp_ratio_raw
+
+# histogram p-values raw
+ggplot(out_glmer_raw_conv, aes(x = prepost_pval)) + geom_histogram() + 
+  scale_y_continuous(labels = scales::unit_format(unit = "K", scale = 1e-3)) + 
+  labs(title = "Histogram p-values", subtitle="Raw model output changing CpGs")-> hist_glmer_pvals_raw
+
+plot_grid(hist_glmer_disp_ratio_raw, hist_glmer_pvals_raw, labs="auto", align="hv", axis="lb", ncol=1, label_fontface = "plain", label_size = 22)-> hists_glmer_raw
+
+ggsave(hists_glmer_raw, file = "plots/model_out/changing/hist_raw_glmer.png", width = 12, height = 12)
+
+# qqplot raw
+
+png(file = "plots/model_out/changing/qqplot_raw_glmer.png", width = 800, height = 800)
+qqplot.pvalues(out_glmer_raw_conv$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
-### apply a FDR multiple-testing correction
+## filter for 95 percentile
+out_glmer<- subset(out_glmer_raw_conv, dispersion.ratio < as.vector(quantile(out_glmer_raw_conv$dispersion.ratio, 0.95)))
+nrow(out_glmer) # 328640
 
-## two options: dispersion filter by ratio < 1.1 (threshold)
-out_glmer_threshold <- subset(out_glmer_raw, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 168720, 179311 with cov not nT
-out_glmer_threshold$prepost_qval <- p.adjust(out_glmer_threshold$prepost_pval, method = "fdr", n = nrow(out_glmer_threshold))
+# histogram dispersion ratio filtered 
+ggplot(out_glmer, aes(x = dispersion.ratio)) + geom_histogram() + 
+scale_y_log10() + labs(title = "Histogram dispersion ratio", subtitle= "Filtered model output changing CpGs") -> hist_glmer_disp_ratio_filter
 
-nrow(out_glmer_threshold)/nrow(out_glmer_raw) # = 0.53
-nrow(subset(out_glmer_threshold, prepost_qval < 0.05)) # N = 3563
+# histogram p-values filtered
+ggplot(out_glmer, aes(x = prepost_pval)) + geom_histogram() + 
+  scale_y_continuous(labels = scales::unit_format(unit = "K", scale = 1e-3)) + 
+  labs(title = "Histogram p-values", subtitle="Filtered model output changing CpGs")-> hist_glmer_pvals_filter
 
-# qq plot
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_threshold.png", width = 800, height = 800)
-qqplot.pvalues(out_glmer_threshold$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
+plot_grid(hist_glmer_disp_ratio_filter, hist_glmer_pvals_filter, labs="auto", align="hv", axis="lb", ncol=1, label_fontface = "plain", label_size = 22)-> hists_glmer_filter
+
+ggsave(hists_glmer_filter, file = "plots/model_out/changing/hist_filtered_glmer.png", width = 12, height = 12)
+
+# qqplot filtered
+
+png(file = "plots/model_out/changing/qqplot_filtered_glmer.png", width = 800, height = 800)
+qqplot.pvalues(out_glmer$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
 dev.off()
 
-## second option: within the 90% quantiles
-out_glmer_perc <- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glmer_raw$dispersion.ratio, 0.95)))
-ggplot(out_glmer_perc, aes(x = prepost_pval)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted")
+#### FDR-correction ####
 
-out_glmer_perc$prepost_qval <- p.adjust(out_glmer_perc$prepost_pval, method = "fdr", n = nrow(out_glmer_perc))
-nrow(out_glmer_perc)/nrow(out_glmer_raw) # = 0.90 (obvs)
-nrow(subset(out_glmer_perc, prepost_qval < 0.05)) # N = 19110
-
-png(file = "plots/model_out/qqplot_changing_qqplot_glmer_90percentile.png", width = 800, height = 800)
-qqplot.pvalues(out_glmer_perc$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
-dev.off()
-
-## save the one we choose: threshold
-save(out_glmer_threshold, file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
-
-## lmer
-out_lmer <- parallel::mclapply(data, function_model_lmer, mc.cores=4) #274188
-# some have multiple convergence warnings, exclude them
-errors <- NULL
-for (i in 1:length(out_lmer)){
-  length <- length(out_lmer[[i]])
-  if(length != 16){
-    errors <- c(errors, i)
-  }
-}
-
-# some have wrong col names
-errors_cols <- NULL
-names <- names(out_lmer[[1]])
-for (i in 1:length(out_lmer)){
-  wrongnames <- names == names(out_lmer[[i]])
-  if((FALSE %in% wrongnames) == TRUE){
-    errors_cols <- c(errors_cols, i)
-  }
-}
-# both are due to large eigenvalues, unindentifiable model
-
-out_lmer <- out_lmer[-errors]
-out_lmer <- out_lmer[-errors_cols]
-out_lmer_raw <- do.call(rbind.data.frame, out_lmer)
-save(out_lmer_raw, file="results/modeloutput/prepost_modeloutput_lmer_min0.75_raw.RData")
-
-# qq plot raw data
-png(file = "plots/model_out/qqplot_changing_qqplot_lmer_raw.png", width = 1000, height = 1000)
-qqplot.pvalues(out_lmer_raw$prepost_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
-dev.off()
-
-# quite some overdispersion but not as much
-
-### apply a FDR multiple-testing correction
-
-## two options: dispersion filter by ratio < 1.1 (threshold)
-out_lmer_threshold <- subset(out_lmer_raw, dispersion.ratio < 1.1 & dispersion.pval > 0.05 & is.na(convergence)) # 168720, 179311 with cov not nT
-out_lmer_threshold$prepost_qval <- p.adjust(out_lmer_threshold$prepost_pval, method = "fdr", n = nrow(out_lmer_threshold))
-
-nrow(out_lmer_threshold)/nrow(out_lmer_raw) # = 0.60
-nrow(subset(out_lmer_threshold, prepost_qval < 0.05)) # N = 347
-
-# qq plot
-png(file = "plots/model_out/qqplot_changing_qqplot_lmer_threshold.png", width = 1000, height = 1000)
-qqplot.pvalues(out_lmer_threshold$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
-dev.off()
-
-## second option: within the 90% quantiles
-out_lmer_perc <- subset(out_lmer_raw, dispersion.ratio < as.vector(quantile(out_lmer_raw$dispersion.ratio, 0.975)) & dispersion.ratio > as.vector(quantile(out_lmer_raw$dispersion.ratio, 0.025)))
-out_lmer_perc$prepost_qval <- p.adjust(out_lmer_perc$prepost_pval, method = "fdr", n = nrow(out_lmer_perc))
-nrow(out_lmer_perc)/nrow(out_lmer_raw) # = 0.90 (obvs)
-nrow(subset(out_lmer_perc, prepost_qval < 0.05)) # N = 337
-
-png(file = "plots/model_out/qqplot_changing_qqplot_lmer_90percentile.png", width = 1000, height = 1000)
-qqplot.pvalues(out_lmer_perc$prepost_qval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95) 
-dev.off()
-
-## after filtering, quite some underdispersion?
+out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
 
 #### Filter for mean delta methylation ####
 
@@ -318,46 +213,45 @@ load(file = "results/modeloutput/all_sites_deltameth.RData")
 mean_delta_meth <- delta_meth %>% group_by(chr_pos) %>% summarise_at(vars(delta_meth), funs(mean(., na.rm=TRUE)))
 names(mean_delta_meth)[2] <- "mean_delta_meth"
 
-out_glmer <- left_join(out_glmer_threshold, mean_delta_meth, by = "chr_pos")
-out_lmer <- left_join(out_lmer_threshold, mean_delta_meth, by = "chr_pos")
+out_glmer <- left_join(out_glmer, mean_delta_meth, by = "chr_pos")
 
 ### Filter min absolute mean methylation of 10%
 
-## save the epi data only from cpg's that are sig
 sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
-# N = 3563 but with 10% mean difference only 434
+nrow(sub_glmer_prepost)
+# 1026
 
-sub_lmer_prepost <- subset(out_lmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
-# N = 204 
-nrow(subset(sub_glmer_prepost, chr_pos %in% sub_lmer_prepost$chr_pos)) #105
-nrow(subset(sub_lmer_prepost, chr_pos %in% sub_glmer_prepost$chr_pos)) #105
-
+### Save original data (per CpG site per individual) for models but only subset significant CpG sites
 changing_cpg <- subset(prepost_long, chr_pos %in% sub_glmer_prepost$chr_pos)
-save(changing_cpg, file="results/modeloutput/subset_sites_sig_prepost.RData")
+save(changing_cpg, file="results/modeloutput/changing/changing_sites_glmer.RData")
 
-changing_cpg_lmer <- subset(prepost_long, chr_pos %in% sub_lmer_prepost$chr_pos)
-save(changing_cpg_lmer, file="results/modeloutput/subset_sites_sig_prepost_lmer.RData")
+### Save the model output
+save(out_glmer, file="results/modeloutput/changing/modeloutput_glmer.RData")
 
-### volcano plot
-source("scripts/plotting_theme.R")
+#### Plotting results ####
+
+### Volcano plot
+
+### Add column indicationg it's significant or not
 
 out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
 
-clrs <- viridisLite::viridis(6)
 ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
     labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
-    #xlim(-1, 1)+
     scale_color_manual(values=c("grey60", clrs[4])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> volcano_change
 
-ggsave(volcano_change, file = "plots/model_out/volcano_change.png", width=10, height=10)    
+ggsave(volcano_change, file = "plots/model_out/changing/volcano_change.png", width=10, height=10)    
 
-### manhattan plot
+### How many get up- and how many get downregulated?
+sub_glmer_prepost <- sub_glmer_prepost %>% mutate(posneg = as.factor(case_when(mean_delta_meth > 0 ~ "pos", mean_delta_meth < 0 ~ "neg")))
+summary(sub_glmer_prepost$posneg)
 
+### Manhattan plot
 
 # load scaffold numbers
 load("data/scaffold_names_dovetail.RData")
@@ -414,11 +308,10 @@ out_glmer %>% subset(scaf_nr <= 30) %>%
     legend.position="none",
     axis.title.x = element_text(margin=margin(t=10)),
     axis.title.y = element_text(margin=margin(r=5)),
-     axis.ticks.x = element_blank()
+    axis.ticks.x = element_blank(),
     axis.line.y = element_blank()) -> manhattan_change
 
-ggsave(manhattan_change, file = "plots/model_out/manhattan_change_glmer.png", width=26, height=10)    
-
+ggsave(manhattan_change, file = "plots/model_out/changing/manhattan_glmer.png", width=26, height=10)    
 
 ### plot the raw data of the five most sig cpg sites
 out_glmer <- out_glmer %>% arrange(prepost_qval)
@@ -436,7 +329,6 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[1]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_1
-
 
 subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
   arrange(id, year) %>%
@@ -491,4 +383,257 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[6]) %>%
 cowplot::plot_grid(plot_top_cpg_1, plot_top_cpg_2, plot_top_cpg_3, plot_top_cpg_4, 
                     plot_top_cpg_5, plot_top_cpg_6, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> plots_change
 
-ggsave(plots_change, file = "plots/model_out/plot_top_change_cpg.png", width=16, height=20)    
+ggsave(plots_change, file = "plots/model_out/changing/rawdata_top_sig.png", width=16, height=20)    
+
+#### Annotation of changing CpG sites: gene regions #####
+
+### Packages ####
+pacman::p_load(genomation, GenomicFeatures, rtracklayer, 
+               GenomicRanges)
+
+
+### Combine all sites vs changing sites
+cpg_all <- out_glmer %>% dplyr::select(c(chr_pos, prepost_qval))
+names(cpg_all)[2] <- "parameter_qval"
+cpg_all$parameter <- "all"
+
+cpg_changing_select <- sub_glmer_prepost %>% dplyr::select(c(chr_pos, prepost_qval))
+names(cpg_changing_select)[2] <- "parameter_qval"
+cpg_changing_select$parameter <- "time_period"
+
+all_models_sig <- rbind(cpg_all, cpg_changing_select)
+
+### Rename chr_pos and divide ###
+all_models_sig$chr_pos <- gsub("__", ";", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr_pos, )
+
+# Extract the numbers following HRSCAF=XXX_number
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(all_models_sig$chr_pos, "_", fixed = TRUE)
+
+all_models_sig$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2))
+
+all_models_sig$pos <- sapply(split_chr_pos, "[", 3)
+
+all_models_sig <- all_models_sig %>% 
+  relocate(chr, .after = chr_pos) %>%
+  relocate(pos, .after = chr_pos)
+
+#revert scafnames
+all_models_sig$chr_pos <- gsub(";","__", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr_pos)
+
+all_models_sig$chr <- gsub(";","__", all_models_sig$chr)
+all_models_sig$chr <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr)
+
+### Load annotation data
+annotation_dir <- "~/PhD_grouse/grouse-annotation/output"
+
+promoter=unique(gffToGRanges(paste0(annotation_dir, "/promoters.gff3")))
+genes=unique(gffToGRanges(paste0(annotation_dir, "/genes.gff3")))
+TSS=unique(gffToGRanges(paste0(annotation_dir, "/TSS.gff3")))
+exons_gene=unique(gffToGRanges(paste0(annotation_dir, "/exons_gene.gff3")))
+introns=unique(gffToGRanges(paste0(annotation_dir, "/introns_transcripts.gff3")))
+downstream=unique(gffToGRanges(paste0(annotation_dir, "/downstream.gff3")))
+upstream=unique(gffToGRanges(paste0(annotation_dir, "/upstream.gff3")))
+threeUTR =unique(gffToGRanges(paste0(annotation_dir, "/threeUTRs.gff3")))
+fiveUTR=unique(gffToGRanges(paste0(annotation_dir, "/fiveUTRs.gff3")))
+
+#### Annotate ####
+all_models_sig$end <- all_models_sig$pos
+all_models_sig$start <- all_models_sig$pos
+sig_gr <- as(all_models_sig, "GRanges")
+
+sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
+  add_column("region" = "promoter", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
+  add_column("region" = "gene", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
+  add_column("region" = "TSS", .after="parameter") %>%
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_exon <- as.data.frame(subsetByOverlaps(sig_gr, exons_gene)) %>% as.data.frame() %>%
+  add_column("region" = "exon", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_intron <- as.data.frame(subsetByOverlaps(sig_gr, introns))  %>% as.data.frame() %>%
+  add_column("region" = "intron", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_down <- as.data.frame(subsetByOverlaps(sig_gr, downstream)) %>% as.data.frame() %>%
+  add_column("region" = "downstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_up <- as.data.frame(subsetByOverlaps(sig_gr, upstream))  %>% as.data.frame() %>%
+  add_column("region" = "upstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_threeUTR <- as.data.frame(subsetByOverlaps(sig_gr, threeUTR))  %>% as.data.frame() %>%
+  add_column("region" = "threeUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_fiveUTR <- as.data.frame(subsetByOverlaps(sig_gr, fiveUTR))  %>% as.data.frame() %>%
+  add_column("region" = "fiveUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
+                                  sig_tss, sig_exon, sig_intron, sig_down,
+                                  sig_up, sig_threeUTR,  sig_fiveUTR)
+
+summary(as.factor(all_models_sig_annotated$region))
+
+save(all_models_sig_annotated, file="results/modeloutput/changing/annotated_sig_cpg.RData")
+
+#### Summarise number of sites per region ####
+sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
+names(sum_annotated) <- c("region", "model", "n")
+
+sum_annotated$model <- gsub("all", "All", sum_annotated$model)
+sum_annotated$model <- gsub("time_period", "Time period", sum_annotated$model)
+
+sum_annotated$region <- gsub("downstream", "Downstream", sum_annotated$region)
+sum_annotated$region <- gsub("upstream", "Upstream", sum_annotated$region)
+sum_annotated$region <- gsub("exon", "Exon", sum_annotated$region)
+sum_annotated$region <- gsub("fiveUTR", "5' UTR", sum_annotated$region)
+sum_annotated$region <- gsub("gene", "Gene body", sum_annotated$region)
+sum_annotated$region <- gsub("intron", "Intron", sum_annotated$region)
+sum_annotated$region <- gsub("promoter", "Promoter", sum_annotated$region)
+sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
+
+sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
+
+# add total sig CpGs
+sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
+  model == "All" ~ nrow(out_glmer),
+  model == "Time period" ~ nrow(sub_glmer_prepost)))
+
+sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
+
+write.csv(sum_annotated, file="results/modeloutput/changing/summary_regions_sig_cpgs.csv", row.names=F, quote=F)
+
+#### Plot number of sites per region ####
+ggplot(sum_annotated, aes(x = region, y = n)) + geom_bar(stat="identity") + 
+  facet_wrap(~model, ncol=2, scales="free") + coord_flip() -> num_region_cpg
+
+ggsave(num_region_cpg, file="plots/model_out/changing/n_sig_cpg_per_region.png", width=10, height=18)
+
+ggplot(sum_annotated, aes(x = region, y = perc)) + geom_bar(stat="identity") + ylim(0,100)+
+  facet_wrap(~model, ncol=2,) + coord_flip() -> perc_region_cpg
+
+ggsave(perc_region_cpg, file="plots/model_out/changing/perc_sig_cpg_per_region.png", width=10, height=18)
+
+#### Annotate with gene names based on chicken liftover ####
+### load annotation data
+gff <- makeTxDbFromGFF(paste0(annotation_dir, "/liftoff_gallus_ltet.gff"), 
+                       format="gff3", organism="Lyrurus tetrix") 
+
+promoters_chicken <- promoters(gff, upstream=2000, downstream=200, columns=c("tx_name", "gene_id")) # From NIOO
+genes_chicken <- genes(gff)
+TSS_chicken <- promoters(gff, upstream=300, downstream=50, columns=c("tx_name", "gene_id")) # TSS as in Laine et al., 2016. Nature Communications
+downstream_chicken <- flank(genes(gff), 10000, start=FALSE, both=FALSE, use.names=TRUE)
+upstream_chicken <- promoters(genes(gff), upstream=10000, downstream=0)
+exons_gene_chicken <- unlist(exonsBy(gff, "gene")) # group exons by genes
+introns_chicken <- unlist(intronsByTranscript(gff, use.names=TRUE))
+
+exons <- exonsBy(gff, "gene")
+gene <- data.frame()
+for (i in 1:length(exons)){
+  df <- as.data.frame(exons[[i]])
+  for (j in 1:nrow(df)){
+    if(grepl("XM_015281696.4-1", df$exon_name[j]) == TRUE){
+    gene <- rbind(gene, names(exons[i]))  }
+  }}
+
+#rename seqnames which can't be done in gff
+
+all_models_sig$chr_pos <- gsub("__", ";",all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub( "HRSCAF_", "HRSCAF=",all_models_sig$chr_pos)
+
+all_models_sig$chr <- gsub("__", ";",all_models_sig$chr)
+all_models_sig$chr <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr)
+
+sig_gr <- as(all_models_sig, "GRanges")
+
+## annotate with chicken
+sig_promoter_chicken <- mergeByOverlaps(sig_gr, promoters_chicken) 
+sig_promoter_chicken_df <- unique(data.frame(chr_pos = sig_promoter_chicken$chr_pos,
+                                      chr = sig_promoter_chicken$sig_gr@seqnames,
+                                      pos = sig_promoter_chicken$sig_gr$pos,
+                                      parameter = sig_promoter_chicken$parameter,
+                                      parameter_qval = sig_promoter_chicken$parameter_qval,
+                                      gene_id = sig_promoter_chicken$gene_id@unlistData,
+                                      region = "promoter"))
+
+sig_gene_chicken <- mergeByOverlaps(sig_gr, genes_chicken) 
+sig_gene_chicken_df <- unique(data.frame(chr_pos = sig_gene_chicken$chr_pos,
+                                             chr = sig_gene_chicken$sig_gr@seqnames,
+                                             pos = sig_gene_chicken$sig_gr$pos,
+                                             parameter = sig_gene_chicken$parameter,
+                                      parameter_qval = sig_gene_chicken$parameter_qval,
+                                           gene_id = sig_gene_chicken$gene_id,
+                                             region = "gene"))
+
+sig_TSS_chicken <- mergeByOverlaps(sig_gr, TSS_chicken) 
+sig_TSS_chicken_df <- unique(data.frame(chr_pos = sig_TSS_chicken$chr_pos,
+                                         chr = sig_TSS_chicken$sig_gr@seqnames,
+                                         pos = sig_TSS_chicken$sig_gr$pos,
+                                         parameter = sig_TSS_chicken$parameter,
+                                      parameter_qval = sig_TSS_chicken$parameter_qval,
+                                       gene_id = unlist(sig_TSS_chicken$gene_id),
+                                         region = "TSS"))
+
+sig_exon_chicken <- mergeByOverlaps(sig_gr, exons_gene_chicken) 
+sig_exon_chicken_df <- unique(data.frame(chr_pos = sig_exon_chicken$chr_pos,
+                                        chr = sig_exon_chicken$sig_gr@seqnames,
+                                        pos = sig_exon_chicken$sig_gr$pos,
+                                        parameter = sig_exon_chicken$parameter,
+                                      parameter_qval = sig_exon_chicken$parameter_qval,
+                                        gene_id = sig_exon_chicken$exon_name,
+                                        region = "exon"))
+
+sig_intron_chicken <- mergeByOverlaps(sig_gr, introns_chicken) 
+sig_intron_chicken_df <- unique(data.frame(chr_pos = sig_intron_chicken$chr_pos,
+                                         chr = sig_intron_chicken$sig_gr@seqnames,
+                                         pos = sig_intron_chicken$sig_gr$pos,
+                                         parameter = sig_intron_chicken$parameter,
+                                      parameter_qval = sig_intron_chicken$parameter_qval,
+                                        gene_id = NA,
+                                         region = "intron"))
+
+sig_down_chicken <- mergeByOverlaps(sig_gr, downstream_chicken) 
+sig_down_chicken_df <- unique(data.frame(chr_pos = sig_down_chicken$chr_pos,
+                                        chr = sig_down_chicken$sig_gr@seqnames,
+                                        pos = sig_down_chicken$sig_gr$pos,
+                                        parameter = sig_down_chicken$parameter,
+                                      parameter_qval = sig_down_chicken$parameter_qval,
+                                         gene_id = sig_down_chicken$gene_id,
+                                        region = "downstream"))
+
+sig_up_chicken <- mergeByOverlaps(sig_gr, upstream_chicken) 
+sig_up_chicken_df <- unique(data.frame(chr_pos = sig_up_chicken$chr_pos,
+                                         chr = sig_up_chicken$sig_gr@seqnames,
+                                         pos = sig_up_chicken$sig_gr$pos,
+                                        parameter = sig_up_chicken$parameter,
+                                      parameter_qval = sig_up_chicken$parameter_qval,
+                                       gene_id = sig_up_chicken$gene_id,
+                                         region = "upstream"))
+
+
+all_models_sig_annotated_chicken <- rbind(sig_promoter_chicken_df, sig_gene_chicken_df,
+                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_down_chicken_df,
+                                  sig_up_chicken_df) # left out intron due to error
+
+all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
+                                           !is.na(gene_id) &
+                                             !grepl("LOC", gene_id))
+
+subset(all_models_sig_annotated_chicken, parameter == "all" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_chicken, parameter == "time_period" & region != "exon") %>% arrange(parameter_qval) %>%
+  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing.csv", quote=F, row.names=F, col.names = F)
