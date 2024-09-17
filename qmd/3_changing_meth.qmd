@@ -10,14 +10,16 @@ format:
 
 **Identifying CpG sites that change over the lekking season**
 
-Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. Moreover, as there are multiple samples for each individual, we correct for the non-independence of samples by including ID as a random effect. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
+Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. 
+
+Moreover, as there are (sometimes) multiple samples for each individual, we correct for the non-independence of individuals by including ID as a random effect, nested within lek. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
 
 ## Prepare the data {#sec-change}
 
 ```{r model, echo=T, eval=F}
 ### load packages 
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
-               parallel, performance, lmerTest, tidystats, insight, rptR)
+pacman::p_load(tidyverse, data.table, tibble, performance, 
+               parallel, lmerTest, tidystats)
 
 ### load epi data
 load(file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group.RData") 
@@ -150,19 +152,19 @@ out_glmer <- do.call(rbind.data.frame, out_glmer)
 
 #### Exclude models that did not converge ####
 out_glmer_raw_conv <- subset(out_glmer_raw, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
-nrow(out_glmer_raw_conv) / nrow(out_glmer_raw) * 100 # retain 97%, 345983 out of 354765
+nrow(out_glmer_raw_conv) / nrow(out_glmer_raw) * 100 # retain 97.5%, 345937 out of 354765
 
 ```
 
 When excluding models with convergence warnings/errors, we retain 97% of models, 345,983 out of 354,765 CpG site models.
 
-## Explore and filter for under- and overdispersion
+## Explore and filter for overdispersion
 
 We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is under/overdispersion and how to best filter for it.
 
 ![Histogram dispersion ratio and p-values raw models](../plots/model_out/changing/hist_raw_glmer.png) ![QQ plot model changing CpG sites raw models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
-Next, filter out the sites with an overdispersion ratio higher than the 95 percentile.
+Next, we filter out the sites with an overdispersion ratio higher than the 95 percentile.
 
 ```{r filter_dispersion, echo=T, eval=F}
 ## filter for 95 percentile
@@ -170,7 +172,7 @@ out_glmer<- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glme
 
 ```
 
-We are then left with a total of 328,683 CpG site models.
+We are then left with a total of 328,640 CpG site models.
 
 ![Histogram dispersion ratio and p-values filtered models](../plots/model_out/changing/hist_filtered_glmer.png) ![QQ plot model changing CpG sites filtered models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
@@ -179,6 +181,7 @@ We are then left with a total of 328,683 CpG site models.
 After excluding CpG site models with overdispersion, we apply a multiple-testing correction using the false discovery rate (FDR).
 
 ```{r fdr, echo=T, eval=F}
+
 out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = nrow(out_glmer))
 
 ```
@@ -232,7 +235,7 @@ save(out_glmer, file="results/modeloutput/changing/modeloutput_glmer.RData")
 
 ```
 
-A total of 1,023 CpG sites significantly change across the lekking period.
+A total of 1,026 CpG sites significantly change across the lekking period.
 
 ## Plotting
 
@@ -241,10 +244,10 @@ A total of 1,023 CpG sites significantly change across the lekking period.
 Next, we make a volcano plot to visualise the results.
 
 ```{r volcano, echo=T, eval= F}
-out_glmer <- out_glmer %>% 
-  mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+#| code-fold: true
 
-clrs <- viridisLite::viridis(6)
+out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
+
 ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
     labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
@@ -258,11 +261,72 @@ ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))
 
 ![Volcano plot changing CpG sites](../plots/model_out/changing/volcano_change.png){width="450" fig-align="left"}
 
-Interestingly, there seems to more CpG sites that increase in methylation over time compared to CpG sites that increase in methylation over time ().
+Interestingly, there seems to more CpG sites that increase in methylation over time compared to CpG sites that decrease in methylation over time (807 CpG sites increase, 219 decrease in methylation %).
 
 We can also look at the distribution of CpG sites across the genome in a Manhattan plot.
 
-![Manhattan plot](../plots/model_out/manhattan_change_glmer.png){fig-align="left"}
+
+```{r manhattan, echo=T, eval= F}
+#| code-fold: true
+load("data/scaffold_names_dovetail.RData")
+
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(out_glmer$chr_pos, "_", fixed = TRUE)
+
+# Extract the numbers following HRSCAF=XXX_number
+out_glmer$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2), ";", 
+                             sapply(split_chr_pos, "[", 4), "=",
+                             sapply(split_chr_pos, "[", 5))
+
+out_glmer$pos <- as.numeric(sapply(split_chr_pos, "[", 6))
+
+# join
+out_glmer <- left_join(out_glmer, genome[,c("contig", "scaf_nr")], by = c("chr" = "contig"))
+
+# plot 
+# lmer
+test <- sample_n(out_glmer, 100)
+out_glmer <- out_glmer %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
+                                        TRUE ~ "odd"))
+
+shade <- out_glmer %>%
+  subset(scaf_nr <= 30) %>%
+  group_by(scaf_nr) %>%
+  summarise(min = min(pos), max = max(pos)) %>%
+  mutate(min = case_when(scaf_nr == 2 | scaf_nr == 4 | scaf_nr == 6 | scaf_nr == 8 | scaf_nr == 10 |
+                          scaf_nr == 12 | scaf_nr == 14 | scaf_nr == 16 | scaf_nr == 18 | scaf_nr == 20 |
+                          scaf_nr == 22 | scaf_nr == 24 | scaf_nr == 26 | scaf_nr == 28 | scaf_nr == 30 ~ 0,
+                         TRUE ~ min)) %>%
+  mutate(max = case_when(scaf_nr == 2 | scaf_nr == 4 | scaf_nr == 6 | scaf_nr == 8 | scaf_nr == 10 |
+                          scaf_nr == 12 | scaf_nr == 14 | scaf_nr == 16 | scaf_nr == 18 | scaf_nr == 20 |
+                          scaf_nr == 22 | scaf_nr == 24 | scaf_nr == 26 | scaf_nr == 28 | scaf_nr == 30  ~ 0,
+                         TRUE ~ max))
+                                        
+clrs <- viridisLite::viridis(6)
+out_glmer %>% subset(scaf_nr <= 30) %>% 
+  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
+    geom_point(size=5, alpha=0.5, aes(col = as.factor(col), fill = as.factor(col))) +
+    facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
+    labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+    #geom_rect(data=shade, aes(xmin=min, xmax=max, ymin=0, ymax=-log10(as.numeric(test$prepost_pval))), 
+    #        alpha=0.5, fill = "#eceff4") + # "#f7f7f7" "#eceff4"
+    #xlim(-1, 1)+
+    scale_color_manual(values=c(clrs[2], clrs[4])) +
+    scale_fill_manual(values=alpha(c(clrs[2], clrs[4]), 0.5)) +
+    geom_hline(yintercept = -log10(0.05/nrow(out_glmer)), col = "darkred", linetype = "dotted", linewidth = 1) +
+    theme(axis.text.x = element_blank(),
+    panel.spacing = unit(0, "lines"),
+    plot.margin = margin(r = 0.5, l = 0.1, b = 0.1, t = 0.1, unit = "cm"),
+    axis.line.x = element_blank(),
+    legend.position="none",
+    axis.title.x = element_text(margin=margin(t=10)),
+    axis.title.y = element_text(margin=margin(r=5)),
+    axis.ticks.x = element_blank(),
+    axis.line.y = element_blank()) -> manhattan_change
+
+```
+![Manhattan plot](../plots/model_out/changing/manhattan_glmer.png){fig-align="left"}
 
 ### Raw data
 
@@ -270,7 +334,7 @@ To assess whether the models performed well, I also plotted the raw data of the 
 
 ```{r raw plots, echo=T, eval=F}
 # raw plot for the 1st significant CpG site, repeat for the other 4 and combine with cowplot
-
+#| code-fold: true
 out_glmer <- out_glmer %>% arrange(prepost_qval)
 
 subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
@@ -280,11 +344,12 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[1]) +
-  theme(legend.position="none") + ylim(0,1)
+  theme(legend.position="none") +
+  ylim(0,1)
 
 ```
 
-![Raw data top 5 significantly changing CpG sites](../plots/model_out/plot_top_change_cpg.png){width="350" fig-align="left"}
+![Raw data top 5 significantly changing CpG sites](../plots/model_out/changing/rawdata_top_sig.png.png){width="350" fig-align="left"}
 
 ## Annotation
 
@@ -547,12 +612,14 @@ all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
 We next run the list of gene IDs of the significant sites as the target list as well as the list of gene IDs from all CpG sites that we ran the model on as a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
 
 ```{r sig_go}
-table_go_function_changing <- read_excel("../results/model_out/go_changing_function_list.xlsx")
+table_go_function_changing <- read_excel("../results/modeloutput/changing/GOFUNCTION_changing.xls")
 
 table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
-table_go_process_changing <- read_excel("../results/model_out/go_changing_process_list.xlsx")
+table_go_process_changing <- read_excel("../results/modeloutput/changing/GOPROCESS_changing.xls")
 
 table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_process_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
 ```
+
+Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly!

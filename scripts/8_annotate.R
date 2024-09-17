@@ -8,41 +8,89 @@ pacman::p_load(tidyverse, data.table, genomation, GenomicFeatures, rtracklayer,
 source("scripts/plotting_theme.R")
 
 ### Significants sites ####
-# changing
-load(file="results/modeloutput/prepost_modeloutput_glmer_min0.75.RData")
-cpg_change <- subset(out_glmer, prepost_qval < 0.05 & abs(prepost_estimate) > 0.1)
 
-# AMS
-load(file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
-cpg_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05 & abs(ams_delta_meth_estimate) > 0.1)
+## attendance
+load(file="results/modeloutput/effort/out_attend_with_pre.RData")
+cpg_attend_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_attend_pre$pre_control <- "pre"
 
-# effort
-load(file="results/modeloutput/effort_deltameth_modeloutput_filtered.RData")
-cpg_effort <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
+load(file="results/modeloutput/effort/out_attend_no_pre.RData")
+cpg_attend_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_attend_no_pre$pre_control <- "no_pre"
 
-#physio
-load(file="results/modeloutput/physio_deltameth_modeloutput_filtered.RData")
-cpg_physio <- subset(delta_out_all, parameter_qval < 0.05 & abs(parameter_estimate) > 0.1)
+## fight 
+load(file="results/modeloutput/effort/out_fight_with_pre.RData")
+cpg_fight_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_fight_pre$pre_control <- "pre"
 
+load(file="results/modeloutput/effort/out_fight_no_pre.RData")
+cpg_fight_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_fight_no_pre$pre_control <- "no_pre"
 
+## dist 
+load(file="results/modeloutput/effort/out_dist_with_pre.RData")
+cpg_dist_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_dist_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/effort/out_dist_no_pre.RData")
+cpg_dist_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_dist_no_pre$pre_control <- "no_pre"
+
+## mass 
+load(file="results/modeloutput/physio/out_mass_dif_with_pre.RData")
+cpg_mass_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_mass_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/physio/out_mass_dif_no_pre.RData")
+cpg_mass_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_mass_no_pre$pre_control <- "no_pre"
+
+## microf 
+load(file="results/modeloutput/physio/out_microf_dif_with_pre.RData")
+cpg_microf_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_microf_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/physio/out_microf_dif_no_pre.RData")
+cpg_microf_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_microf_no_pre$pre_control <- "no_pre"
+
+## trypa 
+load(file="results/modeloutput/physio/out_trypa_dif_with_pre.RData")
+cpg_trypa_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_trypa_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/physio/out_trypa_dif_no_pre.RData")
+cpg_trypa_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_trypa_no_pre$pre_control <- "no_pre"
+
+## hct 
+load(file="results/modeloutput/physio/out_hct_dif_with_pre.RData")
+cpg_hct_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_hct_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/physio/out_hct_dif_no_pre.RData")
+cpg_hct_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_hct_no_pre$pre_control <- "no_pre"
+
+## ig 
+load(file="results/modeloutput/physio/out_ig_dif_with_pre.RData")
+cpg_ig_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_ig_pre$pre_control <- "pre"
+
+load(file="results/modeloutput/physio/out_ig_dif_no_pre.RData")
+cpg_ig_no_pre <- subset(data, parameter_qval < 0.05)%>% dplyr::select(c(chr_pos, parameter, parameter_qval))
+cpg_ig_no_pre$pre_control <- "no_pre"
 
 ### combine
-cpg_all <- out_glmer %>% dplyr::select(c(chr_pos, prepost_qval))
-names(cpg_all)[2] <- "parameter_qval"
-cpg_all$parameter <- "all"
 
-cpg_changing_select <- cpg_change %>% dplyr::select(c(chr_pos, prepost_qval))
-names(cpg_changing_select)[2] <- "parameter_qval"
-cpg_changing_select$parameter <- "time_period"
-
-cpg_ams_select <- cpg_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
-names(cpg_ams_select)[2] <- "parameter_qval"
-cpg_ams_select$parameter <- "AMS"
-
-cpg_effort_select <- cpg_effort %>% dplyr::select(c(chr_pos, parameter, parameter_qval))
-cpg_physio_select <- cpg_physio %>% dplyr::select(c(chr_pos, parameter, parameter_qval))
-
-all_models_sig <- rbind(cpg_all, cpg_changing_select, cpg_ams_select, cpg_effort_select, cpg_physio_select)
+all_models_sig <- rbind(cpg_attend_no_pre, cpg_attend_pre,
+                        cpg_fight_no_pre, cpg_fight_pre,
+                        cpg_dist_no_pre, cpg_dist_pre,
+                        cpg_mass_no_pre, cpg_mass_pre,
+                        cpg_microf_no_pre, cpg_microf_pre,
+                        cpg_trypa_no_pre, cpg_trypa_pre,
+                        cpg_ig_no_pre, cpg_ig_pre,
+                        cpg_hct_no_pre, cpg_hct_pre)
 
 ### Rename chr_pos and divide ###
 all_models_sig$chr_pos <- gsub("__", ";", all_models_sig$chr_pos)
@@ -132,15 +180,19 @@ summary(as.factor(all_models_sig_annotated$region))
 
 save(all_models_sig_annotated, file="results/annotated/annotated_modeloutput_sig_annotated.RData")
 
-sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
-names(sum_annotated) <- c("region", "model", "n")
+sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter, all_models_sig_annotated$pre_control))
+names(sum_annotated) <- c("region", "model", "pre_control", "n")
 
-sum_annotated$model <- gsub("all", "All", sum_annotated$model)
-sum_annotated$model <- gsub("AMS", "Annual mating success", sum_annotated$model)
 sum_annotated$model <- gsub("attend", "Attendance", sum_annotated$model)
 sum_annotated$model <- gsub("dist", "Centrality", sum_annotated$model)
 sum_annotated$model <- gsub("fight", "Fighting rate", sum_annotated$model)
-sum_annotated$model <- gsub("time_period", "Time period", sum_annotated$model)
+sum_annotated$model <- gsub("mass_dif", "Delta body mass", sum_annotated$model)
+sum_annotated$model <- gsub("microf_dif", "Delta Microfilaria spp. ", sum_annotated$model)
+sum_annotated$model <- gsub("ig_dif", "Delta IgG", sum_annotated$model)
+sum_annotated$model <- gsub("hct_dif", "Delta HCT", sum_annotated$model)
+
+sum_annotated$pre_control <- gsub("no_pre", "No pre-lekking methylation %", sum_annotated$pre_control )
+sum_annotated$pre_control <- gsub("pre", "With pre-lekking methylation %", sum_annotated$pre_control )
 
 sum_annotated$region <- gsub("downstream", "Downstream", sum_annotated$region)
 sum_annotated$region <- gsub("upstream", "Upstream", sum_annotated$region)
@@ -154,24 +206,47 @@ sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
 sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
 
 # add total sig CpGs
-sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
-  model == "All" ~ 354649,
-  model == "Annual mating success" ~ nrow(cpg_ams),
-  model == "Attendance" ~ nrow(subset(cpg_effort, parameter == "attend")),
-  model == "Centrality" ~ nrow(subset(cpg_effort, parameter == "dist")),
-  model == "Fighting rate" ~ nrow(subset(cpg_effort, parameter == "fight")),
-  model == "Time period" ~ nrow(cpg_change),
-  model == "Delta body mass" ~ nrow(subset(cpg_physio, parameter == "Delta body mass")),
-  model == "Delta HCT" ~ nrow(subset(cpg_physio, parameter == "Delta HCT")),
-  model == "Delta IgG" ~ nrow(subset(cpg_physio, parameter == "Delta IgG")),
-  model == "Delta Microfilaria spp." ~ nrow(subset(cpg_physio, parameter == "Delta Microfilaria spp.")),
-  model == "Delta Trypanosoma spp." ~ nrow(subset(cpg_physio, parameter == "Delta Trypanosoma spp."))
-))
+##sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
+#  model == "All" ~ 354649,
+#  model == "Annual mating success" ~ nrow(cpg_ams),
+#  model == "Attendance" ~ nrow(subset(cpg_effort, parameter == "attend")),
+#  model == "Centrality" ~ nrow(subset(cpg_effort, parameter == "dist")),
+#  model == "Fighting rate" ~ nrow(subset(cpg_effort, parameter == "fight")),
+#  model == "Time period" ~ nrow(cpg_change),
+#  model == "Delta body mass" ~ nrow(subset(cpg_physio, parameter == "Delta body mass")),
+#  model == "Delta HCT" ~ nrow(subset(cpg_physio, parameter == "Delta HCT")),
+#  model == "Delta IgG" ~ nrow(subset(cpg_physio, parameter == "Delta IgG")),
+#  model == "Delta Microfilaria spp." ~ nrow(subset(cpg_physio, parameter == "Delta Microfilaria spp.")),
+#  model == "Delta Trypanosoma spp." ~ nrow(subset(cpg_physio, parameter == "Delta Trypanosoma spp."))
+#))
 
-sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
-
+#sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
+sum_annotated <- subset(sum_annotated, n > 0)
 write.csv(sum_annotated, file="results/tables/summary_regions_sig_cpgs_all.csv", row.names=F, quote=F)
 
+### to get info of the region (ANN ID)
+
+#check out manually
+
+sig_promoter_data <- mergeByOverlaps(sig_gr, promoter)
+
+sig_gene_data <- mergeByOverlaps(sig_gr, genes)
+
+sig_tss_data <- mergeByOverlaps(sig_gr, TSS)
+
+sig_exon_data <- mergeByOverlaps(sig_gr, exons_gene)
+
+sig_intron_data <- mergeByOverlaps(sig_gr, introns)
+
+sig_down_data <- mergeByOverlaps(sig_gr, downstream)
+
+sig_up_data <- mergeByOverlaps(sig_gr, upstream)
+
+sig_threeUTR_data <- mergeByOverlaps(sig_gr, threeUTR) 
+
+sig_fiveUTR_data <- mergeByOverlaps(sig_gr, fiveUTR)
+
+### plot distribution
 source("scripts/plotting_theme.R")
 ggplot(sum_annotated, aes(x = region, y = n)) + geom_bar(stat="identity") + 
   facet_wrap(~model, ncol=2, scales="free") + coord_flip() -> num_region_cpg
