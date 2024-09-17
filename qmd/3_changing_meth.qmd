@@ -160,8 +160,7 @@ When excluding models with convergence warnings/errors, we retain 97% of models,
 
 We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is under/overdispersion and how to best filter for it.
 
-![Histogram dispersion ratio and p-values raw models](../plots/model_out/changing/hist_raw_glmer.png) 
-![QQ plot model changing CpG sites raw models](../plots/model_out/changing/qqplot_raw_glmer.png)
+![Histogram dispersion ratio and p-values raw models](../plots/model_out/changing/hist_raw_glmer.png) ![QQ plot model changing CpG sites raw models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
 Next, filter out the sites with an overdispersion ratio higher than the 95 percentile.
 
@@ -173,8 +172,7 @@ out_glmer<- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glme
 
 We are then left with a total of 328,683 CpG site models.
 
-![Histogram dispersion ratio and p-values filtered models](../plots/model_out/changing/hist_filtered_glmer.png) 
-![QQ plot model changing CpG sites filtered models](../plots/model_out/changing/qqplot_raw_glmer.png)
+![Histogram dispersion ratio and p-values filtered models](../plots/model_out/changing/hist_filtered_glmer.png) ![QQ plot model changing CpG sites filtered models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
 ## FDR-correction
 
@@ -423,6 +421,7 @@ sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
 sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 
 ```
+
 ```{r, load_annotation, eval=T, echo=F}
 sum_annotated <- read.csv("../results/modeloutput/changing/summary_regions_sig_cpgs.csv")
 sum_annotated %>% kbl() %>%
