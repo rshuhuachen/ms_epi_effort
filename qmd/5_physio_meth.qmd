@@ -10,269 +10,253 @@ format:
 
 Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (*Microfilaria spp.* and *Trypanosoma spp.*), body mass, IgG and HCT.
 
-Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.
+Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect. Here too, we run two models in parallel: one that does and one does that not include the fixed effect of pre-lekking methylation %.
 
 ## Prepare the data {#sec-physio}
 
 ```{r delta_meth, echo=T, eval=F}
-
+#| code-fold: true
 ### load packages
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
-               parallel, performance, lmerTest, tidystats, insight)
+pacman::p_load(tidyverse, data.table, tibble, 
+               parallel, performance, lmerTest, tidystats)
 
 ### load data
 
-load(file = "results/modeloutput/subset_sites_sig_deltameth.RData")
+load(file="results/modeloutput/changing/changing_sites_glmer.RData")
 
 ### load phenotypic data
 
 load("data/phenotypes/fulldata_complete_epi_withdates.RData")
-load("data/phenotypes/pheno_dif_prepost.RData")
 
-#combine with site info
+load("data/phenotypes/pheno_dif_prepost.RData")  ## differences in physiology
+
+### combine delta methylation data with site and behaviour info
 
 delta_meth <- left_join(delta_meth, unique(all_pheno_epi[,c("id", "year", "site", "Core")], by = c("id", "year")))
 
-#combine with delta physiology
+### z-transform the traits before the model
 prepost_dif$mass_dif_scl <- scale(prepost_dif$mass_dif)
 prepost_dif$microf_dif_scl <- scale(prepost_dif$microf_dif)
 prepost_dif$trypa_dif_scl <- scale(prepost_dif$trypa_dif)
 prepost_dif$ig_dif_scl <- scale(prepost_dif$ig_dif)
 prepost_dif$hct_dif_scl <- scale(prepost_dif$hct_dif)
 
-delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_dif_scl", "microf_dif_scl", "trypa_dif_scl", "ig_dif_scl", "hct_dif_scl")], by = c("id", "year")))
+### combine data with pre-post delta physio numbers
+delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_dif", "microf_dif", "trypa_dif", "ig_dif", "hct_dif",
+                        "mass_dif_scl", "microf_dif_scl", "trypa_dif_scl", "ig_dif_scl", "hct_dif_scl")], by = c("id", "year")))
 
-delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
-```
-
-## Functon to run the model
-
-Below you'll find the full function ran per trait per CpG site, where the LMM ran follows this structure:
-
-`lmerTest::lmer(scale(delta_meth) ~ scale(delta_trait) + age + scale(methperc_pre) + (1|site/id))`
-
-```{r function, eval=F}
-#| code-fold: true
-# function to run the model
-function_model_delta <- function(df, parameter){tryCatch({
-  chr_pos <- as.character(df[1,1])
-  df <- as.data.frame(df)
-  df$methperc_pre_scl <- scale(df$methperc_pre)
-
-  formula <- formula(paste0("scale(delta_meth) ~ ", parameter, "_dif_scl + age + scale(methperc_pre) + (1|site/id) "))
-  
-  model <- lmerTest::lmer(formula, data=df)
-  summary <- summary(model)
-  
-  overdisp.lmer_fun <- function(model) {
-    vpars <- function(m) {
-      nrow(m)*(nrow(m)+1)/2
-    }
-    model.df <- sum(sapply(VarCorr(model),vpars))+length(fixef(model))
-    rdf <- nrow(model.frame(model))-model.df
-    rp <- residuals(model,type="pearson")
-    Pearson.chisq <- sum(rp^2)
-    prat <- Pearson.chisq/rdf
-    pval <- pchisq(Pearson.chisq, df=rdf, lower.tail=FALSE)
-    data.frame(chisq=Pearson.chisq,ratio=prat,rdf=rdf,p=pval)
-  }
-  
-  #fixed effect
-  parameter_estimate <- summary$coefficients[2,1]
-  parameter_se <- summary$coefficients[2,2]
-  parameter_df <- summary$coefficients[2,3]
-  parameter_tval <- summary$coefficients[2,4]
-  parameter_pval <- summary$coefficients[2,5]
-  
-  #age effect
-  age_estimate <- summary$coefficients["age", "Estimate"]
-  age_se <- summary$coefficients["age", "Std. Error"]
-  age_df <- summary$coefficients["age", "df"]
-  age_tval <- summary$coefficients["age", "t value"]
-  age_pval <- summary$coefficients["age", "Pr(>|t|)"]
-  
-  #premeth effect
-  pre_estimate <- summary$coefficients["scale(methperc_pre)", "Estimate"]
-  pre_se <- summary$coefficients["scale(methperc_pre)", "Std. Error"]
-  pre_df <- summary$coefficients["scale(methperc_pre)", "df"]
-  pre_tval <- summary$coefficients["scale(methperc_pre)", "t value"]
-  pre_pval <- summary$coefficients["scale(methperc_pre)", "Pr(>|t|)"]
-  
-  rsqc <- performance::r2(model)$R2_conditional #fixed plus random parameterects relative to overall variance
-  rsqm <- performance::r2(model)$R2_marginal #fixed parameterects relative to overall variance
-  
-  dispersion.chisq <- overdisp.lmer_fun(model)[1,1]
-  dispersion.ratio <- overdisp.lmer_fun(model)[1,2]
-  dispersion.rdf <- overdisp.lmer_fun(model)[1,3]
-  dispersion.pval <- overdisp.lmer_fun(model)[1,4]
-  
-  isSingular <- isSingular(model)
-  
-  icc_id_site <-icc(model, by_group = TRUE, tolerance = 0)[1,2]
-  icc_site <-icc(model, by_group = TRUE, tolerance = 0)[2,2]
-  
-  return(data.frame(chr_pos=as.factor(chr_pos),
-                    parameter = as.factor(parameter),
-                    icc_id_site = as.numeric(icc_id_site),
-                    icc_site = as.numeric(icc_site),
-                    parameter_estimate = as.numeric(parameter_estimate),
-                    parameter_se = as.numeric(parameter_se),
-                    parameter_df = as.numeric(parameter_df),
-                    parameter_tval = as.numeric(parameter_tval),
-                    parameter_pval = as.numeric(parameter_pval),
-                    age_estimate = as.numeric(age_estimate),
-                    age_se = as.numeric(age_se),
-                    age_df = as.numeric(age_df),
-                    age_tval = as.numeric(age_tval),
-                    age_pval = as.numeric(age_pval),
-                    pre_estimate = as.numeric(pre_estimate),
-                    pre_se = as.numeric(pre_se),
-                    pre_df = as.numeric(pre_df),
-                    pre_tval = as.numeric(pre_tval),
-                    pre_pval = as.numeric(pre_pval),
-                    rsqc = as.numeric(rsqc),
-                    rsqm = as.numeric(rsqm),
-                    dispersion.chisq = as.numeric(dispersion.chisq),
-                    dispersion.ratio = as.numeric(dispersion.ratio),
-                    dispersion.rdf = as.numeric(dispersion.rdf),
-                    dispersion.pval = as.numeric(dispersion.pval),
-                    isSingular = as.logical(isSingular)
-                    
-  ))
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
-}
 
 ```
+
+## Function to run the model
+
+Below you'll find the function ran per trait per CpG site, where the LMM ran follows this structure:
+
+`lmerTest::lmer(delta_meth ~ scale(delta_trait) + methperc_pre + (1|site/id))`
+
+This model is identical to the one presented in @sec-model-trait, except that the trait in question is also a calculation of the difference in the trait (delta; e.g. delta mass) rather than just one measure (e.g. attendance).
 
 ## Run the model per trait
 
+Here too, we only include CpG sites if they have at least 20 data points, which is therefore done for physiological trait separately. I'll give the code for one trait only (delta mass) but the exact same is done for the rest.
+
 ```{r run_model_example, echo=T, eval=F}
+#| code-fold: true
 ### run the model per trait
+source("scripts/function_models.R") 
+
+### only select cpg sites with enough data
+delta_meth_n_mass <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth)& !is.na(mass_dif)) %>% tally()
+delta_meth_n_mass <- subset(delta_meth_n_mass, n > 20)
+ 
+delta_meth_sub_mass <- subset(delta_meth, chr_pos %in% delta_meth_n_mass$chr_pos)
+length(unique(delta_meth_sub_mass$chr_pos)) #808 sites
+
+delta_meth_sub_mass_ls <- delta_meth_sub_mass %>% group_split(chr_pos)
 
 ### mass
-# run model
-delta_out_mass <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="mass",mc.cores=12)
-delta_out_mass <- do.call(rbind.data.frame, delta_out_mass)
 
-# convert to numeric
-delta_out_mass$parameter_pval <- as.numeric(delta_out_mass$parameter_pval)
-delta_out_mass$age_pval <- as.numeric(delta_out_mass$age_pval)
+### no pre ####
+m_mass_no_pre <- parallel::mclapply(delta_meth_sub_mass_ls, function_model_delta_pheno, parameter="mass_dif", pre="no_control", mc.cores=4)
+m_mass_no_pre_out <- function_process_model(m_mass_no_pre, dir_plots = "plots/model_out/physio/mass", dir_data = "results/modeloutput/physio",name_file = "mass_dif_no_pre", pretty_name = "Delta mass", filter_disp=FALSE) 
 
-# exclude those with overdispersion
-delta_out_mass <- subset(delta_out_mass, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
-
-# FDR correction
-delta_out_mass$parameter_qval <- p.adjust(delta_out_mass$parameter_pval, method = "fdr", n = nrow(delta_out_mass))
-
-delta_out_mass$age_qval <- p.adjust(delta_out_mass$age_pval, method = "fdr", n = nrow(delta_out_mass))
-
+### with pre ####
+m_mass_with_pre <- parallel::mclapply(delta_meth_sub_mass_ls, function_model_delta_pheno, parameter="mass_dif", pre="control", mc.cores=4)
+m_mass_with_pre_out <- function_process_model(m_mass_with_pre, dir_plots = "plots/model_out/physio/mass", dir_data = "results/modeloutput/physio",name_file = "mass_dif_with_pre", pretty_name = "Delta mass", filter_disp=FALSE) 
 ```
 
-Repeat this for all traits:
+### Delta mass
 
-```{r run_model, echo=T, eval=F}
-#| code-fold: true
-### microf
-# run model
-delta_out_microf <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="microf",mc.cores=12)
-delta_out_microf <- do.call(rbind.data.frame, delta_out_microf)
+808 CpG sites had enough phenotypic and epigenetic data to run the body mass model (after filtering for n > 20).
 
-# to numeric
-delta_out_microf$parameter_pval <- as.numeric(delta_out_microf$parameter_pval)
-delta_out_microf$age_pval <- as.numeric(delta_out_microf$age_pval)
+#### With pre-lekking
 
-# exclude overdispersion
-delta_out_microf <- subset(delta_out_microf, isSingular == FALSE & dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+![Histogram dispersion and p-value: delta mass with pre-methylation](../plots/model_out/physio/mass/hist_raw_disp_pval_mass_dif_with_pre.png)
 
-# FDR correction
-delta_out_microf$parameter_qval <- p.adjust(delta_out_microf$parameter_pval, method = "fdr", n = nrow(delta_out_microf))
-delta_out_microf$age_qval <- p.adjust(delta_out_microf$age_pval, method = "fdr", n = nrow(delta_out_microf))
+![Volcano plot: delta mass with pre-methylation](../plots/model_out/physio/mass/volcawith_mass_dif_with_pre.png)
 
-### trypa
-# run model
-delta_out_trypa <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="trypa",mc.cores=12)
-delta_out_trypa <- do.call(rbind.data.frame, delta_out_trypa)
+![Raw data: delta mass with pre-methylation CpG 1](../plots/model_out/physio/mass/mass_with_pre_1.png)
 
-# as numeric
-delta_out_trypa$parameter_pval <- as.numeric(delta_out_trypa$parameter_pval)
-delta_out_trypa$age_pval <- as.numeric(delta_out_trypa$age_pval)
+![Raw data: delta mass with pre-methylation CpG 2](../plots/model_out/physio/mass/mass_with_pre_2.png)
 
-# exclude overdispersion
-delta_out_trypa <- subset(delta_out_trypa, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+CpG site "ScEsiA3_17616__HRSCAF_20466_3956821" is located in a downstream region (gene IDs ANN28634 similar to BPI and ANN28635 similar to ID1).
 
-# FDR correction
-delta_out_trypa$parameter_qval <- p.adjust(delta_out_trypa$parameter_pval, method = "fdr", n = nrow(delta_out_trypa))
-delta_out_trypa$age_qval <- p.adjust(delta_out_trypa$age_pval, method = "fdr", n = nrow(delta_out_trypa))
+::: {.callout-caution collapse="true"}
+BPI: BPI (Bactericidal Permeability Increasing Protein) is a Protein Coding gene. Diseases associated with BPI include Meningococcemia and Reactive Arthritis. Among its related pathways are Innate Immune System and Toll Like Receptor 3 (TLR3) Cascade. Gene Ontology (GO) annotations related to this gene include lipid binding and lipopolysaccharide binding. An important paralog of this gene is LBP.
 
-### ig
-# run model
-delta_out_ig <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="ig",mc.cores=12)
-delta_out_ig <- do.call(rbind.data.frame, delta_out_ig)
+ID1: The protein encoded by this gene is a helix-loop-helix (HLH) protein that can form heterodimers with members of the basic HLH family of transcription factors. The encoded protein has no DNA binding activity and therefore can inhibit the DNA binding and transcriptional activation ability of basic HLH proteins with which it interacts. This protein may play a role in cell growth, senescence, and differentiation. Two transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Jul 2008]
+:::
 
-# as numeric
-delta_out_ig$parameter_pval <- as.numeric(delta_out_ig$parameter_pval)
-delta_out_ig$age_pval <- as.numeric(delta_out_ig$age_pval)
+CpG site "ScEsiA3_18278__HRSCAF_21663_133779007" is located in a gene body, exon, upstream region and 5'UTR (gene IDs ANN06028 and ANN06030). This CpG site is the same that is significantly associated with attendance rate where we include pre-lekking methylation % in the model (!).
 
-# exclude overdispersion
-delta_out_ig <- subset(delta_out_ig, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+#### Without pre-lekking
 
-# FDR correction
-delta_out_ig$parameter_qval <- p.adjust(delta_out_ig$parameter_pval, method = "fdr", n = nrow(delta_out_ig))
-delta_out_ig$age_qval <- p.adjust(delta_out_ig$age_pval, method = "fdr", n = nrow(delta_out_ig))
+![Histogram dispersion and p-value: delta mass without pre-methylation](../plots/model_out/physio/mass/hist_raw_disp_pval_mass_dif_no_pre.png)
 
-### hct
-# run model
-delta_out_hct <- parallel::mclapply(delta_meth_ls, function_model_delta, parameter="hct",mc.cores=12)
-delta_out_hct <- do.call(rbind.data.frame, delta_out_hct)
+![Volcano plot: delta mass without pre-methylation](../plots/model_out/physio/mass/volcano_mass_dif_no_pre.png)
 
-# as numeric
-delta_out_hct$parameter_pval <- as.numeric(delta_out_hct$parameter_pval)
-delta_out_hct$age_pval <- as.numeric(delta_out_hct$age_pval)
+![Raw data: delta mass without pre-methylation CpG 1](../plots/model_out/physio/mass/mass_no_pre_1.png)
 
-# exclude overdispersion
-delta_out_hct <- subset(delta_out_hct, dispersion.ratio < 1.1 & dispersion.pval > 0.05)
+![Raw data: delta mass without pre-methylation CpG 2](../plots/model_out/physio/mass/mass_no_pre_2.png)
 
-# FDR correction
-delta_out_hct$parameter_qval <- p.adjust(delta_out_hct$parameter_pval, method = "fdr", n = nrow(delta_out_hct))
-delta_out_hct$age_qval <- p.adjust(delta_out_hct$age_pval, method = "fdr", n = nrow(delta_out_hct))
+![Raw data: delta mass without pre-methylation CpG 3](../plots/model_out/physio/mass/mass_no_pre_3.png)
 
-### combine
-delta_out_all <- rbind(delta_out_mass, delta_out_microf, delta_out_trypa, delta_out_ig, delta_out_hct)
-delta_out_all$chr_pos <- as.factor(delta_out_all$chr_pos)
-delta_out_all$parameter <- as.factor(delta_out_all$parameter)
-delta_out_all$isSingular <- as.logical(delta_out_all$isSingular)
-delta_out_all[c(3:25, 27,28)] <- lapply(delta_out_all[c(3:25, 27:28)], as.numeric)
+![Raw data: delta mass without pre-methylation CpG 4](../plots/model_out/physio/mass/mass_no_pre_4.png)
 
+![Raw data: delta mass without pre-methylation CpG 5](../plots/model_out/physio/mass/mass_no_pre_5.png)
 
-```
+One of the significant 5 CpG sites overlaps with the model that does include pre-methylation %.
 
-## Results
+CpG site "ScEsiA3_15486__HRSCAF_17393_53786697" is located in a gene body and intron (gene ID ANN20472 similar to Six4).
 
-Below we can see the volcano plots of all five physiological traits.
+::: {.callout-caution collapse="true"}
+Six4: This gene encodes a member of the homeobox family, subfamily SIX. The drosophila homolog is a nuclear homeoprotein required for eye development. Studies in mouse show that this gene product functions as a transcription factor, and may have a role in the differentiation or maturation of neuronal cells. [provided by RefSeq, May 2010]
+:::
 
-![Volcano plot physiological change](../plots/model_out/volcano_physio.png){width="350" fig-align="left"}
+CpG site "ScEsiA3_17616__HRSCAF_20466_3956821" is located in a downstream region (gene ID ANN28634, similar to BPI, and ANN28635 similar to ID1). (see above)
 
-After also subsetting for at least an (absolute) estimate of 0.1, there are 12 significant CpGs for delta *Microfilaria spp*, 21 for delta *Trypanosoma spp.*, 23 for delta HCT and 5 for delta IgG, but 8 significant ones for delta body mass. Below you'll find the raw data plots for each trait and CpG site.
+CpG site "ScEsiA3_18752__HRSCAF_22883_4031831" is located in a gene body and intron (gene ID ANN31264 similar to TET3).
+
+::: {.callout-caution collapse="true"}
+TET3: Enables methyl-CpG binding activity and zinc ion binding activity. Involved in histone H3-K4 trimethylation; positive regulation of transcription by RNA polymerase II; and protein O-linked glycosylation. Predicted to be located in cytoplasm and male pronucleus. Predicted to be active in nucleus. Biomarker of esophagus squamous cell carcinoma. [provided by Alliance of Genome Resources, Apr 2022]
+:::
+
+CpG site "ScEsiA3_21976__HRSCAF_26926_4403331" is located in a down- and upstream region (gene ID ANN30832, similar to Kiaa0319l).
+
+::: {.callout-caution collapse="true"}
+Kiaa0319l: Predicted to act upstream of or within several processes, including flagellated sperm motility; proacrosomal vesicle fusion; and receptor-mediated endocytosis of virus by host cell. Located in Golgi apparatus; cytoplasmic vesicle; and nucleolus. [provided by Alliance of Genome Resources, Apr 2022]
+:::
 
 ### Microfilaria spp.
 
-![Raw data delta Microfilaria a](../plots/model_out/rawdata_plot_microf_a.png)
+149 CpG sites had enough phenotypic and epigenetic data to run the Microfilaria model (after filtering for n > 20).
 
-![Raw data delta Microfilaria b](../plots/model_out/rawdata_plot_microf_b.png)
+#### With pre-lekking
+
+![Histogram dispersion and p-value: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_with_pre.png)
+
+![Volcano plot: delta Microfilaria spp.  with pre-methylation](../plots/model_out/physio/microf/volcawith_microf_dif_with_pre.png)
+
+![Raw data: delta Microfilaria spp.  with pre-methylation CpG 1](../plots/model_out/physio/microf/microf_with_pre_1.png)
+
+![Raw data: delta Microfilaria spp.  with pre-methylation CpG 2](../plots/model_out/physio/microf/microf_with_pre_2.png)
+
+![Raw data: delta Microfilaria spp.  with pre-methylation CpG 3](../plots/model_out/physio/microf/microf_with_pre_3.png)
+
+CpG site "ScEsiA3_16771__HRSCAF_19097_2512626" is located in a gene body, exon and 5'UTR (gene ID ANN30965 similar to JAM3).
+
+::: {.callout-caution collapse="true"}
+JAM3: Tight junctions represent one mode of cell-to-cell adhesion in epithelial or endothelial cell sheets, forming continuous seals around cells and serving as a physical barrier to prevent solutes and water from passing freely through the paracellular space. The protein encoded by this immunoglobulin superfamily gene member is localized in the tight junctions between high endothelial cells. Unlike other proteins in this family, the this protein is unable to adhere to leukocyte cell lines and only forms weak homotypic interactions. The encoded protein is a member of the junctional adhesion molecule protein family and acts as a receptor for another member of this family. A mutation in an intron of this gene is associated with hemorrhagic destruction of the brain, subependymal calcification, and congenital cataracts. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Apr 2011]
+:::
+
+CpG site "ScEsiA3_21978__HRSCAF_26928_6268951" is located in a TSS, promoter (gene id ANN24632 similar to PPP1R1B) and upstream region (gene ID ANN24631 similar to STARD3).
+
+::: {.callout-caution collapse="true"}
+STARD3: This gene encodes a member of a subfamily of lipid trafficking proteins that are characterized by a C-terminal steroidogenic acute regulatory domain and an N-terminal metastatic lymph node 64 domain. The encoded protein localizes to the membranes of late endosomes and may be involved in exporting cholesterol. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Oct 2009]
+:::
+
+
+The third CpG site was unannotated.
+
+#### Without pre-lekking
+
+![Histogram dispersion and p-value: delta Microfilaria spp. without pre-methylation](../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_no_pre.png)
+
+![Volcano plot: delta Microfilaria spp. without pre-methylation](../plots/model_out/physio/microf/volcano_microf_dif_no_pre.png)
+
+![Raw data: delta Microfilaria spp. without pre-methylation CpG 1](../plots/model_out/physio/microf/microf_no_pre_1.png)
+
+This is not the same site that was significant in the model with pre-lekking methylation.
+
+This CpG site was unannotated.
 
 ### Trypanosoma spp.
 
-![Raw data delta Trypanosoma a](../plots/model_out/rawdata_plot_trypa_a.png)
+164 CpG sites had enough phenotypic and epigenetic data to run the Trypanosoma model (after filtering for n > 20).
 
-![Raw data delta Trypanosoma b](../plots/model_out/rawdata_plot_trypa_b.png)
+#### With pre-lekking
+
+![Histogram dispersion and p-value: delta Trypanosoma spp. with pre-methylation](../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_with_pre.png)
+
+![Volcano plot: delta trypailaria spp.  with pre-methylation](../plots/model_out/physio/trypa/volcawith_trypa_dif_with_pre.png)
+
+#### Without pre-lekking
+
+![Histogram dispersion and p-value: delta trypailaria spp. without pre-methylation](../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_no_pre.png)
+
+![Volcano plot: delta trypailaria spp. without pre-methylation](../plots/model_out/physio/trypa/volcano_trypa_dif_no_pre.png)
 
 ### IgG
 
-![Raw data delta IgG](../plots/model_out/rawdata_plot_igg.png)
+775 CpG sites had enough phenotypic and epigenetic data to run the IgG model (after filtering for n > 20).
+
+#### With pre-lekking
+
+![Histogram dispersion and p-value: delta IgG with pre-methylation](../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_with_pre.png)
+
+![Volcano plot: delta IgG  with pre-methylation](../plots/model_out/physio/ig/volcawith_ig_dif_with_pre.png)
+
+![Raw data: delta IgG  with pre-methylation CpG 1](../plots/model_out/physio/ig/ig_with_pre_1.png)
+
+![Raw data: delta IgG  with pre-methylation CpG 2](../plots/model_out/physio/ig/ig_with_pre_2.png)
+
+Both CpG site "ScEsiA3_21979__HRSCAF_26929_1282292" (gene ID ANN27654 similar to NFIC) and "ScEsiA3_21979__HRSCAF_26929_1282301" (gene ID ANN27654 similar to NFIC) are located in upstream regions. The first one is the same site that was associated with centrality! 
+
+#### Without pre-lekking
+
+![Histogram dispersion and p-value: delta IgG without pre-methylation](../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_no_pre.png)
+
+![Volcano plot: delta IgG without pre-methylation](../plots/model_out/physio/ig/volcano_ig_dif_no_pre.png)
+
+![Raw data: delta IgG without pre-methylation CpG 1](../plots/model_out/physio/ig/ig_no_pre_1.png)
+
+![Raw data: delta IgG without pre-methylation CpG 2](../plots/model_out/physio/ig/ig_no_pre_2.png)
+
+These were the exact same CpG sites that are significant compared to the model that did include pre-methylation levels.
 
 ### HCT
 
-![Raw data delta HCT a](../plots/model_out/rawdata_plot_hct_a.png)
+146 CpG sites had enough phenotypic and epigenetic data to run the HCT model (after filtering for n > 20).
 
-![Raw data delta HCT b](../plots/model_out/rawdata_plot_hct_b.png)
+#### With pre-lekking
+
+![Histogram dispersion and p-value: delta HCT with pre-methylation](../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_with_pre.png)
+
+![Volcano plot: delta HCT with pre-methylation](../plots/model_out/physio/hct/volcawith_hct_dif_with_pre.png)
+
+![Raw data: delta HCT with pre-methylation CpG 1](../plots/model_out/physio/hct/hct_with_pre_1.png)
+
+CpG site "ScEsiA3_15486__HRSCAF_17393_15878140" is located in a promoter and upstream region (gene ID ANN19643 similar to GAL: Galanin peptides (C. japonica)).
+
+::: {.callout-caution collapse="true"}
+GAL: This gene encodes a neuroendocrine peptide that is widely expressed in the central and peripheral nervous systems and also the gastrointestinal tract, pancreas, adrenal gland and urogenital tract. The encoded protein is a precursor that is proteolytically processed to generate two mature peptides: galanin and galanin message-associated peptide (GMAP). Galanin has diverse physiological functions including nociception, feeding and energy homeostasis, osmotic regulation and water balance. GMAP has been demonstrated to possess antifungal activity and hypothesized to be part of the innate immune system. [provided by RefSeq, Jul 2015]
+:::
+
+
+#### Without pre-lekking
+
+![Histogram dispersion and p-value: delta HCT without pre-methylation](../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_no_pre.png)
+
+![Volcano plot: delta HCT without pre-methylation](../plots/model_out/physio/hct/volcano_hct_dif_no_pre.png)
+

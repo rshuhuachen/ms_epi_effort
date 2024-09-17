@@ -62,16 +62,19 @@ function_model_delta_pheno <- function(df, parameter, pre){tryCatch({
   
   isSingular <- isSingular(model)
 
-  if(is.null(summary(model)$optinfo$conv$lme4$messages )){
+  if(is.null(summary(model)$optinfo$conv$lme4$messages == TRUE)){
     convergence <- NA
   }
 
-  if(!is.null(summary(model)$optinfo$conv$lme4$messages )){
+  if(!is.null(summary(model)$optinfo$conv$lme4$messages == TRUE)){
     convergence <- summary(model)$optinfo$conv$lme4$messages
-    if (length(convergence == 2)){
+    if (length(convergence) == 1){
+      convergence <- convergence
+    }
+    else if (length(convergence) == 2){
       convergence <- paste0(convergence[1], "_", convergence[2])
     }
-    if (length(convergence == 3)){
+    else if (length(convergence) == 3){
       convergence <- paste0(convergence[1], "_", convergence[2], "_", convergence[3])
     }
   }
@@ -109,7 +112,8 @@ function_model_delta_pheno <- function(df, parameter, pre){tryCatch({
 
 #### function to process the model output
 
-function_process_model <- function(list, dir_plots, name_file, pretty_name, filter_disp){
+function_process_model <- function(list, dir_plots, dir_data, name_file, pretty_name, filter_disp){
+  pacman::p_load(tidyverse, cowplot)
 
     # some have multiple convergence warnings, exclude them, and some do not have enough data for site:id, exclude
     errors <- NULL
@@ -130,8 +134,8 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
     }
     }
 
-    if (errors != NULL){list <- list[-errors]}
-    if (errors_cols != NULL){list <- list[-errors_cols]}
+    if (length(errors) != 0){list <- list[-errors]}
+    if (length(errors_cols) != 0){list <- list[-errors_cols]}
 
     # some still have wrong col names
     errors_cols <- NULL
@@ -142,7 +146,7 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
         errors_cols <- c(errors_cols, i)
     }
     }
-    if (errors_cols != NULL){list <- list[-errors_cols]}
+    if (length(errors_cols) != 0){list <- list[-errors_cols]}
 
     ## unlist the list
 
@@ -157,14 +161,14 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
     data$isSingular <- as.logical(data$isSingular)
 
     # exclude those with convergence error
-    data <- subset(data, convergence == "boundary (singular) fit: see help('isSingular')" | is.na(convergence))
+    data <- subset(data, !grepl("converge", convergence))
 
     # plot overdispersion raw data
 
     ggplot(data, aes(x = dispersion.ratio)) + geom_histogram() + labs(title = "Histogram dispersion ratio", 
-        subtitle= paste0("Raw model output ", data$parameter[1], "; n = ", nrow(data))) -> hist_disp
+    subtitle= paste0("Raw model output ", data$parameter[1], "; n = ", nrow(data))) -> hist_disp
 
-    ggplot(data, aes(x = parameter_qval))+ geom_histogram() + 
+    ggplot(data, aes(x = parameter_pval))+ geom_histogram() + 
     scale_y_continuous(labels = scales::unit_format(unit = "K", scale = 1e-3)) + 
     labs(title = "Histogram p-values", subtitle= paste0("Raw model output ", data$parameter[1])) -> hist_pval
 
@@ -173,7 +177,7 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
 
     if(filter_disp == TRUE){
         # exclude those with overdispersion
-        data <- subset(data, dispersion.ratio > as.vector(quantile(delta_out_dist_nopre$dispersion.ratio, 0.025, na.rm=T)))
+        data <- subset(data, dispersion.ratio > as.vector(quantile(data$dispersion.ratio, 0.025, na.rm=T)))
         
         ggplot(data, aes(x = dispersion.ratio)) + geom_histogram() + labs(title = "Histogram dispersion ratio", 
         subtitle= paste0("Raw model output ", data$parameter[1], "; n = ", nrow(data))) -> hist_disp_filter
@@ -188,9 +192,10 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
         
     # FDR correction
     data$parameter_qval <- p.adjust(data$parameter_pval, method = "fdr", n = nrow(data))
+    save(data, file = paste0(dir_data, "/out_", name_file, ".RData"))
 
     # subset significant ones 
-
+    
     sig <- subset(data, parameter_qval < 0.05)
 
     # volcano plot
@@ -210,7 +215,7 @@ function_process_model <- function(list, dir_plots, name_file, pretty_name, filt
     geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> volcano
 
-    ggsave(volcano, paste0(dir_plots, "/volcano_", name_file, ".png"), width=10, height=10)    
+    ggsave(volcano, file = paste0(dir_plots, "/volcano_", name_file, ".png"), width=10, height=10)    
 
     out <- list(data = data, volcano = volcano, sig = sig, hists_glmer_raw = hists_glmer_raw)
 
