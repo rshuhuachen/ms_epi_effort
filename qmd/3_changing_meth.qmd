@@ -488,6 +488,7 @@ sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 ```
 
 ```{r, load_annotation, eval=T, echo=F}
+library(dplyr); library(kableExtra)
 sum_annotated <- read.csv("../results/modeloutput/changing/summary_regions_sig_cpgs.csv")
 sum_annotated %>% kbl() %>%
   kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
@@ -612,11 +613,12 @@ all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
 We next run the list of gene IDs of the significant sites as the target list as well as the list of gene IDs from all CpG sites that we ran the model on as a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
 
 ```{r sig_go}
-table_go_function_changing <- read_excel("../results/modeloutput/changing/GOFUNCTION_changing.xls")
+library(readxl)
+table_go_function_changing <- read_excel("../results/modeloutput/changing/GOFUNCTION_changing.xlsx")
 
 table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
-table_go_process_changing <- read_excel("../results/modeloutput/changing/GOPROCESS_changing.xls")
+table_go_process_changing <- read_excel("../results/modeloutput/changing/GOPROCESS_changing.xlsx")
 
 table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_process_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
