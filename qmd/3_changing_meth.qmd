@@ -349,7 +349,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
 
 ```
 
-![Raw data top 5 significantly changing CpG sites](../plots/model_out/changing/rawdata_top_sig.png.png){width="350" fig-align="left"}
+![Raw data top 5 significantly changing CpG sites](../plots/model_out/changing/rawdata_top_sig.png){width="350" fig-align="left"}
 
 ## Annotation
 
@@ -487,14 +487,14 @@ sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 
 ```
 
-```{r, load_annotation, eval=T, echo=F}
+```{r, load_annotation, eval=T, echo=F,message=F,warning=F}
 library(dplyr); library(kableExtra)
 sum_annotated <- read.csv("../results/modeloutput/changing/summary_regions_sig_cpgs.csv")
 sum_annotated %>% kbl() %>%
   kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 ```
 
-![Number of changing CpG sites per region](../plots/model_out/changing/n_sig_cpg_per_region.png)
+![Number of changing CpG sites per region](../plots/model_out/changing/perc_sig_per_region.png)
 
 
 ### GOrilla
