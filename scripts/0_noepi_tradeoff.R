@@ -1,12 +1,12 @@
-### load packages
-pacman::p_load(tidyverse, data.table, lmerTest, glmmTMB)
+### load packages ####
+pacman::p_load(tidyverse, data.table, lmerTest, glmmTMB, brms, bayesplot)
 
-### load data
+### load data ####
 
 load("data/phenotypes/fulldata_complete_epi_withdates.RData")
 load("data/phenotypes/pheno_dif_prepost.RData")
 
-### test for trade-offs
+### test for trade-offs ####
 
 data <- left_join(all_pheno_epi, prepost_dif[,c("id", "year", "mass_dif", "microf_dif", "trypa_dif", "ig_dif", "hct_dif")], by = c("year", "id"))
 data <- data %>% mutate(age_year = as.factor(case_when(Core == "Core" ~ year - born,
@@ -17,6 +17,7 @@ data <- data %>% mutate(age_year = as.factor(case_when(Core == "Core" ~ year - b
 
 data$mass <- as.numeric(data$mass)    
 
+##### very raw testing #####
 ### reproduction
 ## reproduction vs survival
 summary(glmer(surv ~ attend + age + (1|year) + (1|site/id), data = data, family = "binomial")) #higher attendance, lower survival probability
@@ -99,4 +100,23 @@ summary(glmer(surv ~ scale(microf_dif) + age + (1|year) + (1|site/id), data = da
 summary(glmer(surv ~ scale(trypa_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
 summary(glmer(surv ~ scale(hct_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
 
+#### formal models in brms ####
 
+## 1) reproductive effort affected by available resources?
+m_1_a <- bf(attend ~ mass + (1|site/id))
+m_1_f <- bf(fight ~ mass + (1|site/id))
+m_1_d <- bf(dist ~ mass + (1|site/id))
+
+## 2) loss in resources affected by reproductive effort?
+m_2 <- bf(mass_dif ~ attend + fight + dist +(1|site/id))
+
+## 3) fitness affected by loss in resources and/or reproductive effort?
+m_3_s <- bf(surv ~ mass_dif + attend + fight + dist + (1|site/id), family = "bernoulli")
+m_3_m <- bf(MS ~ mass_dif + attend + fight + dist +(1|site/id), family = "poisson")
+
+sem <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s + m_3_m
+
+fit <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+
+save(fit, file="results/modeloutput/brms_fit_pheno.RData")
