@@ -5,7 +5,7 @@ project:
 engine: knitr
 
 book:
-  title: "Epigenetic changes associated with reproductive investment in a lekking bird"
+  title: "The role of epigenetics in regulating life history trade-offs"
   author: "Rebecca S. Chen"
   cover-image: img/grouse.jpeg
   chapters:
