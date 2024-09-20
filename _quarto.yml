@@ -10,6 +10,7 @@ book:
   cover-image: img/grouse.jpeg
   chapters:
       - index.qmd
+      - qmd/0_intro_hypothesis.qmd
       - qmd/1_explore.qmd
       - qmd/2_filter.qmd
       - qmd/3_changing_meth.qmd
@@ -22,6 +23,8 @@ book:
   navbar:
     search: true
   favicon: img/grouse_silhouette.png
+
+bibliography: bibliography.bib
 
 format:
   html:

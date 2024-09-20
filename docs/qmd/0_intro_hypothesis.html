@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in a lekking bird - 4&nbsp; Filtering</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 2&nbsp; Introduction and hypotheses</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../qmd/3_changing_meth.html" rel="next">
-<link href="../qmd/1_explore.html" rel="prev">
+<link href="../qmd/1_explore.html" rel="next">
+<link href="../index.html" rel="prev">
 <link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -120,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/2_filter.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/0_intro_hypothesis.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/0_intro_hypothesis.html" class="sidebar-item-text sidebar-link">
+  <a href="../qmd/0_intro_hypothesis.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></span></a>
   </div>
 </li>
@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link active">
+  <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
@@ -198,10 +198,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#prepare-data" id="toc-prepare-data" class="nav-link active" data-scroll-target="#prepare-data"><span class="header-section-number">4.1</span> Prepare data</a></li>
-  <li><a href="#pre-filter-data" id="toc-pre-filter-data" class="nav-link" data-scroll-target="#pre-filter-data"><span class="header-section-number">4.2</span> Pre-filter data</a></li>
-  <li><a href="#convert-data" id="toc-convert-data" class="nav-link" data-scroll-target="#convert-data"><span class="header-section-number">4.3</span> Convert data</a></li>
-  <li><a href="#sec-postfilter" id="toc-sec-postfilter" class="nav-link" data-scroll-target="#sec-postfilter"><span class="header-section-number">4.4</span> Post-filtering</a></li>
+  <li><a href="#phenotypes" id="toc-phenotypes" class="nav-link active" data-scroll-target="#phenotypes"><span class="header-section-number">2.1</span> Phenotypes</a></li>
   </ul>
 </nav>
     </div>
@@ -210,7 +207,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></h1>
 </div>
 
 
@@ -225,70 +222,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p><strong>Preparing and filtering the data</strong></p>
-<p>Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis).</p>
-<p>First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.</p>
-<section id="prepare-data" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="prepare-data"><span class="header-section-number">4.1</span> Prepare data</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">methRead</span>(files, <span class="at">pipeline =</span> <span class="st">"bismarkCytosineReport"</span>,</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sample.id =</span> ids, <span class="at">assembly =</span> <span class="st">"ltet"</span>, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">treatment =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="at">each =</span><span class="fu">length</span>(ids))), <span class="at">context =</span> <span class="st">"CpG"</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sep =</span> <span class="st">" "</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Trade-offs between reproduction and survival are central to life history theory. The black grouse faces extreme costs of reproduction during lekking periods, in which they intensively fight to hold territories for several weeks per year. This intensive fighting is not only energy-demanding, but also time-intensive, meaning the birds sacrifice valuable time that could be spent on foraging. Therefore, only males that can afford the cost of lekking - i.e.&nbsp;they are in a good enough body condition to attend leks and display - are expected to invest in reproduction.</p>
+<p>Trade-offs are often assumed to arise from resource limitation, yet the genetic and molecular pathways that underlie the distribution of resources are relatively little understood. Here, we hypothesize that epigenetic regulation can play a central role in the change of cellular processes that are associated with the respective trade-off. Epigenetic mechanisms can change gene expression without changing the primary nucleotide sequence. Although the majority of epigenetic variation has genetic underpinnings, the epigenome can respond to both external (temperature, toxins) and internal (hormones) environmental variables. Previous research has shown that epigenetic variation has temporal fluctuations, is associated with aggressive behaviour, and X.</p>
+<p>Therefore, expect that CpG site methylation changes across the lekking season, as a response to the investment in reproduction. Reproductive investment is known to be costly in black grouse males, as previous research shows that those with high investment lose the most body mass (<span class="citation" data-cites="Lebigre">(<a href="#ref-Lebigre" role="doc-biblioref"><strong>Lebigre?</strong></a>)</span>). Moreover, reproductive investment is associated with changes in testosterone level and increased parasite vulnerability.</p>
+<p>Furthermore, we expect that these methylation changes are associated with investment in reproduction, where those males that invest most experience the biggest methylation changes. Assuming a trade-off between reproductive effort and body maintanance, the methylation changes can also be related to changes in physiological measures that reflect this trade-off, for example those are related to immunology, oxygen transportation, hormonal regulation, and loss in body resources. Moreover, given that reproductive effort is associated with reproductive success, we expect that changes in CpG site methylation can be predictive of mating success as well as survival. This hypothesis is sketched below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../plots/flowcharts/hypothesis.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Hypothesis</figcaption>
+</figure>
 </div>
-<p>Where <code>files</code> = the list of 116 file locations and <code>ids</code> = the list of the 116 ID’s of those files.</p>
-</section>
-<section id="pre-filter-data" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="pre-filter-data"><span class="header-section-number">4.2</span> Pre-filter data</h2>
-<p>Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile</p>
+<section id="phenotypes" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="phenotypes"><span class="header-section-number">2.1</span> Phenotypes</h2>
+<p>First, we explore the trade-offs that we can find in our black grouse data set, independent of epigenetic changes. For this analysis, we use our full phenotypic dataset, which includes samples that are not used for the epigenetic analysis in this paper as they are not sampled before and after the lekking season.</p>
+<p>We have a few different questions that we want to test for, to understand what trade-offs can be identified in our species:</p>
+<ol type="1">
+<li><p>Do males invest more in reproduction if they have more resources to start with?</p></li>
+<li><p>Is reproductive effort associated with body mass losses?</p></li>
+<li><p>Is reproductive effort and/or losses in body mass associated with mating success and/or survival?</p></li>
+</ol>
+<p>We test these three questions in a Bayesian structural equation model, in which we can test multiple regressions simultaneously.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ltet_meth <span class="ot">&lt;-</span> <span class="fu">filterByCoverage</span>(ltet_meth,<span class="at">lo.count=</span><span class="dv">10</span>,<span class="at">lo.perc=</span><span class="cn">NULL</span>,</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">hi.count=</span><span class="cn">NULL</span>,<span class="at">hi.perc=</span><span class="fl">99.9</span>)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages ####</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, lmerTest, glmmTMB, brms, bayesplot)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">### load data ####</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/fulldata_complete_epi_withdates.RData"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/pheno_dif_prepost.RData"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">### test for trade-offs ####</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(all_pheno_epi, prepost_dif[,<span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"mass_dif"</span>, <span class="st">"microf_dif"</span>, <span class="st">"trypa_dif"</span>, <span class="st">"ig_dif"</span>, <span class="st">"hct_dif"</span>)], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"year"</span>, <span class="st">"id"</span>))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">age_year =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(Core <span class="sc">==</span> <span class="st">"Core"</span> <span class="sc">~</span> year <span class="sc">-</span> born,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                                                        Core <span class="sc">==</span> <span class="st">"No core"</span> <span class="sc">~</span> <span class="cn">NA</span>)),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">age =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(Core <span class="sc">==</span> <span class="st">"Core"</span> <span class="sc">&amp;</span> (year <span class="sc">-</span> born <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">~</span> <span class="st">"Adult"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                                                        Core <span class="sc">==</span> <span class="st">"Core"</span> <span class="sc">&amp;</span> (year <span class="sc">-</span> born <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">~</span> <span class="st">"Yearling"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                                                        Core <span class="sc">==</span> <span class="st">"No core"</span> <span class="sc">~</span> <span class="st">"Adult"</span>)))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>mass <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(data<span class="sc">$</span>mass)    </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 1) reproductive effort affected by available resources?</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>m_1_a <span class="ot">&lt;-</span> <span class="fu">bf</span>(attend <span class="sc">~</span> mass <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>m_1_f <span class="ot">&lt;-</span> <span class="fu">bf</span>(fight <span class="sc">~</span> mass <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>m_1_d <span class="ot">&lt;-</span> <span class="fu">bf</span>(dist <span class="sc">~</span> mass <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id))</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 2) loss in resources affected by reproductive effort?</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>m_2 <span class="ot">&lt;-</span> <span class="fu">bf</span>(mass_dif <span class="sc">~</span> attend <span class="sc">+</span> fight <span class="sc">+</span> dist <span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id))</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="do">## 3) fitness affected by loss in resources and/or reproductive effort?</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>m_3_s <span class="ot">&lt;-</span> <span class="fu">bf</span>(surv <span class="sc">~</span> mass_dif <span class="sc">+</span> attend <span class="sc">+</span> fight <span class="sc">+</span> dist <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id), <span class="at">family =</span> <span class="st">"bernoulli"</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>m_3_m <span class="ot">&lt;-</span> <span class="fu">bf</span>(MS <span class="sc">~</span> mass_dif <span class="sc">+</span> attend <span class="sc">+</span> fight <span class="sc">+</span> dist <span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id), <span class="at">family =</span> <span class="st">"poisson"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>sem <span class="ot">&lt;-</span> m_1_a <span class="sc">+</span> m_1_f <span class="sc">+</span> m_1_d <span class="sc">+</span> m_2 <span class="sc">+</span> m_3_s <span class="sc">+</span> m_3_m</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">brm</span>(sem, <span class="at">data =</span> data, <span class="at">cores =</span> <span class="dv">8</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>, <span class="at">max_treedepth =</span> <span class="dv">15</span>),</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>           <span class="at">prior =</span> <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">class =</span> b), <span class="at">iter =</span> <span class="dv">100000</span>, <span class="at">thin =</span> <span class="dv">1000</span>, <span class="at">warmup =</span> <span class="dv">50000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, we unite the strands. We do not filter yet for sites that are covered in at least X individuals as we will perform this filtering steps later in the script.</p>
+<p>However, if we use all three measures of reproductive effort as predictors for survival, we automatically exclude males had did not attend the lek, as they therefore have unmeasured fighting and centrality rates. Therfore, we also run an alternative model that just uses attendance as a predictor of survival.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ltet_meth_unite <span class="ot">&lt;-</span> methylKit<span class="sc">::</span><span class="fu">unite</span>(ltet_meth, <span class="at">destrand =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">min.per.group =</span> 1L, <span class="at">mc.cores =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m_3_s_v2 <span class="ot">&lt;-</span> <span class="fu">bf</span>(surv <span class="sc">~</span> attend <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>site<span class="sc">/</span>id), <span class="at">family =</span> <span class="st">"bernoulli"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sem2 <span class="ot">&lt;-</span> m_1_a <span class="sc">+</span> m_1_f <span class="sc">+</span> m_1_d <span class="sc">+</span> m_2 <span class="sc">+</span> m_3_s_v2 <span class="sc">+</span> m_3_m</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>fit_a <span class="ot">&lt;-</span> <span class="fu">brm</span>(sem, <span class="at">data =</span> data, <span class="at">cores =</span> <span class="dv">8</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">adapt_delta =</span> <span class="fl">0.99</span>, <span class="at">max_treedepth =</span> <span class="dv">15</span>), <span class="at">prior =</span> <span class="fu">prior</span>(<span class="fu">normal</span>(<span class="dv">0</span>,<span class="dv">10</span>), <span class="at">class =</span> b), <span class="at">iter =</span> <span class="dv">100000</span>, <span class="at">thin =</span> <span class="dv">1000</span>, <span class="at">warmup =</span> <span class="dv">50000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>At this stage, we have a data set consisting of 1,559,800 partially filtered CpG sites.</p>
-</section>
-<section id="convert-data" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="convert-data"><span class="header-section-number">4.3</span> Convert data</h2>
-<p>The next step is a custom R script that converts the output of the “unite” call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated.</p>
-<p>We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the formula. Right now I have used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, I think this is more correct and will allow the models to make more accurate estimates and will only include CpG sites with more variation in methylation %.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/function_convert_methfile.R"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>prepost_long <span class="ot">&lt;-</span> <span class="fu">convert_meth</span>(<span class="at">methfile =</span> ltet_meth_unite, <span class="at">novar =</span> <span class="st">"remove"</span>, <span class="at">threshold =</span> <span class="fl">0.3</span>) </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="sec-postfilter" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="sec-postfilter"><span class="header-section-number">4.4</span> Post-filtering</h2>
-<p>Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59 pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#count number of individuals per CpG per time point</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_per_prepost <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(chr_pos, prepost) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count=</span><span class="fu">n</span>())</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span>  <span class="fu">spread</span>(n_per_prepost, <span class="at">key=</span>prepost,<span class="at">value=</span>count)</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"n_post"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(n_per_prepost_wide)[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">"n_pre"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#keep only if CpG site is covered in at least 50% of samples at both time points</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>thres <span class="ot">=</span> <span class="fl">0.5</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>n_per_prepost_wide <span class="ot">&lt;-</span> n_per_prepost_wide <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">keep =</span> <span class="fu">as.factor</span>(<span class="fu">case_when</span>(n_pre  <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">&amp;</span> n_post <span class="sc">&gt;</span> thres<span class="sc">*</span>(<span class="dv">118</span><span class="sc">*</span><span class="fl">0.5</span>) <span class="sc">~</span> <span class="st">"keep"</span>)))</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(n_per_prepost_wide<span class="sc">$</span>keep) <span class="co"># 354,649 CpG sites to keep</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">left_join</span>(prepost_long, n_per_prepost_wide, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"chr_pos"</span>))</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>prepost_long_clean <span class="ot">&lt;-</span> <span class="fu">subset</span>(prepost_long_clean, keep <span class="sc">==</span> <span class="st">"keep"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes).</p>
 
 
 </section>
@@ -525,31 +523,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-      }
-    }
 });
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../qmd/1_explore.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span>
+      <a href="../index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../qmd/3_changing_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../qmd/1_explore.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

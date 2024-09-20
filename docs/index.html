@@ -31,7 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./qmd/1_explore.html" rel="next">
+<link href="./qmd/0_intro_hypothesis.html" rel="next">
 <link href="./img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -114,38 +114,44 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./qmd/0_intro_hypothesis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./qmd/1_explore.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/2_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -154,7 +160,13 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#overview-data" id="toc-overview-data" class="nav-link active" data-scroll-target="#overview-data"><span class="header-section-number">0.1</span> Overview data</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -185,14 +197,10 @@ ul.task-list li input[type="checkbox"] {
 <p><img src="img/grouse.jpeg" title="Epigenetic changes associated with reproductive investment in a lekking bird" class="quarto-cover-image img-fluid"></p>
 <p><strong>Epigenetic changes associated with reproductive investment in a lekking bird</strong></p>
 <p>This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (<em>Lyrurus tetrix</em>)</p>
+<section id="overview-data" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="overview-data"><span class="header-section-number">0.1</span> Overview data</h2>
 <p>Epigenetic, morphological, behavioural, and physiological data were obtained from 51 black grouse males sampled across five lekking sites in Central Finland between 2005 and 2007 inclusive. The birds were captured at two time points: before the lekking season (January-March) and after the lekking season (after mid-April) using walk-in traps. Six individuals were captured both before and after the lekking season in two years, and one individual was caught in three years, totalling to 116 captures.</p>
 <p>Reproductive effort was estimated using three behavioural indicators: lek attendance, fighting rate and lek centrality. Blood was used to quantify the abundance of <em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>, two extra-cellular blood parasites, immunoglobulin concentration in blood plasma, and haematocrit concentration. Additionally, body mass was quantified during capture to the nearest 10g.</p>
-<p>Our research questions are as follows:</p>
-<ul>
-<li>Is reproductive effort associated with changes in DNA methylation?</li>
-<li>Are physiological changes associated with changes in DNA methylation?</li>
-<li>Are changes in DNA methylation associated with fitness (annual mating success and survival to the next year)?</li>
-</ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="img/methylation.jpeg" class="img-fluid figure-img"></p>
@@ -201,6 +209,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -440,8 +449,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./qmd/1_explore.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./qmd/0_intro_hypothesis.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

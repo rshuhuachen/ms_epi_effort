@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in a lekking bird - 6&nbsp; Physio-associated CpG sites</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 7&nbsp; Physio-associated CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -120,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/5_physio_meth.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/5_physio_meth.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -148,38 +148,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../qmd/0_intro_hypothesis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../qmd/1_explore.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -192,15 +198,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-physio" id="toc-sec-physio" class="nav-link active" data-scroll-target="#sec-physio"><span class="header-section-number">6.1</span> Prepare the data</a></li>
-  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">6.2</span> Function to run the model</a></li>
-  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</a>
+  <li><a href="#sec-physio" id="toc-sec-physio" class="nav-link active" data-scroll-target="#sec-physio"><span class="header-section-number">7.1</span> Prepare the data</a></li>
+  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">7.2</span> Function to run the model</a></li>
+  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">7.3</span> Run the model per trait</a>
   <ul class="collapse">
-  <li><a href="#delta-mass" id="toc-delta-mass" class="nav-link" data-scroll-target="#delta-mass"><span class="header-section-number">6.3.1</span> Delta mass</a></li>
-  <li><a href="#microfilaria-spp." id="toc-microfilaria-spp." class="nav-link" data-scroll-target="#microfilaria-spp."><span class="header-section-number">6.3.2</span> Microfilaria spp.</a></li>
-  <li><a href="#trypanosoma-spp." id="toc-trypanosoma-spp." class="nav-link" data-scroll-target="#trypanosoma-spp."><span class="header-section-number">6.3.3</span> Trypanosoma spp.</a></li>
-  <li><a href="#igg" id="toc-igg" class="nav-link" data-scroll-target="#igg"><span class="header-section-number">6.3.4</span> IgG</a></li>
-  <li><a href="#hct" id="toc-hct" class="nav-link" data-scroll-target="#hct"><span class="header-section-number">6.3.5</span> HCT</a></li>
+  <li><a href="#delta-mass" id="toc-delta-mass" class="nav-link" data-scroll-target="#delta-mass"><span class="header-section-number">7.3.1</span> Delta mass</a></li>
+  <li><a href="#microfilaria-spp." id="toc-microfilaria-spp." class="nav-link" data-scroll-target="#microfilaria-spp."><span class="header-section-number">7.3.2</span> Microfilaria spp.</a></li>
+  <li><a href="#trypanosoma-spp." id="toc-trypanosoma-spp." class="nav-link" data-scroll-target="#trypanosoma-spp."><span class="header-section-number">7.3.3</span> Trypanosoma spp.</a></li>
+  <li><a href="#igg" id="toc-igg" class="nav-link" data-scroll-target="#igg"><span class="header-section-number">7.3.4</span> IgG</a></li>
+  <li><a href="#hct" id="toc-hct" class="nav-link" data-scroll-target="#hct"><span class="header-section-number">7.3.5</span> HCT</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -210,7 +216,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></h1>
 </div>
 
 
@@ -228,8 +234,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Which changes in CpG site methylation are associated with changes in physiology?</strong></p>
 <p>Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (<em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>), body mass, IgG and HCT.</p>
 <p>Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect. Here too, we run two models in parallel: one that does and one does that not include the fixed effect of pre-lekking methylation %.</p>
-<section id="sec-physio" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="sec-physio"><span class="header-section-number">6.1</span> Prepare the data</h2>
+<section id="sec-physio" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-physio"><span class="header-section-number">7.1</span> Prepare the data</h2>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -264,14 +270,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="function-to-run-the-model" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">6.2</span> Function to run the model</h2>
+<section id="function-to-run-the-model" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">7.2</span> Function to run the model</h2>
 <p>Below you’ll find the function ran per trait per CpG site, where the LMM ran follows this structure:</p>
 <p><code>lmerTest::lmer(delta_meth ~ scale(delta_trait) + methperc_pre + (1|site/id))</code></p>
-<p>This model is identical to the one presented in <a href="4_effort_meth.html#sec-model-trait"><span>Section&nbsp;5.4</span></a>, except that the trait in question is also a calculation of the difference in the trait (delta; e.g.&nbsp;delta mass) rather than just one measure (e.g.&nbsp;attendance).</p>
+<p>This model is identical to the one presented in <a href="4_effort_meth.html#sec-model-trait"><span>Section&nbsp;6.4</span></a>, except that the trait in question is also a calculation of the difference in the trait (delta; e.g.&nbsp;delta mass) rather than just one measure (e.g.&nbsp;attendance).</p>
 </section>
-<section id="run-the-model-per-trait" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</h2>
+<section id="run-the-model-per-trait" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="run-the-model-per-trait"><span class="header-section-number">7.3</span> Run the model per trait</h2>
 <p>Here too, we only include CpG sites if they have at least 20 data points, which is therefore done for physiological trait separately. I’ll give the code for one trait only (delta mass) but the exact same is done for the rest.</p>
 <div class="cell">
 <details>
@@ -299,11 +305,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>m_mass_with_pre_out <span class="ot">&lt;-</span> <span class="fu">function_process_model</span>(m_mass_with_pre, <span class="at">dir_plots =</span> <span class="st">"plots/model_out/physio/mass"</span>, <span class="at">dir_data =</span> <span class="st">"results/modeloutput/physio"</span>,<span class="at">name_file =</span> <span class="st">"mass_dif_with_pre"</span>, <span class="at">pretty_name =</span> <span class="st">"Delta mass"</span>, <span class="at">filter_disp=</span><span class="cn">FALSE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<section id="delta-mass" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="delta-mass"><span class="header-section-number">6.3.1</span> Delta mass</h3>
+<section id="delta-mass" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="delta-mass"><span class="header-section-number">7.3.1</span> Delta mass</h3>
 <p>808 CpG sites had enough phenotypic and epigenetic data to run the body mass model (after filtering for n &gt; 20).</p>
-<section id="with-pre-lekking" class="level4" data-number="6.3.1.1">
-<h4 data-number="6.3.1.1" class="anchored" data-anchor-id="with-pre-lekking"><span class="header-section-number">6.3.1.1</span> With pre-lekking</h4>
+<section id="with-pre-lekking" class="level4" data-number="7.3.1.1">
+<h4 data-number="7.3.1.1" class="anchored" data-anchor-id="with-pre-lekking"><span class="header-section-number">7.3.1.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta mass with pre-methylation</figcaption>
@@ -348,8 +354,8 @@ Caution
 </div>
 <p>CpG site “ScEsiA3_18278__HRSCAF_21663_133779007” is located in a gene body, exon, upstream region and 5’UTR (gene IDs ANN06028 and ANN06030). This CpG site is the same that is significantly associated with attendance rate where we include pre-lekking methylation % in the model (!).</p>
 </section>
-<section id="without-pre-lekking" class="level4" data-number="6.3.1.2">
-<h4 data-number="6.3.1.2" class="anchored" data-anchor-id="without-pre-lekking"><span class="header-section-number">6.3.1.2</span> Without pre-lekking</h4>
+<section id="without-pre-lekking" class="level4" data-number="7.3.1.2">
+<h4 data-number="7.3.1.2" class="anchored" data-anchor-id="without-pre-lekking"><span class="header-section-number">7.3.1.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta mass without pre-methylation</figcaption>
@@ -447,11 +453,11 @@ Caution
 </div>
 </section>
 </section>
-<section id="microfilaria-spp." class="level3" data-number="6.3.2">
-<h3 data-number="6.3.2" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">6.3.2</span> Microfilaria spp.</h3>
+<section id="microfilaria-spp." class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">7.3.2</span> Microfilaria spp.</h3>
 <p>149 CpG sites had enough phenotypic and epigenetic data to run the Microfilaria model (after filtering for n &gt; 20).</p>
-<section id="with-pre-lekking-1" class="level4" data-number="6.3.2.1">
-<h4 data-number="6.3.2.1" class="anchored" data-anchor-id="with-pre-lekking-1"><span class="header-section-number">6.3.2.1</span> With pre-lekking</h4>
+<section id="with-pre-lekking-1" class="level4" data-number="7.3.2.1">
+<h4 data-number="7.3.2.1" class="anchored" data-anchor-id="with-pre-lekking-1"><span class="header-section-number">7.3.2.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta Microfilaria spp. with pre-methylation</figcaption>
@@ -518,8 +524,8 @@ Caution
 </div>
 <p>The third CpG site was unannotated.</p>
 </section>
-<section id="without-pre-lekking-1" class="level4" data-number="6.3.2.2">
-<h4 data-number="6.3.2.2" class="anchored" data-anchor-id="without-pre-lekking-1"><span class="header-section-number">6.3.2.2</span> Without pre-lekking</h4>
+<section id="without-pre-lekking-1" class="level4" data-number="7.3.2.2">
+<h4 data-number="7.3.2.2" class="anchored" data-anchor-id="without-pre-lekking-1"><span class="header-section-number">7.3.2.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta Microfilaria spp. without pre-methylation</figcaption>
@@ -542,11 +548,11 @@ Caution
 <p>This CpG site was unannotated.</p>
 </section>
 </section>
-<section id="trypanosoma-spp." class="level3" data-number="6.3.3">
-<h3 data-number="6.3.3" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">6.3.3</span> Trypanosoma spp.</h3>
+<section id="trypanosoma-spp." class="level3" data-number="7.3.3">
+<h3 data-number="7.3.3" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">7.3.3</span> Trypanosoma spp.</h3>
 <p>164 CpG sites had enough phenotypic and epigenetic data to run the Trypanosoma model (after filtering for n &gt; 20).</p>
-<section id="with-pre-lekking-2" class="level4" data-number="6.3.3.1">
-<h4 data-number="6.3.3.1" class="anchored" data-anchor-id="with-pre-lekking-2"><span class="header-section-number">6.3.3.1</span> With pre-lekking</h4>
+<section id="with-pre-lekking-2" class="level4" data-number="7.3.3.1">
+<h4 data-number="7.3.3.1" class="anchored" data-anchor-id="with-pre-lekking-2"><span class="header-section-number">7.3.3.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta Trypanosoma spp. with pre-methylation</figcaption>
@@ -560,8 +566,8 @@ Caution
 </figure>
 </div>
 </section>
-<section id="without-pre-lekking-2" class="level4" data-number="6.3.3.2">
-<h4 data-number="6.3.3.2" class="anchored" data-anchor-id="without-pre-lekking-2"><span class="header-section-number">6.3.3.2</span> Without pre-lekking</h4>
+<section id="without-pre-lekking-2" class="level4" data-number="7.3.3.2">
+<h4 data-number="7.3.3.2" class="anchored" data-anchor-id="without-pre-lekking-2"><span class="header-section-number">7.3.3.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta trypailaria spp. without pre-methylation</figcaption>
@@ -576,11 +582,11 @@ Caution
 </div>
 </section>
 </section>
-<section id="igg" class="level3" data-number="6.3.4">
-<h3 data-number="6.3.4" class="anchored" data-anchor-id="igg"><span class="header-section-number">6.3.4</span> IgG</h3>
+<section id="igg" class="level3" data-number="7.3.4">
+<h3 data-number="7.3.4" class="anchored" data-anchor-id="igg"><span class="header-section-number">7.3.4</span> IgG</h3>
 <p>775 CpG sites had enough phenotypic and epigenetic data to run the IgG model (after filtering for n &gt; 20).</p>
-<section id="with-pre-lekking-3" class="level4" data-number="6.3.4.1">
-<h4 data-number="6.3.4.1" class="anchored" data-anchor-id="with-pre-lekking-3"><span class="header-section-number">6.3.4.1</span> With pre-lekking</h4>
+<section id="with-pre-lekking-3" class="level4" data-number="7.3.4.1">
+<h4 data-number="7.3.4.1" class="anchored" data-anchor-id="with-pre-lekking-3"><span class="header-section-number">7.3.4.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta IgG with pre-methylation</figcaption>
@@ -607,8 +613,8 @@ Caution
 </div>
 <p>Both CpG site “ScEsiA3_21979__HRSCAF_26929_1282292” (gene ID ANN27654 similar to NFIC) and “ScEsiA3_21979__HRSCAF_26929_1282301” (gene ID ANN27654 similar to NFIC) are located in upstream regions. The first one is the same site that was associated with centrality!</p>
 </section>
-<section id="without-pre-lekking-3" class="level4" data-number="6.3.4.2">
-<h4 data-number="6.3.4.2" class="anchored" data-anchor-id="without-pre-lekking-3"><span class="header-section-number">6.3.4.2</span> Without pre-lekking</h4>
+<section id="without-pre-lekking-3" class="level4" data-number="7.3.4.2">
+<h4 data-number="7.3.4.2" class="anchored" data-anchor-id="without-pre-lekking-3"><span class="header-section-number">7.3.4.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta IgG without pre-methylation</figcaption>
@@ -636,11 +642,11 @@ Caution
 <p>These were the exact same CpG sites that are significant compared to the model that did include pre-methylation levels.</p>
 </section>
 </section>
-<section id="hct" class="level3" data-number="6.3.5">
-<h3 data-number="6.3.5" class="anchored" data-anchor-id="hct"><span class="header-section-number">6.3.5</span> HCT</h3>
+<section id="hct" class="level3" data-number="7.3.5">
+<h3 data-number="7.3.5" class="anchored" data-anchor-id="hct"><span class="header-section-number">7.3.5</span> HCT</h3>
 <p>146 CpG sites had enough phenotypic and epigenetic data to run the HCT model (after filtering for n &gt; 20).</p>
-<section id="with-pre-lekking-4" class="level4" data-number="6.3.5.1">
-<h4 data-number="6.3.5.1" class="anchored" data-anchor-id="with-pre-lekking-4"><span class="header-section-number">6.3.5.1</span> With pre-lekking</h4>
+<section id="with-pre-lekking-4" class="level4" data-number="7.3.5.1">
+<h4 data-number="7.3.5.1" class="anchored" data-anchor-id="with-pre-lekking-4"><span class="header-section-number">7.3.5.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta HCT with pre-methylation</figcaption>
@@ -677,8 +683,8 @@ Caution
 </div>
 </div>
 </section>
-<section id="without-pre-lekking-4" class="level4" data-number="6.3.5.2">
-<h4 data-number="6.3.5.2" class="anchored" data-anchor-id="without-pre-lekking-4"><span class="header-section-number">6.3.5.2</span> Without pre-lekking</h4>
+<section id="without-pre-lekking-4" class="level4" data-number="7.3.5.2">
+<h4 data-number="7.3.5.2" class="anchored" data-anchor-id="without-pre-lekking-4"><span class="header-section-number">7.3.5.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <figcaption class="figure-caption">Histogram dispersion and p-value: delta HCT without pre-methylation</figcaption>
@@ -948,12 +954,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../qmd/4_effort_meth.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../qmd/6_fitness_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

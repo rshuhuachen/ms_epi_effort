@@ -113,6 +113,7 @@ m_2 <- bf(mass_dif ~ attend + fight + dist +(1|site/id))
 ## 3) fitness affected by loss in resources and/or reproductive effort?
 m_3_s <- bf(surv ~ mass_dif + attend + fight + dist + (1|site/id), family = "bernoulli")
 m_3_m <- bf(MS ~ mass_dif + attend + fight + dist +(1|site/id), family = "poisson")
+m_3_s_v2 <- bf(surv ~ attend + (1|site/id), family = "bernoulli")
 
 sem <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s + m_3_m
 
@@ -120,3 +121,10 @@ fit <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_t
            prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
 
 save(fit, file="results/modeloutput/brms_fit_pheno.RData")
+
+sem2 <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s_v2 + m_3_m
+
+fit_a <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+
+save(fit_a, file="results/modeloutput/brms_fit_pheno_alternative.RData")

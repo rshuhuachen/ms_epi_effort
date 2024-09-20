@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Epigenetic changes associated with reproductive investment in a lekking bird - 4&nbsp; Changing CpG sites</title>
+<title>Epigenetic changes associated with reproductive investment in a lekking bird - 5&nbsp; Changing CpG sites</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/3_changing_meth.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../qmd/3_changing_meth.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -151,38 +151,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../qmd/0_intro_hypothesis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction and hypotheses</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../qmd/1_explore.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Data exploration</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/2_filter.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/3_changing_meth.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/4_effort_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/5_physio_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Physio-associated CpG sites</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../qmd/6_fitness_meth.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
     </ul>
@@ -195,23 +201,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-change" id="toc-sec-change" class="nav-link active" data-scroll-target="#sec-change"><span class="header-section-number">4.1</span> Prepare the data</a></li>
-  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">4.2</span> Function to run the model</a></li>
-  <li><a href="#sec-changingcpg" id="toc-sec-changingcpg" class="nav-link" data-scroll-target="#sec-changingcpg"><span class="header-section-number">4.3</span> Run the model</a></li>
-  <li><a href="#exclude-models-that-did-not-convergence" id="toc-exclude-models-that-did-not-convergence" class="nav-link" data-scroll-target="#exclude-models-that-did-not-convergence"><span class="header-section-number">4.4</span> Exclude models that did not convergence</a></li>
-  <li><a href="#explore-and-filter-for-overdispersion" id="toc-explore-and-filter-for-overdispersion" class="nav-link" data-scroll-target="#explore-and-filter-for-overdispersion"><span class="header-section-number">4.5</span> Explore and filter for overdispersion</a></li>
-  <li><a href="#fdr-correction" id="toc-fdr-correction" class="nav-link" data-scroll-target="#fdr-correction"><span class="header-section-number">4.6</span> FDR-correction</a></li>
-  <li><a href="#filter-for-average-methylation-differences" id="toc-filter-for-average-methylation-differences" class="nav-link" data-scroll-target="#filter-for-average-methylation-differences"><span class="header-section-number">4.7</span> Filter for average methylation % differences</a></li>
-  <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting"><span class="header-section-number">4.8</span> Plotting</a>
+  <li><a href="#sec-change" id="toc-sec-change" class="nav-link active" data-scroll-target="#sec-change"><span class="header-section-number">5.1</span> Prepare the data</a></li>
+  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">5.2</span> Function to run the model</a></li>
+  <li><a href="#sec-changingcpg" id="toc-sec-changingcpg" class="nav-link" data-scroll-target="#sec-changingcpg"><span class="header-section-number">5.3</span> Run the model</a></li>
+  <li><a href="#exclude-models-that-did-not-convergence" id="toc-exclude-models-that-did-not-convergence" class="nav-link" data-scroll-target="#exclude-models-that-did-not-convergence"><span class="header-section-number">5.4</span> Exclude models that did not convergence</a></li>
+  <li><a href="#explore-and-filter-for-overdispersion" id="toc-explore-and-filter-for-overdispersion" class="nav-link" data-scroll-target="#explore-and-filter-for-overdispersion"><span class="header-section-number">5.5</span> Explore and filter for overdispersion</a></li>
+  <li><a href="#fdr-correction" id="toc-fdr-correction" class="nav-link" data-scroll-target="#fdr-correction"><span class="header-section-number">5.6</span> FDR-correction</a></li>
+  <li><a href="#filter-for-average-methylation-differences" id="toc-filter-for-average-methylation-differences" class="nav-link" data-scroll-target="#filter-for-average-methylation-differences"><span class="header-section-number">5.7</span> Filter for average methylation % differences</a></li>
+  <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting"><span class="header-section-number">5.8</span> Plotting</a>
   <ul class="collapse">
-  <li><a href="#volcano-and-manhattan-plots" id="toc-volcano-and-manhattan-plots" class="nav-link" data-scroll-target="#volcano-and-manhattan-plots"><span class="header-section-number">4.8.1</span> Volcano and Manhattan plots</a></li>
-  <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data"><span class="header-section-number">4.8.2</span> Raw data</a></li>
+  <li><a href="#volcano-and-manhattan-plots" id="toc-volcano-and-manhattan-plots" class="nav-link" data-scroll-target="#volcano-and-manhattan-plots"><span class="header-section-number">5.8.1</span> Volcano and Manhattan plots</a></li>
+  <li><a href="#raw-data" id="toc-raw-data" class="nav-link" data-scroll-target="#raw-data"><span class="header-section-number">5.8.2</span> Raw data</a></li>
   </ul></li>
-  <li><a href="#annotation" id="toc-annotation" class="nav-link" data-scroll-target="#annotation"><span class="header-section-number">4.9</span> Annotation</a>
+  <li><a href="#annotation" id="toc-annotation" class="nav-link" data-scroll-target="#annotation"><span class="header-section-number">5.9</span> Annotation</a>
   <ul class="collapse">
-  <li><a href="#based-on-black-grouse-annotation" id="toc-based-on-black-grouse-annotation" class="nav-link" data-scroll-target="#based-on-black-grouse-annotation"><span class="header-section-number">4.9.1</span> Based on black grouse annotation</a></li>
-  <li><a href="#based-on-the-chicken-annotation" id="toc-based-on-the-chicken-annotation" class="nav-link" data-scroll-target="#based-on-the-chicken-annotation"><span class="header-section-number">4.9.2</span> Based on the chicken annotation</a></li>
-  <li><a href="#gorilla" id="toc-gorilla" class="nav-link" data-scroll-target="#gorilla"><span class="header-section-number">4.9.3</span> GOrilla</a></li>
+  <li><a href="#based-on-black-grouse-annotation" id="toc-based-on-black-grouse-annotation" class="nav-link" data-scroll-target="#based-on-black-grouse-annotation"><span class="header-section-number">5.9.1</span> Based on black grouse annotation</a></li>
+  <li><a href="#gorilla" id="toc-gorilla" class="nav-link" data-scroll-target="#gorilla"><span class="header-section-number">5.9.2</span> GOrilla</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -221,7 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Changing CpG sites</span></h1>
 </div>
 
 
@@ -239,8 +244,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Identifying CpG sites that change over the lekking season</strong></p>
 <p>Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect.</p>
 <p>Moreover, as there are (sometimes) multiple samples for each individual, we correct for the non-independence of individuals by including ID as a random effect, nested within lek. The response variables in these models are both the number of methylated and number of unmethylated C’s, using the <code>cbind</code> function.</p>
-<section id="sec-change" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="sec-change"><span class="header-section-number">4.1</span> Prepare the data</h2>
+<section id="sec-change" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="sec-change"><span class="header-section-number">5.1</span> Prepare the data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, </span>
@@ -273,8 +278,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> prepost_long <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="function-to-run-the-model" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">4.2</span> Function to run the model</h2>
+<section id="function-to-run-the-model" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">5.2</span> Function to run the model</h2>
 <p>Below you will find the full model used to 1) run the model in parallel per CpG site and 2) collect the output in a dataframe. Most importantly, this is the formula run for the model:</p>
 <pre><code>lme4::glmer(cbind(numC, numT) ~ prepost + (1|id), family = "binomial")</code></pre>
 <div class="cell">
@@ -356,8 +361,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 </section>
-<section id="sec-changingcpg" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="sec-changingcpg"><span class="header-section-number">4.3</span> Run the model</h2>
+<section id="sec-changingcpg" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-changingcpg"><span class="header-section-number">5.3</span> Run the model</h2>
 <p>Here, we run the model in parallel, and next exclude CpG sites where there was overdispersion or convergence errors. After this filter step, we apply an FDR multiple-testing correction.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model in parallel per CpG site (list item)</span></span>
@@ -365,8 +370,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>out_glmer <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, out_glmer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="exclude-models-that-did-not-convergence" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="exclude-models-that-did-not-convergence"><span class="header-section-number">4.4</span> Exclude models that did not convergence</h2>
+<section id="exclude-models-that-did-not-convergence" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="exclude-models-that-did-not-convergence"><span class="header-section-number">5.4</span> Exclude models that did not convergence</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Exclude models that did not converge ####</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>out_glmer_raw_conv <span class="ot">&lt;-</span> <span class="fu">subset</span>(out_glmer_raw, convergence <span class="sc">==</span> <span class="st">"boundary (singular) fit: see help('isSingular')"</span> <span class="sc">|</span> <span class="fu">is.na</span>(convergence))</span>
@@ -374,8 +379,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>When excluding models with convergence warnings/errors, we retain 97% of models, 345,983 out of 354,765 CpG site models.</p>
 </section>
-<section id="explore-and-filter-for-overdispersion" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="explore-and-filter-for-overdispersion"><span class="header-section-number">4.5</span> Explore and filter for overdispersion</h2>
+<section id="explore-and-filter-for-overdispersion" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="explore-and-filter-for-overdispersion"><span class="header-section-number">5.5</span> Explore and filter for overdispersion</h2>
 <p>We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is under/overdispersion and how to best filter for it.</p>
 <p><img src="../plots/model_out/changing/hist_raw_glmer.png" class="img-fluid" alt="Histogram dispersion ratio and p-values raw models"> <img src="../plots/model_out/changing/qqplot_raw_glmer.png" class="img-fluid" alt="QQ plot model changing CpG sites raw models"></p>
 <p>Next, we filter out the sites with an overdispersion ratio higher than the 95 percentile.</p>
@@ -386,15 +391,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We are then left with a total of 328,640 CpG site models.</p>
 <p><img src="../plots/model_out/changing/hist_filtered_glmer.png" class="img-fluid" alt="Histogram dispersion ratio and p-values filtered models"> <img src="../plots/model_out/changing/qqplot_raw_glmer.png" class="img-fluid" alt="QQ plot model changing CpG sites filtered models"></p>
 </section>
-<section id="fdr-correction" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="fdr-correction"><span class="header-section-number">4.6</span> FDR-correction</h2>
+<section id="fdr-correction" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="fdr-correction"><span class="header-section-number">5.6</span> FDR-correction</h2>
 <p>After excluding CpG site models with overdispersion, we apply a multiple-testing correction using the false discovery rate (FDR).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>out_glmer<span class="sc">$</span>prepost_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(out_glmer<span class="sc">$</span>prepost_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(out_glmer))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="filter-for-average-methylation-differences" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="filter-for-average-methylation-differences"><span class="header-section-number">4.7</span> Filter for average methylation % differences</h2>
+<section id="filter-for-average-methylation-differences" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="filter-for-average-methylation-differences"><span class="header-section-number">5.7</span> Filter for average methylation % differences</h2>
 <p>A “changing CpG site” is then defined as a CpG site with a significant effect of time period (FDR-corrected q-value &lt; 0.05) and at a mean difference in methylation % (across individuals) of at least -10% or 10%.</p>
 <p>We first have to calculate delta methylation (post-lekking methylation % minus pre-lekking methylation %) in order to get this average.</p>
 <div class="cell">
@@ -438,10 +443,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>A total of 1,026 CpG sites significantly change across the lekking period.</p>
 </section>
-<section id="plotting" class="level2" data-number="4.8">
-<h2 data-number="4.8" class="anchored" data-anchor-id="plotting"><span class="header-section-number">4.8</span> Plotting</h2>
-<section id="volcano-and-manhattan-plots" class="level3" data-number="4.8.1">
-<h3 data-number="4.8.1" class="anchored" data-anchor-id="volcano-and-manhattan-plots"><span class="header-section-number">4.8.1</span> Volcano and Manhattan plots</h3>
+<section id="plotting" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="plotting"><span class="header-section-number">5.8</span> Plotting</h2>
+<section id="volcano-and-manhattan-plots" class="level3" data-number="5.8.1">
+<h3 data-number="5.8.1" class="anchored" data-anchor-id="volcano-and-manhattan-plots"><span class="header-section-number">5.8.1</span> Volcano and Manhattan plots</h3>
 <p>Next, we make a volcano plot to visualise the results.</p>
 <div class="cell">
 <details>
@@ -534,8 +539,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="raw-data" class="level3" data-number="4.8.2">
-<h3 data-number="4.8.2" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">4.8.2</span> Raw data</h3>
+<section id="raw-data" class="level3" data-number="5.8.2">
+<h3 data-number="5.8.2" class="anchored" data-anchor-id="raw-data"><span class="header-section-number">5.8.2</span> Raw data</h3>
 <p>To assess whether the models performed well, I also plotted the raw data of the five most significantly changing CpG sites.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># raw plot for the 1st significant CpG site, repeat for the other 4 and combine with cowplot</span></span>
@@ -560,10 +565,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="annotation" class="level2" data-number="4.9">
-<h2 data-number="4.9" class="anchored" data-anchor-id="annotation"><span class="header-section-number">4.9</span> Annotation</h2>
-<section id="based-on-black-grouse-annotation" class="level3" data-number="4.9.1">
-<h3 data-number="4.9.1" class="anchored" data-anchor-id="based-on-black-grouse-annotation"><span class="header-section-number">4.9.1</span> Based on black grouse annotation</h3>
+<section id="annotation" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="annotation"><span class="header-section-number">5.9</span> Annotation</h2>
+<section id="based-on-black-grouse-annotation" class="level3" data-number="5.9.1">
+<h3 data-number="5.9.1" class="anchored" data-anchor-id="based-on-black-grouse-annotation"><span class="header-section-number">5.9.1</span> Based on black grouse annotation</h3>
 <p>Next, we annotate in which regions these changing CpG sites are located in based on the black grouse annotation.</p>
 <div class="cell">
 <details>
@@ -871,127 +876,14 @@ Attaching package: 'kableExtra'</code></pre>
 </figure>
 </div>
 </section>
-<section id="based-on-the-chicken-annotation" class="level3" data-number="4.9.2">
-<h3 data-number="4.9.2" class="anchored" data-anchor-id="based-on-the-chicken-annotation"><span class="header-section-number">4.9.2</span> Based on the chicken annotation</h3>
-<p>We can follow the same steps as above but instead of using the black grouse annotation, using the lifted-over chicken annotation that contains official gene symbols. We can use these symbols to run a gene ontology enrichment analysis with GOrilla.</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Annotate with gene names based on chicken liftover ####</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="do">### load annotation data</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>gff <span class="ot">&lt;-</span> <span class="fu">makeTxDbFromGFF</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/liftoff_gallus_ltet.gff"</span>), </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">format=</span><span class="st">"gff3"</span>, <span class="at">organism=</span><span class="st">"Lyrurus tetrix"</span>) </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>promoters_chicken <span class="ot">&lt;-</span> <span class="fu">promoters</span>(gff, <span class="at">upstream=</span><span class="dv">2000</span>, <span class="at">downstream=</span><span class="dv">200</span>, <span class="at">columns=</span><span class="fu">c</span>(<span class="st">"tx_name"</span>, <span class="st">"gene_id"</span>)) <span class="co"># From NIOO</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>genes_chicken <span class="ot">&lt;-</span> <span class="fu">genes</span>(gff)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>TSS_chicken <span class="ot">&lt;-</span> <span class="fu">promoters</span>(gff, <span class="at">upstream=</span><span class="dv">300</span>, <span class="at">downstream=</span><span class="dv">50</span>, <span class="at">columns=</span><span class="fu">c</span>(<span class="st">"tx_name"</span>, <span class="st">"gene_id"</span>)) <span class="co"># TSS as in Laine et al., 2016. Nature Communications</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>downstream_chicken <span class="ot">&lt;-</span> <span class="fu">flank</span>(<span class="fu">genes</span>(gff), <span class="dv">10000</span>, <span class="at">start=</span><span class="cn">FALSE</span>, <span class="at">both=</span><span class="cn">FALSE</span>, <span class="at">use.names=</span><span class="cn">TRUE</span>)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>upstream_chicken <span class="ot">&lt;-</span> <span class="fu">promoters</span>(<span class="fu">genes</span>(gff), <span class="at">upstream=</span><span class="dv">10000</span>, <span class="at">downstream=</span><span class="dv">0</span>)</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>exons_gene_chicken <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">exonsBy</span>(gff, <span class="st">"gene"</span>)) <span class="co"># group exons by genes</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>introns_chicken <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">intronsByTranscript</span>(gff, <span class="at">use.names=</span><span class="cn">TRUE</span>))</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>exons <span class="ot">&lt;-</span> <span class="fu">exonsBy</span>(gff, <span class="st">"gene"</span>)</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>gene <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(exons)){</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(exons[[i]])</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(df)){</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">grepl</span>(<span class="st">"XM_015281696.4-1"</span>, df<span class="sc">$</span>exon_name[j]) <span class="sc">==</span> <span class="cn">TRUE</span>){</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    gene <span class="ot">&lt;-</span> <span class="fu">rbind</span>(gene, <span class="fu">names</span>(exons[i]))  }</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  }}</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#rename seqnames which can't be done in gff</span></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"__"</span>, <span class="st">";"</span>,all_models_sig<span class="sc">$</span>chr_pos)</span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>( <span class="st">"HRSCAF_"</span>, <span class="st">"HRSCAF="</span>,all_models_sig<span class="sc">$</span>chr_pos)</span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"__"</span>, <span class="st">";"</span>,all_models_sig<span class="sc">$</span>chr)</span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"HRSCAF_"</span>, <span class="st">"HRSCAF="</span>, all_models_sig<span class="sc">$</span>chr)</span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>sig_gr <span class="ot">&lt;-</span> <span class="fu">as</span>(all_models_sig, <span class="st">"GRanges"</span>)</span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="do">## annotate with chicken</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>sig_promoter_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, promoters_chicken) </span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>sig_promoter_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_promoter_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">chr =</span> sig_promoter_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">pos =</span> sig_promoter_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter =</span> sig_promoter_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_promoter_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">gene_id =</span> sig_promoter_chicken<span class="sc">$</span>gene_id<span class="sc">@</span>unlistData,</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">region =</span> <span class="st">"promoter"</span>))</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>sig_gene_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, genes_chicken) </span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>sig_gene_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_gene_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">chr =</span> sig_gene_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">pos =</span> sig_gene_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">parameter =</span> sig_gene_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_gene_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">gene_id =</span> sig_gene_chicken<span class="sc">$</span>gene_id,</span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">region =</span> <span class="st">"gene"</span>))</span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>sig_TSS_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, TSS_chicken) </span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>sig_TSS_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_TSS_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">chr =</span> sig_TSS_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">pos =</span> sig_TSS_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">parameter =</span> sig_TSS_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_TSS_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">gene_id =</span> <span class="fu">unlist</span>(sig_TSS_chicken<span class="sc">$</span>gene_id),</span>
-<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">region =</span> <span class="st">"TSS"</span>))</span>
-<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>sig_exon_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, exons_gene_chicken) </span>
-<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>sig_exon_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_exon_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">chr =</span> sig_exon_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">pos =</span> sig_exon_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">parameter =</span> sig_exon_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_exon_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">gene_id =</span> sig_exon_chicken<span class="sc">$</span>exon_name,</span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">region =</span> <span class="st">"exon"</span>))</span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>sig_intron_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, introns_chicken) </span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>sig_intron_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_intron_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">chr =</span> sig_intron_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">pos =</span> sig_intron_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">parameter =</span> sig_intron_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_intron_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">gene_id =</span> <span class="cn">NA</span>,</span>
-<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">region =</span> <span class="st">"intron"</span>))</span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a>sig_down_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, downstream_chicken) </span>
-<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a>sig_down_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_down_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">chr =</span> sig_down_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">pos =</span> sig_down_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">parameter =</span> sig_down_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_down_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">gene_id =</span> sig_down_chicken<span class="sc">$</span>gene_id,</span>
-<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">region =</span> <span class="st">"downstream"</span>))</span>
-<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a>sig_up_chicken <span class="ot">&lt;-</span> <span class="fu">mergeByOverlaps</span>(sig_gr, upstream_chicken) </span>
-<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a>sig_up_chicken_df <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos =</span> sig_up_chicken<span class="sc">$</span>chr_pos,</span>
-<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">chr =</span> sig_up_chicken<span class="sc">$</span>sig_gr<span class="sc">@</span>seqnames,</span>
-<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">pos =</span> sig_up_chicken<span class="sc">$</span>sig_gr<span class="sc">$</span>pos,</span>
-<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">parameter =</span> sig_up_chicken<span class="sc">$</span>parameter,</span>
-<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">parameter_qval =</span> sig_up_chicken<span class="sc">$</span>parameter_qval,</span>
-<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>                                       <span class="at">gene_id =</span> sig_up_chicken<span class="sc">$</span>gene_id,</span>
-<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">region =</span> <span class="st">"upstream"</span>))</span>
-<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a>all_models_sig_annotated_chicken <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sig_promoter_chicken_df, sig_gene_chicken_df,</span>
-<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_down_chicken_df,</span>
-<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a>                                  sig_up_chicken_df) <span class="co"># left out intron due to error</span></span>
-<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>all_models_sig_annotated_chicken <span class="ot">&lt;-</span> <span class="fu">subset</span>(all_models_sig_annotated_chicken,</span>
-<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a>                                           <span class="sc">!</span><span class="fu">is.na</span>(gene_id) <span class="sc">&amp;</span></span>
-<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a>                                             <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"LOC"</span>, gene_id))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="gorilla" class="level3" data-number="4.9.3">
-<h3 data-number="4.9.3" class="anchored" data-anchor-id="gorilla"><span class="header-section-number">4.9.3</span> GOrilla</h3>
+<section id="gorilla" class="level3" data-number="5.9.2">
+<h3 data-number="5.9.2" class="anchored" data-anchor-id="gorilla"><span class="header-section-number">5.9.2</span> GOrilla</h3>
 <p>We next run the list of gene IDs of the significant sites as the target list as well as the list of gene IDs from all CpG sites that we ran the model on as a background list. I used default settings and the analysis was done based on a human model (<em>Homo sapiens</em>). The result can be seen below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/changing/GOFUNCTION_changing.xlsx"</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_function_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/changing/GOFUNCTION_changing_similar.xlsx"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_function_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
 <table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
@@ -1010,200 +902,156 @@ Attaching package: 'kableExtra'</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">GO:0001012</td>
-<td style="text-align: left;">RNA polymerase II regulatory region DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">4.70e-06</td>
-<td style="text-align: right;">1.78</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">731</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">108</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0000977</td>
-<td style="text-align: left;">RNA polymerase II regulatory region sequence-specific DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">2.30e-06</td>
-<td style="text-align: right;">1.78</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">731</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">108</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0043565</td>
-<td style="text-align: left;">sequence-specific DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">1.80e-06</td>
-<td style="text-align: right;">1.68</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">928</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">129</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:1990837</td>
-<td style="text-align: left;">sequence-specific double-stranded DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">1.60e-06</td>
-<td style="text-align: right;">1.71</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">855</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">121</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0000976</td>
-<td style="text-align: left;">transcription regulatory region sequence-specific DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">3.10e-06</td>
-<td style="text-align: right;">1.72</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">802</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">114</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0044212</td>
-<td style="text-align: left;">transcription regulatory region DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">3.00e-06</td>
-<td style="text-align: right;">1.71</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">804</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">114</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0001067</td>
-<td style="text-align: left;">regulatory region nucleic acid binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">2.80e-06</td>
-<td style="text-align: right;">1.71</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">805</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">114</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">GO:0000987</td>
 <td style="text-align: left;">proximal promoter sequence-specific DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">3.10e-06</td>
-<td style="text-align: right;">1.80</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">652</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">97</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0003700</td>
-<td style="text-align: left;">DNA-binding transcription factor activity</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">4.80e-06</td>
-<td style="text-align: right;">1.74</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">723</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">104</td>
+<td style="text-align: right;">5.63e-05</td>
+<td style="text-align: right;">0.219</td>
+<td style="text-align: right;">1.65</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">477</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">61</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">GO:0000978</td>
 <td style="text-align: left;">RNA polymerase II proximal promoter sequence-specific DNA binding</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">9.80e-06</td>
-<td style="text-align: right;">1.77</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">642</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">94</td>
+<td style="text-align: right;">1.26e-04</td>
+<td style="text-align: right;">0.246</td>
+<td style="text-align: right;">1.62</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">470</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">59</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0000981</td>
-<td style="text-align: left;">DNA-binding transcription factor activity, RNA polymerase II-specific</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">1.18e-05</td>
-<td style="text-align: right;">1.72</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">701</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">100</td>
+<td style="text-align: left;">GO:1990837</td>
+<td style="text-align: left;">sequence-specific double-stranded DNA binding</td>
+<td style="text-align: right;">1.42e-04</td>
+<td style="text-align: right;">0.185</td>
+<td style="text-align: right;">1.51</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">639</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">75</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0003690</td>
-<td style="text-align: left;">double-stranded DNA binding</td>
-<td style="text-align: right;">1.00e-07</td>
-<td style="text-align: right;">1.93e-05</td>
-<td style="text-align: right;">1.60</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">918</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">122</td>
+<td style="text-align: left;">GO:0043565</td>
+<td style="text-align: left;">sequence-specific DNA binding</td>
+<td style="text-align: right;">1.54e-04</td>
+<td style="text-align: right;">0.150</td>
+<td style="text-align: right;">1.49</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">694</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">80</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0003677</td>
-<td style="text-align: left;">DNA binding</td>
-<td style="text-align: right;">2.00e-07</td>
-<td style="text-align: right;">6.08e-05</td>
-<td style="text-align: right;">1.44</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1441</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">172</td>
+<td style="text-align: left;">GO:0001012</td>
+<td style="text-align: left;">RNA polymerase II regulatory region DNA binding</td>
+<td style="text-align: right;">2.08e-04</td>
+<td style="text-align: right;">0.162</td>
+<td style="text-align: right;">1.55</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">541</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">65</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0140110</td>
-<td style="text-align: left;">transcription regulator activity</td>
-<td style="text-align: right;">2.50e-06</td>
-<td style="text-align: right;">7.39e-04</td>
-<td style="text-align: right;">1.46</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1116</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">135</td>
+<td style="text-align: left;">GO:0000977</td>
+<td style="text-align: left;">RNA polymerase II regulatory region sequence-specific DNA binding</td>
+<td style="text-align: right;">2.08e-04</td>
+<td style="text-align: right;">0.135</td>
+<td style="text-align: right;">1.55</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">541</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">65</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0001228</td>
-<td style="text-align: left;">DNA-binding transcription activator activity, RNA polymerase II-specific</td>
-<td style="text-align: right;">9.00e-06</td>
-<td style="text-align: right;">2.52e-03</td>
-<td style="text-align: right;">1.90</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">312</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">49</td>
+<td style="text-align: left;">GO:0000976</td>
+<td style="text-align: left;">transcription regulatory region sequence-specific DNA binding</td>
+<td style="text-align: right;">2.13e-04</td>
+<td style="text-align: right;">0.118</td>
+<td style="text-align: right;">1.52</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">594</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">70</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0008134</td>
-<td style="text-align: left;">transcription factor binding</td>
-<td style="text-align: right;">4.96e-04</td>
-<td style="text-align: right;">1.30e-01</td>
+<td style="text-align: left;">GO:0044212</td>
+<td style="text-align: left;">transcription regulatory region DNA binding</td>
+<td style="text-align: right;">2.35e-04</td>
+<td style="text-align: right;">0.115</td>
+<td style="text-align: right;">1.52</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">596</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">70</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0001067</td>
+<td style="text-align: left;">regulatory region nucleic acid binding</td>
+<td style="text-align: right;">2.47e-04</td>
+<td style="text-align: right;">0.107</td>
+<td style="text-align: right;">1.51</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">597</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0003700</td>
+<td style="text-align: left;">DNA-binding transcription factor activity</td>
+<td style="text-align: right;">3.51e-04</td>
+<td style="text-align: right;">0.137</td>
 <td style="text-align: right;">1.53</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">481</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">61</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">530</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">63</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">GO:0060228</td>
 <td style="text-align: left;">phosphatidylcholine-sterol O-acyltransferase activator activity</td>
-<td style="text-align: right;">5.67e-04</td>
-<td style="text-align: right;">1.40e-01</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
+<td style="text-align: right;">4.64e-04</td>
+<td style="text-align: right;">0.164</td>
+<td style="text-align: right;">12.90</td>
+<td style="text-align: right;">8813</td>
 <td style="text-align: right;">3</td>
-<td style="text-align: right;">954</td>
+<td style="text-align: right;">683</td>
 <td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0003690</td>
+<td style="text-align: left;">double-stranded DNA binding</td>
+<td style="text-align: right;">8.25e-04</td>
+<td style="text-align: right;">0.268</td>
+<td style="text-align: right;">1.43</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">688</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">76</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0005245</td>
+<td style="text-align: left;">voltage-gated calcium channel activity</td>
+<td style="text-align: right;">9.89e-04</td>
+<td style="text-align: right;">0.297</td>
+<td style="text-align: right;">4.11</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">7</td>
 </tr>
 </tbody>
 </table>
 </div>
 
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/changing/GOPROCESS_changing.xlsx"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_process_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/changing/GOPROCESS_changing_similar.xlsx"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_process_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
 <table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
@@ -1222,950 +1070,752 @@ Attaching package: 'kableExtra'</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">GO:0045664</td>
+<td style="text-align: left;">regulation of neuron differentiation</td>
+<td style="text-align: right;">3.00e-07</td>
+<td style="text-align: right;">0.00426</td>
+<td style="text-align: right;">1.99</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">370</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">57</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">GO:2000026</td>
 <td style="text-align: left;">regulation of multicellular organismal development</td>
-<td style="text-align: right;">0.00e+00</td>
-<td style="text-align: right;">0.000686</td>
-<td style="text-align: right;">1.45</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1505</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">181</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0006355</td>
-<td style="text-align: left;">regulation of transcription, DNA-templated</td>
-<td style="text-align: right;">1.00e-07</td>
-<td style="text-align: right;">0.000647</td>
-<td style="text-align: right;">1.35</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2151</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">241</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:1903506</td>
-<td style="text-align: left;">regulation of nucleic acid-templated transcription</td>
-<td style="text-align: right;">1.00e-07</td>
-<td style="text-align: right;">0.000449</td>
-<td style="text-align: right;">1.35</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2152</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">241</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:2001141</td>
-<td style="text-align: left;">regulation of RNA biosynthetic process</td>
-<td style="text-align: right;">1.00e-07</td>
-<td style="text-align: right;">0.000447</td>
-<td style="text-align: right;">1.35</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2159</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">241</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:1903508</td>
-<td style="text-align: left;">positive regulation of nucleic acid-templated transcription</td>
-<td style="text-align: right;">2.00e-07</td>
-<td style="text-align: right;">0.000486</td>
-<td style="text-align: right;">1.51</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1144</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">143</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0045893</td>
-<td style="text-align: left;">positive regulation of transcription, DNA-templated</td>
-<td style="text-align: right;">2.00e-07</td>
-<td style="text-align: right;">0.000405</td>
-<td style="text-align: right;">1.51</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1144</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">143</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:1902680</td>
-<td style="text-align: left;">positive regulation of RNA biosynthetic process</td>
-<td style="text-align: right;">2.00e-07</td>
-<td style="text-align: right;">0.000366</td>
-<td style="text-align: right;">1.51</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1145</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">143</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0051252</td>
-<td style="text-align: left;">regulation of RNA metabolic process</td>
-<td style="text-align: right;">2.00e-07</td>
-<td style="text-align: right;">0.000447</td>
-<td style="text-align: right;">1.32</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2361</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">258</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0051254</td>
-<td style="text-align: left;">positive regulation of RNA metabolic process</td>
-<td style="text-align: right;">3.00e-07</td>
-<td style="text-align: right;">0.000520</td>
-<td style="text-align: right;">1.48</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1217</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">149</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0006357</td>
-<td style="text-align: left;">regulation of transcription by RNA polymerase II</td>
-<td style="text-align: right;">4.00e-07</td>
-<td style="text-align: right;">0.000572</td>
-<td style="text-align: right;">1.40</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1613</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">187</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0050793</td>
-<td style="text-align: left;">regulation of developmental process</td>
-<td style="text-align: right;">5.00e-07</td>
-<td style="text-align: right;">0.000627</td>
-<td style="text-align: right;">1.36</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1871</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">211</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0031326</td>
-<td style="text-align: left;">regulation of cellular biosynthetic process</td>
-<td style="text-align: right;">6.00e-07</td>
-<td style="text-align: right;">0.000667</td>
-<td style="text-align: right;">1.28</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2669</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">284</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0045944</td>
-<td style="text-align: left;">positive regulation of transcription by RNA polymerase II</td>
 <td style="text-align: right;">1.10e-06</td>
-<td style="text-align: right;">0.001210</td>
-<td style="text-align: right;">1.56</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">851</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">110</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0001654</td>
-<td style="text-align: left;">eye development</td>
-<td style="text-align: right;">1.10e-06</td>
-<td style="text-align: right;">0.001150</td>
-<td style="text-align: right;">3.21</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">79</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">21</td>
+<td style="text-align: right;">0.00772</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1067</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">124</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0048513</td>
-<td style="text-align: left;">animal organ development</td>
-<td style="text-align: right;">1.40e-06</td>
-<td style="text-align: right;">0.001340</td>
-<td style="text-align: right;">1.52</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">120</td>
+<td style="text-align: left;">GO:0050767</td>
+<td style="text-align: left;">regulation of neurogenesis</td>
+<td style="text-align: right;">2.30e-06</td>
+<td style="text-align: right;">0.01030</td>
+<td style="text-align: right;">1.81</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">450</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">63</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0010628</td>
-<td style="text-align: left;">positive regulation of gene expression</td>
-<td style="text-align: right;">1.50e-06</td>
-<td style="text-align: right;">0.001380</td>
-<td style="text-align: right;">1.40</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1487</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">172</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0031328</td>
-<td style="text-align: left;">positive regulation of cellular biosynthetic process</td>
-<td style="text-align: right;">1.50e-06</td>
-<td style="text-align: right;">0.001300</td>
-<td style="text-align: right;">1.41</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1383</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">162</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0019219</td>
-<td style="text-align: left;">regulation of nucleobase-containing compound metabolic process</td>
-<td style="text-align: right;">1.70e-06</td>
-<td style="text-align: right;">0.001370</td>
-<td style="text-align: right;">1.28</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2591</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">274</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0009889</td>
-<td style="text-align: left;">regulation of biosynthetic process</td>
-<td style="text-align: right;">1.90e-06</td>
-<td style="text-align: right;">0.001410</td>
-<td style="text-align: right;">1.27</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2727</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">286</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0010557</td>
-<td style="text-align: left;">positive regulation of macromolecule biosynthetic process</td>
+<td style="text-align: left;">GO:0051094</td>
+<td style="text-align: left;">positive regulation of developmental process</td>
 <td style="text-align: right;">2.60e-06</td>
-<td style="text-align: right;">0.001880</td>
-<td style="text-align: right;">1.42</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1312</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">154</td>
+<td style="text-align: right;">0.00893</td>
+<td style="text-align: right;">1.62</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">702</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">88</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0009891</td>
-<td style="text-align: left;">positive regulation of biosynthetic process</td>
-<td style="text-align: right;">3.70e-06</td>
-<td style="text-align: right;">0.002530</td>
-<td style="text-align: right;">1.39</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1403</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">162</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:2000112</td>
-<td style="text-align: left;">regulation of cellular macromolecule biosynthetic process</td>
-<td style="text-align: right;">4.00e-06</td>
-<td style="text-align: right;">0.002630</td>
-<td style="text-align: right;">1.27</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2517</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">265</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0007389</td>
-<td style="text-align: left;">pattern specification process</td>
-<td style="text-align: right;">4.30e-06</td>
-<td style="text-align: right;">0.002750</td>
-<td style="text-align: right;">1.98</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">287</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">47</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0003002</td>
-<td style="text-align: left;">regionalization</td>
-<td style="text-align: right;">5.30e-06</td>
-<td style="text-align: right;">0.003180</td>
-<td style="text-align: right;">2.25</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">182</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">34</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0010556</td>
-<td style="text-align: left;">regulation of macromolecule biosynthetic process</td>
-<td style="text-align: right;">5.30e-06</td>
-<td style="text-align: right;">0.003090</td>
-<td style="text-align: right;">1.27</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2537</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">266</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0010896</td>
-<td style="text-align: left;">regulation of triglyceride catabolic process</td>
-<td style="text-align: right;">6.40e-06</td>
-<td style="text-align: right;">0.003590</td>
-<td style="text-align: right;">7.68</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">7</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0048522</td>
-<td style="text-align: left;">positive regulation of cellular process</td>
-<td style="text-align: right;">6.60e-06</td>
-<td style="text-align: right;">0.003570</td>
-<td style="text-align: right;">1.20</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3723</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">370</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0045935</td>
-<td style="text-align: left;">positive regulation of nucleobase-containing compound metabolic process</td>
-<td style="text-align: right;">7.10e-06</td>
-<td style="text-align: right;">0.003680</td>
-<td style="text-align: right;">1.39</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1356</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">156</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0043010</td>
-<td style="text-align: left;">camera-type eye development</td>
-<td style="text-align: right;">7.50e-06</td>
-<td style="text-align: right;">0.003780</td>
-<td style="text-align: right;">3.62</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">50</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">15</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0045595</td>
-<td style="text-align: left;">regulation of cell differentiation</td>
-<td style="text-align: right;">1.29e-05</td>
-<td style="text-align: right;">0.006230</td>
-<td style="text-align: right;">1.38</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1318</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">151</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0051093</td>
-<td style="text-align: left;">negative regulation of developmental process</td>
-<td style="text-align: right;">1.46e-05</td>
-<td style="text-align: right;">0.006830</td>
-<td style="text-align: right;">1.55</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">701</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">90</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0007423</td>
-<td style="text-align: left;">sensory organ development</td>
-<td style="text-align: right;">2.45e-05</td>
-<td style="text-align: right;">0.011100</td>
-<td style="text-align: right;">2.60</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">102</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">22</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0031325</td>
-<td style="text-align: left;">positive regulation of cellular metabolic process</td>
-<td style="text-align: right;">2.49e-05</td>
-<td style="text-align: right;">0.011000</td>
-<td style="text-align: right;">1.26</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2364</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">246</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0048598</td>
-<td style="text-align: left;">embryonic morphogenesis</td>
-<td style="text-align: right;">3.17e-05</td>
-<td style="text-align: right;">0.013600</td>
-<td style="text-align: right;">1.84</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">309</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">47</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0048856</td>
-<td style="text-align: left;">anatomical structure development</td>
-<td style="text-align: right;">3.36e-05</td>
-<td style="text-align: right;">0.013900</td>
-<td style="text-align: right;">1.25</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2396</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">248</td>
+<td style="text-align: left;">GO:0045597</td>
+<td style="text-align: left;">positive regulation of cell differentiation</td>
+<td style="text-align: right;">2.90e-06</td>
+<td style="text-align: right;">0.00796</td>
+<td style="text-align: right;">1.74</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">512</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">69</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">GO:0051960</td>
 <td style="text-align: left;">regulation of nervous system development</td>
-<td style="text-align: right;">3.84e-05</td>
-<td style="text-align: right;">0.015500</td>
-<td style="text-align: right;">1.52</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">699</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">88</td>
+<td style="text-align: right;">4.30e-06</td>
+<td style="text-align: right;">0.00989</td>
+<td style="text-align: right;">1.74</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">498</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">67</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0072049</td>
-<td style="text-align: left;">comma-shaped body morphogenesis</td>
-<td style="text-align: right;">4.68e-05</td>
-<td style="text-align: right;">0.018400</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: left;">GO:0050793</td>
+<td style="text-align: left;">regulation of developmental process</td>
+<td style="text-align: right;">7.20e-06</td>
+<td style="text-align: right;">0.01400</td>
+<td style="text-align: right;">1.40</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1328</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">144</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0010604</td>
-<td style="text-align: left;">positive regulation of macromolecule metabolic process</td>
-<td style="text-align: right;">4.86e-05</td>
-<td style="text-align: right;">0.018600</td>
-<td style="text-align: right;">1.25</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2375</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">245</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0010468</td>
-<td style="text-align: left;">regulation of gene expression</td>
-<td style="text-align: right;">5.67e-05</td>
-<td style="text-align: right;">0.021100</td>
-<td style="text-align: right;">1.21</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2977</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">298</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0009893</td>
-<td style="text-align: left;">positive regulation of metabolic process</td>
-<td style="text-align: right;">5.89e-05</td>
-<td style="text-align: right;">0.021400</td>
-<td style="text-align: right;">1.23</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2583</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">263</td>
+<td style="text-align: left;">GO:0045666</td>
+<td style="text-align: left;">positive regulation of neuron differentiation</td>
+<td style="text-align: right;">8.20e-06</td>
+<td style="text-align: right;">0.01390</td>
+<td style="text-align: right;">2.18</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">207</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">35</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">GO:0022603</td>
 <td style="text-align: left;">regulation of anatomical structure morphogenesis</td>
-<td style="text-align: right;">7.62e-05</td>
-<td style="text-align: right;">0.027000</td>
-<td style="text-align: right;">1.45</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">843</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">101</td>
+<td style="text-align: right;">1.45e-05</td>
+<td style="text-align: right;">0.02200</td>
+<td style="text-align: right;">1.63</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">587</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">74</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0045664</td>
-<td style="text-align: left;">regulation of neuron differentiation</td>
-<td style="text-align: right;">9.57e-05</td>
-<td style="text-align: right;">0.033100</td>
-<td style="text-align: right;">1.58</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">520</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">68</td>
+<td style="text-align: left;">GO:0060284</td>
+<td style="text-align: left;">regulation of cell development</td>
+<td style="text-align: right;">1.55e-05</td>
+<td style="text-align: right;">0.02110</td>
+<td style="text-align: right;">1.67</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">517</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">67</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0051241</td>
-<td style="text-align: left;">negative regulation of multicellular organismal process</td>
-<td style="text-align: right;">1.00e-04</td>
-<td style="text-align: right;">0.033900</td>
-<td style="text-align: right;">1.44</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">849</td>
+<td style="text-align: left;">GO:0045595</td>
+<td style="text-align: left;">regulation of cell differentiation</td>
+<td style="text-align: right;">2.09e-05</td>
+<td style="text-align: right;">0.02590</td>
+<td style="text-align: right;">1.46</td>
+<td style="text-align: right;">8813</td>
 <td style="text-align: right;">954</td>
-<td style="text-align: right;">101</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">108</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0050767</td>
-<td style="text-align: left;">regulation of neurogenesis</td>
-<td style="text-align: right;">1.22e-04</td>
-<td style="text-align: right;">0.040400</td>
-<td style="text-align: right;">1.51</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">632</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">79</td>
+<td style="text-align: left;">GO:0048522</td>
+<td style="text-align: left;">positive regulation of cellular process</td>
+<td style="text-align: right;">4.19e-05</td>
+<td style="text-align: right;">0.04770</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2823</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">266</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0051173</td>
-<td style="text-align: left;">positive regulation of nitrogen compound metabolic process</td>
-<td style="text-align: right;">1.23e-04</td>
-<td style="text-align: right;">0.039600</td>
-<td style="text-align: right;">1.24</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2251</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">231</td>
+<td style="text-align: left;">GO:0050769</td>
+<td style="text-align: left;">positive regulation of neurogenesis</td>
+<td style="text-align: right;">5.89e-05</td>
+<td style="text-align: right;">0.06180</td>
+<td style="text-align: right;">1.93</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">254</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">38</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0045665</td>
-<td style="text-align: left;">negative regulation of neuron differentiation</td>
-<td style="text-align: right;">1.26e-04</td>
-<td style="text-align: right;">0.039800</td>
-<td style="text-align: right;">2.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">169</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">29</td>
+<td style="text-align: left;">GO:0010720</td>
+<td style="text-align: left;">positive regulation of cell development</td>
+<td style="text-align: right;">6.99e-05</td>
+<td style="text-align: right;">0.06810</td>
+<td style="text-align: right;">1.83</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">303</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">43</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0051239</td>
-<td style="text-align: left;">regulation of multicellular organismal process</td>
-<td style="text-align: right;">1.56e-04</td>
-<td style="text-align: right;">0.048200</td>
-<td style="text-align: right;">1.24</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">2226</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">228</td>
+<td style="text-align: left;">GO:1903506</td>
+<td style="text-align: left;">regulation of nucleic acid-templated transcription</td>
+<td style="text-align: right;">7.98e-05</td>
+<td style="text-align: right;">0.07260</td>
+<td style="text-align: right;">1.30</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1645</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">166</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0051961</td>
-<td style="text-align: left;">negative regulation of nervous system development</td>
-<td style="text-align: right;">1.59e-04</td>
-<td style="text-align: right;">0.048300</td>
-<td style="text-align: right;">1.88</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">231</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">36</td>
+<td style="text-align: left;">GO:0006355</td>
+<td style="text-align: left;">regulation of transcription, DNA-templated</td>
+<td style="text-align: right;">7.98e-05</td>
+<td style="text-align: right;">0.06810</td>
+<td style="text-align: right;">1.30</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1645</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">166</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0001763</td>
-<td style="text-align: left;">morphogenesis of a branching structure</td>
-<td style="text-align: right;">1.68e-04</td>
-<td style="text-align: right;">0.049800</td>
-<td style="text-align: right;">2.26</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">123</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">23</td>
+<td style="text-align: left;">GO:2001141</td>
+<td style="text-align: left;">regulation of RNA biosynthetic process</td>
+<td style="text-align: right;">8.81e-05</td>
+<td style="text-align: right;">0.07080</td>
+<td style="text-align: right;">1.30</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1648</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">166</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0050768</td>
-<td style="text-align: left;">negative regulation of neurogenesis</td>
-<td style="text-align: right;">1.81e-04</td>
-<td style="text-align: right;">0.052500</td>
-<td style="text-align: right;">1.91</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">215</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">34</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0061138</td>
-<td style="text-align: left;">morphogenesis of a branching epithelium</td>
-<td style="text-align: right;">1.87e-04</td>
-<td style="text-align: right;">0.053200</td>
-<td style="text-align: right;">2.29</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">116</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">22</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0032502</td>
-<td style="text-align: left;">developmental process</td>
-<td style="text-align: right;">2.03e-04</td>
-<td style="text-align: right;">0.056900</td>
-<td style="text-align: right;">1.17</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3452</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">335</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">GO:0001525</td>
 <td style="text-align: left;">angiogenesis</td>
-<td style="text-align: right;">2.10e-04</td>
-<td style="text-align: right;">0.057600</td>
-<td style="text-align: right;">1.91</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">208</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">33</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0031323</td>
-<td style="text-align: left;">regulation of cellular metabolic process</td>
-<td style="text-align: right;">2.33e-04</td>
-<td style="text-align: right;">0.062600</td>
-<td style="text-align: right;">1.15</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">4063</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">387</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0080090</td>
-<td style="text-align: left;">regulation of primary metabolic process</td>
-<td style="text-align: right;">2.49e-04</td>
-<td style="text-align: right;">0.065800</td>
-<td style="text-align: right;">1.15</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3949</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">377</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0048518</td>
-<td style="text-align: left;">positive regulation of biological process</td>
-<td style="text-align: right;">2.79e-04</td>
-<td style="text-align: right;">0.072300</td>
-<td style="text-align: right;">1.14</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">4165</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">395</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0051094</td>
-<td style="text-align: left;">positive regulation of developmental process</td>
-<td style="text-align: right;">2.83e-04</td>
-<td style="text-align: right;">0.072100</td>
-<td style="text-align: right;">1.37</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">987</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">112</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0043981</td>
-<td style="text-align: left;">histone H4-K5 acetylation</td>
-<td style="text-align: right;">3.28e-04</td>
-<td style="text-align: right;">0.082300</td>
-<td style="text-align: right;">5.57</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0043982</td>
-<td style="text-align: left;">histone H4-K8 acetylation</td>
-<td style="text-align: right;">3.28e-04</td>
-<td style="text-align: right;">0.080900</td>
-<td style="text-align: right;">5.57</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0007420</td>
-<td style="text-align: left;">brain development</td>
-<td style="text-align: right;">3.32e-04</td>
-<td style="text-align: right;">0.080300</td>
-<td style="text-align: right;">1.99</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">170</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">28</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0021702</td>
-<td style="text-align: left;">cerebellar Purkinje cell differentiation</td>
-<td style="text-align: right;">3.67e-04</td>
-<td style="text-align: right;">0.087400</td>
-<td style="text-align: right;">6.71</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0048731</td>
-<td style="text-align: left;">system development</td>
-<td style="text-align: right;">4.95e-04</td>
-<td style="text-align: right;">0.116000</td>
-<td style="text-align: right;">1.49</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">560</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">69</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0051171</td>
-<td style="text-align: left;">regulation of nitrogen compound metabolic process</td>
-<td style="text-align: right;">4.97e-04</td>
-<td style="text-align: right;">0.115000</td>
-<td style="text-align: right;">1.15</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3817</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">363</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0045596</td>
-<td style="text-align: left;">negative regulation of cell differentiation</td>
-<td style="text-align: right;">5.33e-04</td>
-<td style="text-align: right;">0.121000</td>
-<td style="text-align: right;">1.51</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">502</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">63</td>
+<td style="text-align: right;">1.20e-04</td>
+<td style="text-align: right;">0.09140</td>
+<td style="text-align: right;">2.18</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">26</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">GO:0051004</td>
 <td style="text-align: left;">regulation of lipoprotein lipase activity</td>
-<td style="text-align: right;">5.35e-04</td>
-<td style="text-align: right;">0.120000</td>
-<td style="text-align: right;">5.17</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">954</td>
+<td style="text-align: right;">1.31e-04</td>
+<td style="text-align: right;">0.09380</td>
+<td style="text-align: right;">6.45</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">683</td>
 <td style="text-align: right;">6</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0009952</td>
-<td style="text-align: left;">anterior/posterior pattern specification</td>
-<td style="text-align: right;">5.63e-04</td>
-<td style="text-align: right;">0.124000</td>
-<td style="text-align: right;">2.17</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">117</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">21</td>
+<td style="text-align: left;">GO:1903508</td>
+<td style="text-align: left;">positive regulation of nucleic acid-templated transcription</td>
+<td style="text-align: right;">1.63e-04</td>
+<td style="text-align: right;">0.11100</td>
+<td style="text-align: right;">1.42</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">880</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">97</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0042501</td>
-<td style="text-align: left;">serine phosphorylation of STAT protein</td>
-<td style="text-align: right;">5.67e-04</td>
-<td style="text-align: right;">0.123000</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0097377</td>
-<td style="text-align: left;">spinal cord interneuron axon guidance</td>
-<td style="text-align: right;">5.67e-04</td>
-<td style="text-align: right;">0.121000</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0034371</td>
-<td style="text-align: left;">chylomicron remodeling</td>
-<td style="text-align: right;">5.67e-04</td>
-<td style="text-align: right;">0.119000</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0010873</td>
-<td style="text-align: left;">positive regulation of cholesterol esterification</td>
-<td style="text-align: right;">5.67e-04</td>
-<td style="text-align: right;">0.118000</td>
-<td style="text-align: right;">12.07</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0072050</td>
-<td style="text-align: left;">S-shaped body morphogenesis</td>
-<td style="text-align: right;">6.13e-04</td>
-<td style="text-align: right;">0.125000</td>
-<td style="text-align: right;">8.05</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: left;">GO:0045893</td>
+<td style="text-align: left;">positive regulation of transcription, DNA-templated</td>
+<td style="text-align: right;">1.63e-04</td>
+<td style="text-align: right;">0.10600</td>
+<td style="text-align: right;">1.42</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">880</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">97</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">GO:0021781</td>
 <td style="text-align: left;">glial cell fate commitment</td>
-<td style="text-align: right;">6.13e-04</td>
-<td style="text-align: right;">0.124000</td>
-<td style="text-align: right;">8.05</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">954</td>
+<td style="text-align: right;">1.68e-04</td>
+<td style="text-align: right;">0.10400</td>
+<td style="text-align: right;">10.32</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">683</td>
 <td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0034370</td>
-<td style="text-align: left;">triglyceride-rich lipoprotein particle remodeling</td>
-<td style="text-align: right;">6.13e-04</td>
-<td style="text-align: right;">0.122000</td>
-<td style="text-align: right;">8.05</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: left;">GO:1902680</td>
+<td style="text-align: left;">positive regulation of RNA biosynthetic process</td>
+<td style="text-align: right;">1.70e-04</td>
+<td style="text-align: right;">0.10100</td>
+<td style="text-align: right;">1.42</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">881</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">97</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0010898</td>
-<td style="text-align: left;">positive regulation of triglyceride catabolic process</td>
-<td style="text-align: right;">6.13e-04</td>
-<td style="text-align: right;">0.120000</td>
-<td style="text-align: right;">8.05</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: left;">GO:0051962</td>
+<td style="text-align: left;">positive regulation of nervous system development</td>
+<td style="text-align: right;">1.85e-04</td>
+<td style="text-align: right;">0.10500</td>
+<td style="text-align: right;">1.80</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">287</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">40</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0090207</td>
-<td style="text-align: left;">regulation of triglyceride metabolic process</td>
-<td style="text-align: right;">6.50e-04</td>
-<td style="text-align: right;">0.126000</td>
-<td style="text-align: right;">3.86</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">954</td>
+<td style="text-align: left;">GO:0007399</td>
+<td style="text-align: left;">nervous system development</td>
+<td style="text-align: right;">1.92e-04</td>
+<td style="text-align: right;">0.10500</td>
+<td style="text-align: right;">2.05</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">176</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0051239</td>
+<td style="text-align: left;">regulation of multicellular organismal process</td>
+<td style="text-align: right;">2.02e-04</td>
+<td style="text-align: right;">0.10600</td>
+<td style="text-align: right;">1.28</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1627</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">162</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0048518</td>
+<td style="text-align: left;">positive regulation of biological process</td>
+<td style="text-align: right;">2.04e-04</td>
+<td style="text-align: right;">0.10300</td>
+<td style="text-align: right;">1.18</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">3168</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">289</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0051252</td>
+<td style="text-align: left;">regulation of RNA metabolic process</td>
+<td style="text-align: right;">2.37e-04</td>
+<td style="text-align: right;">0.11500</td>
+<td style="text-align: right;">1.26</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1809</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">177</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0010628</td>
+<td style="text-align: left;">positive regulation of gene expression</td>
+<td style="text-align: right;">2.88e-04</td>
+<td style="text-align: right;">0.13500</td>
+<td style="text-align: right;">1.35</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1141</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">119</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0071526</td>
+<td style="text-align: left;">semaphorin-plexin signaling pathway</td>
+<td style="text-align: right;">3.00e-04</td>
+<td style="text-align: right;">0.13700</td>
+<td style="text-align: right;">4.30</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">683</td>
 <td style="text-align: right;">8</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">GO:0006475</td>
-<td style="text-align: left;">internal protein amino acid acetylation</td>
-<td style="text-align: right;">7.45e-04</td>
-<td style="text-align: right;">0.142000</td>
-<td style="text-align: right;">2.41</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">80</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">16</td>
-</tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0045892</td>
-<td style="text-align: left;">negative regulation of transcription, DNA-templated</td>
-<td style="text-align: right;">7.65e-04</td>
-<td style="text-align: right;">0.144000</td>
-<td style="text-align: right;">1.37</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">835</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">95</td>
+<td style="text-align: left;">GO:0048523</td>
+<td style="text-align: left;">negative regulation of cellular process</td>
+<td style="text-align: right;">3.04e-04</td>
+<td style="text-align: right;">0.13400</td>
+<td style="text-align: right;">1.21</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2480</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">232</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:0048754</td>
-<td style="text-align: left;">branching morphogenesis of an epithelial tube</td>
-<td style="text-align: right;">8.03e-04</td>
-<td style="text-align: right;">0.150000</td>
-<td style="text-align: right;">2.26</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">96</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">18</td>
+<td style="text-align: left;">GO:0031326</td>
+<td style="text-align: left;">regulation of cellular biosynthetic process</td>
+<td style="text-align: right;">3.11e-04</td>
+<td style="text-align: right;">0.13200</td>
+<td style="text-align: right;">1.24</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2057</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">197</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0019222</td>
-<td style="text-align: left;">regulation of metabolic process</td>
-<td style="text-align: right;">8.13e-04</td>
-<td style="text-align: right;">0.149000</td>
-<td style="text-align: right;">1.12</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">4464</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">416</td>
+<td style="text-align: left;">GO:0032502</td>
+<td style="text-align: left;">developmental process</td>
+<td style="text-align: right;">3.33e-04</td>
+<td style="text-align: right;">0.13800</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2606</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">242</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:1903507</td>
-<td style="text-align: left;">negative regulation of nucleic acid-templated transcription</td>
-<td style="text-align: right;">8.27e-04</td>
-<td style="text-align: right;">0.150000</td>
-<td style="text-align: right;">1.37</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">837</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">95</td>
+<td style="text-align: left;">GO:0006357</td>
+<td style="text-align: left;">regulation of transcription by RNA polymerase II</td>
+<td style="text-align: right;">3.68e-04</td>
+<td style="text-align: right;">0.14800</td>
+<td style="text-align: right;">1.32</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1228</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">126</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">GO:0050770</td>
+<td style="text-align: left;">regulation of axonogenesis</td>
+<td style="text-align: right;">3.95e-04</td>
+<td style="text-align: right;">0.15400</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0045944</td>
+<td style="text-align: left;">positive regulation of transcription by RNA polymerase II</td>
+<td style="text-align: right;">3.99e-04</td>
+<td style="text-align: right;">0.15100</td>
+<td style="text-align: right;">1.47</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">639</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0070830</td>
+<td style="text-align: left;">bicellular tight junction assembly</td>
+<td style="text-align: right;">4.07e-04</td>
+<td style="text-align: right;">0.15000</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0120192</td>
+<td style="text-align: left;">tight junction assembly</td>
+<td style="text-align: right;">4.07e-04</td>
+<td style="text-align: right;">0.14600</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0120193</td>
+<td style="text-align: left;">tight junction organization</td>
+<td style="text-align: right;">4.07e-04</td>
+<td style="text-align: right;">0.14300</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0010975</td>
+<td style="text-align: left;">regulation of neuron projection development</td>
+<td style="text-align: right;">4.24e-04</td>
+<td style="text-align: right;">0.14500</td>
+<td style="text-align: right;">1.76</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">279</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0031328</td>
+<td style="text-align: left;">positive regulation of cellular biosynthetic process</td>
+<td style="text-align: right;">4.49e-04</td>
+<td style="text-align: right;">0.15000</td>
+<td style="text-align: right;">1.35</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1074</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">112</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0034371</td>
+<td style="text-align: left;">chylomicron remodeling</td>
+<td style="text-align: right;">4.64e-04</td>
+<td style="text-align: right;">0.15100</td>
+<td style="text-align: right;">12.90</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0010873</td>
+<td style="text-align: left;">positive regulation of cholesterol esterification</td>
+<td style="text-align: right;">4.64e-04</td>
+<td style="text-align: right;">0.14700</td>
+<td style="text-align: right;">12.90</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">GO:1905048</td>
 <td style="text-align: left;">regulation of metallopeptidase activity</td>
-<td style="text-align: right;">8.29e-04</td>
-<td style="text-align: right;">0.149000</td>
-<td style="text-align: right;">4.83</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">954</td>
+<td style="text-align: right;">4.73e-04</td>
+<td style="text-align: right;">0.14700</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">8813</td>
 <td style="text-align: right;">6</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0021537</td>
-<td style="text-align: left;">telencephalon development</td>
-<td style="text-align: right;">8.29e-04</td>
-<td style="text-align: right;">0.147000</td>
-<td style="text-align: right;">4.83</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">6</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:0043954</td>
-<td style="text-align: left;">cellular component maintenance</td>
-<td style="text-align: right;">8.75e-04</td>
-<td style="text-align: right;">0.153000</td>
-<td style="text-align: right;">2.95</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">11</td>
+<td style="text-align: left;">GO:0033700</td>
+<td style="text-align: left;">phospholipid efflux</td>
+<td style="text-align: right;">4.73e-04</td>
+<td style="text-align: right;">0.14300</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">GO:1902679</td>
-<td style="text-align: left;">negative regulation of RNA biosynthetic process</td>
-<td style="text-align: right;">8.95e-04</td>
-<td style="text-align: right;">0.155000</td>
-<td style="text-align: right;">1.37</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">839</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">95</td>
+<td style="text-align: left;">GO:0034370</td>
+<td style="text-align: left;">triglyceride-rich lipoprotein particle remodeling</td>
+<td style="text-align: right;">4.73e-04</td>
+<td style="text-align: right;">0.14000</td>
+<td style="text-align: right;">8.60</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">4</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">GO:1903706</td>
-<td style="text-align: left;">regulation of hemopoiesis</td>
-<td style="text-align: right;">9.17e-04</td>
-<td style="text-align: right;">0.157000</td>
-<td style="text-align: right;">1.63</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">318</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">43</td>
+<td style="text-align: left;">GO:0009893</td>
+<td style="text-align: left;">positive regulation of metabolic process</td>
+<td style="text-align: right;">4.81e-04</td>
+<td style="text-align: right;">0.14000</td>
+<td style="text-align: right;">1.23</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1977</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">189</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">GO:0030154</td>
 <td style="text-align: left;">cell differentiation</td>
-<td style="text-align: right;">9.51e-04</td>
-<td style="text-align: right;">0.161000</td>
-<td style="text-align: right;">1.28</td>
-<td style="text-align: right;">11515</td>
-<td style="text-align: right;">1320</td>
-<td style="text-align: right;">954</td>
-<td style="text-align: right;">140</td>
+<td style="text-align: right;">4.81e-04</td>
+<td style="text-align: right;">0.13700</td>
+<td style="text-align: right;">1.36</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1008</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">106</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0010896</td>
+<td style="text-align: left;">regulation of triglyceride catabolic process</td>
+<td style="text-align: right;">5.00e-04</td>
+<td style="text-align: right;">0.13900</td>
+<td style="text-align: right;">6.45</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0040008</td>
+<td style="text-align: left;">regulation of growth</td>
+<td style="text-align: right;">5.06e-04</td>
+<td style="text-align: right;">0.13800</td>
+<td style="text-align: right;">1.65</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">351</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0022604</td>
+<td style="text-align: left;">regulation of cell morphogenesis</td>
+<td style="text-align: right;">5.24e-04</td>
+<td style="text-align: right;">0.14000</td>
+<td style="text-align: right;">1.74</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">282</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0031325</td>
+<td style="text-align: left;">positive regulation of cellular metabolic process</td>
+<td style="text-align: right;">5.57e-04</td>
+<td style="text-align: right;">0.14600</td>
+<td style="text-align: right;">1.24</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1815</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">175</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0001558</td>
+<td style="text-align: left;">regulation of cell growth</td>
+<td style="text-align: right;">5.59e-04</td>
+<td style="text-align: right;">0.14400</td>
+<td style="text-align: right;">1.84</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">225</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0010557</td>
+<td style="text-align: left;">positive regulation of macromolecule biosynthetic process</td>
+<td style="text-align: right;">5.70e-04</td>
+<td style="text-align: right;">0.14400</td>
+<td style="text-align: right;">1.35</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1024</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">107</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0031323</td>
+<td style="text-align: left;">regulation of cellular metabolic process</td>
+<td style="text-align: right;">5.80e-04</td>
+<td style="text-align: right;">0.14400</td>
+<td style="text-align: right;">1.16</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">3137</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">283</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0051254</td>
+<td style="text-align: left;">positive regulation of RNA metabolic process</td>
+<td style="text-align: right;">6.42e-04</td>
+<td style="text-align: right;">0.15700</td>
+<td style="text-align: right;">1.36</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">937</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0045665</td>
+<td style="text-align: left;">negative regulation of neuron differentiation</td>
+<td style="text-align: right;">6.77e-04</td>
+<td style="text-align: right;">0.16200</td>
+<td style="text-align: right;">2.19</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0040011</td>
+<td style="text-align: left;">locomotion</td>
+<td style="text-align: right;">7.27e-04</td>
+<td style="text-align: right;">0.17100</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">534</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0048589</td>
+<td style="text-align: left;">developmental growth</td>
+<td style="text-align: right;">7.28e-04</td>
+<td style="text-align: right;">0.16800</td>
+<td style="text-align: right;">1.98</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">163</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0031113</td>
+<td style="text-align: left;">regulation of microtubule polymerization</td>
+<td style="text-align: right;">7.36e-04</td>
+<td style="text-align: right;">0.16700</td>
+<td style="text-align: right;">3.82</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0048519</td>
+<td style="text-align: left;">negative regulation of biological process</td>
+<td style="text-align: right;">7.87e-04</td>
+<td style="text-align: right;">0.17600</td>
+<td style="text-align: right;">1.18</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2777</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">253</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0048869</td>
+<td style="text-align: left;">cellular developmental process</td>
+<td style="text-align: right;">7.87e-04</td>
+<td style="text-align: right;">0.17300</td>
+<td style="text-align: right;">1.27</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1449</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">143</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0009891</td>
+<td style="text-align: left;">positive regulation of biosynthetic process</td>
+<td style="text-align: right;">8.10e-04</td>
+<td style="text-align: right;">0.17600</td>
+<td style="text-align: right;">1.32</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1091</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">112</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0019219</td>
+<td style="text-align: left;">regulation of nucleobase-containing compound metabolic process</td>
+<td style="text-align: right;">8.19e-04</td>
+<td style="text-align: right;">0.17500</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">1997</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">189</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0009889</td>
+<td style="text-align: left;">regulation of biosynthetic process</td>
+<td style="text-align: right;">8.28e-04</td>
+<td style="text-align: right;">0.17400</td>
+<td style="text-align: right;">1.21</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">2106</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">198</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0015698</td>
+<td style="text-align: left;">inorganic anion transport</td>
+<td style="text-align: right;">9.42e-04</td>
+<td style="text-align: right;">0.19500</td>
+<td style="text-align: right;">2.45</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">79</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0040007</td>
+<td style="text-align: left;">growth</td>
+<td style="text-align: right;">9.55e-04</td>
+<td style="text-align: right;">0.19500</td>
+<td style="text-align: right;">1.94</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">166</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0030516</td>
+<td style="text-align: left;">regulation of axon extension</td>
+<td style="text-align: right;">9.95e-04</td>
+<td style="text-align: right;">0.20000</td>
+<td style="text-align: right;">2.77</td>
+<td style="text-align: right;">8813</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">12</td>
 </tr>
 </tbody>
 </table>
@@ -2173,7 +1823,8 @@ Attaching package: 'kableExtra'</code></pre>
 
 </div>
 </div>
-<p>Interestingly, there’s a lot of GO terms that are related to gene regulation - fitting the story perfectly!</p>
+<p>Interestingly, there’s a lot of GO terms that are related to gene regulation - fitting the story perfectly! Moreover, the component that was highly significant is the “chylomicron”.</p>
+<p>Wikipedia: “Chylomicrons transport lipids absorbed from the intestine to adipose, cardiac, and skeletal muscle tissue, where their triglyceride components are hydrolyzed by the activity of the lipoprotein lipase, allowing the released free fatty acids to be absorbed by the tissues. When a large portion of the triglyceride core has been hydrolyzed, chylomicron remnants are formed and are taken up by the liver, thereby also transferring dietary fat to the liver.”</p>
 
 
 </section>
@@ -2430,12 +2081,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../qmd/2_filter.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Filtering</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Filtering</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../qmd/4_effort_meth.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Effort-associated CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
