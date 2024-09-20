@@ -182,24 +182,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../qmd/7_annotate.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Annotation</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../qmd/9_discussion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ongoing discussion</span></span></a>
-  </div>
-</li>
     </ul>
     </div>
 </nav>
@@ -211,14 +193,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#sec-physio" id="toc-sec-physio" class="nav-link active" data-scroll-target="#sec-physio"><span class="header-section-number">6.1</span> Prepare the data</a></li>
-  <li><a href="#functon-to-run-the-model" id="toc-functon-to-run-the-model" class="nav-link" data-scroll-target="#functon-to-run-the-model"><span class="header-section-number">6.2</span> Functon to run the model</a></li>
-  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">6.4</span> Results</a>
+  <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">6.2</span> Function to run the model</a></li>
+  <li><a href="#run-the-model-per-trait" id="toc-run-the-model-per-trait" class="nav-link" data-scroll-target="#run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</a>
   <ul class="collapse">
-  <li><a href="#microfilaria-spp." id="toc-microfilaria-spp." class="nav-link" data-scroll-target="#microfilaria-spp."><span class="header-section-number">6.4.1</span> Microfilaria spp.</a></li>
-  <li><a href="#trypanosoma-spp." id="toc-trypanosoma-spp." class="nav-link" data-scroll-target="#trypanosoma-spp."><span class="header-section-number">6.4.2</span> Trypanosoma spp.</a></li>
-  <li><a href="#igg" id="toc-igg" class="nav-link" data-scroll-target="#igg"><span class="header-section-number">6.4.3</span> IgG</a></li>
-  <li><a href="#hct" id="toc-hct" class="nav-link" data-scroll-target="#hct"><span class="header-section-number">6.4.4</span> HCT</a></li>
+  <li><a href="#delta-mass" id="toc-delta-mass" class="nav-link" data-scroll-target="#delta-mass"><span class="header-section-number">6.3.1</span> Delta mass</a></li>
+  <li><a href="#microfilaria-spp." id="toc-microfilaria-spp." class="nav-link" data-scroll-target="#microfilaria-spp."><span class="header-section-number">6.3.2</span> Microfilaria spp.</a></li>
+  <li><a href="#trypanosoma-spp." id="toc-trypanosoma-spp." class="nav-link" data-scroll-target="#trypanosoma-spp."><span class="header-section-number">6.3.3</span> Trypanosoma spp.</a></li>
+  <li><a href="#igg" id="toc-igg" class="nav-link" data-scroll-target="#igg"><span class="header-section-number">6.3.4</span> IgG</a></li>
+  <li><a href="#hct" id="toc-hct" class="nav-link" data-scroll-target="#hct"><span class="header-section-number">6.3.5</span> HCT</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -245,301 +227,473 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><strong>Which changes in CpG site methylation are associated with changes in physiology?</strong></p>
 <p>Similar to the previous section, we next test which CpG site changes are significantly associated with changes in physiology. Physiological measures that we focus on include parasites (<em>Microfilaria spp.</em> and <em>Trypanosoma spp.</em>), body mass, IgG and HCT.</p>
-<p>Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect as well as age and pre-lekking methylation level.</p>
+<p>Again, we build a GLMM per CpG site to identify CpG sites whose DNA methylation change is associated with changes in physiology. For each CpG site for each trait, we build a model that predicts the changes DNA methylation, while fitting the change in physiology as a fixed effect. Here too, we run two models in parallel: one that does and one does that not include the fixed effect of pre-lekking methylation %.</p>
 <section id="sec-physio" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="sec-physio"><span class="header-section-number">6.1</span> Prepare the data</h2>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">### load packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, performance, matrixStats, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               parallel, performance, lmerTest, tidystats, insight)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(tidyverse, data.table, tibble, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               parallel, performance, lmerTest, tidystats)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">### load data</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file =</span> <span class="st">"results/modeloutput/subset_sites_sig_deltameth.RData"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="at">file=</span><span class="st">"results/modeloutput/changing/changing_sites_glmer.RData"</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">### load phenotypic data</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/fulldata_complete_epi_withdates.RData"</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/pheno_dif_prepost.RData"</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#combine with site info</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>delta_meth <span class="ot">&lt;-</span> <span class="fu">left_join</span>(delta_meth, <span class="fu">unique</span>(all_pheno_epi[,<span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"site"</span>, <span class="st">"Core"</span>)], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>)))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#combine with delta physiology</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>mass_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>mass_dif)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>microf_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>microf_dif)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>trypa_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>trypa_dif)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>ig_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>ig_dif)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>hct_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>hct_dif)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>delta_meth <span class="ot">&lt;-</span> <span class="fu">left_join</span>(delta_meth, <span class="fu">unique</span>(prepost_dif[,<span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"mass_dif_scl"</span>, <span class="st">"microf_dif_scl"</span>, <span class="st">"trypa_dif_scl"</span>, <span class="st">"ig_dif_scl"</span>, <span class="st">"hct_dif_scl"</span>)], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>)))</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>delta_meth_ls <span class="ot">&lt;-</span> delta_meth <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="functon-to-run-the-model" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="functon-to-run-the-model"><span class="header-section-number">6.2</span> Functon to run the model</h2>
-<p>Below you’ll find the full function ran per trait per CpG site, where the LMM ran follows this structure:</p>
-<p><code>lmerTest::lmer(scale(delta_meth) ~ scale(delta_trait) + age + scale(methperc_pre) + (1|site/id))</code></p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to run the model</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>function_model_delta <span class="ot">&lt;-</span> <span class="cf">function</span>(df, parameter){<span class="fu">tryCatch</span>({</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  chr_pos <span class="ot">&lt;-</span> <span class="fu">as.character</span>(df[<span class="dv">1</span>,<span class="dv">1</span>])</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(df)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>methperc_pre_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(df<span class="sc">$</span>methperc_pre)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste0</span>(<span class="st">"scale(delta_meth) ~ "</span>, parameter, <span class="st">"_dif_scl + age + scale(methperc_pre) + (1|site/id) "</span>))</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(formula, <span class="at">data=</span>df)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  summary <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  overdisp.lmer_fun <span class="ot">&lt;-</span> <span class="cf">function</span>(model) {</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    vpars <span class="ot">&lt;-</span> <span class="cf">function</span>(m) {</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nrow</span>(m)<span class="sc">*</span>(<span class="fu">nrow</span>(m)<span class="sc">+</span><span class="dv">1</span>)<span class="sc">/</span><span class="dv">2</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    model.df <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">sapply</span>(<span class="fu">VarCorr</span>(model),vpars))<span class="sc">+</span><span class="fu">length</span>(<span class="fu">fixef</span>(model))</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    rdf <span class="ot">&lt;-</span> <span class="fu">nrow</span>(<span class="fu">model.frame</span>(model))<span class="sc">-</span>model.df</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    rp <span class="ot">&lt;-</span> <span class="fu">residuals</span>(model,<span class="at">type=</span><span class="st">"pearson"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    Pearson.chisq <span class="ot">&lt;-</span> <span class="fu">sum</span>(rp<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    prat <span class="ot">&lt;-</span> Pearson.chisq<span class="sc">/</span>rdf</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    pval <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(Pearson.chisq, <span class="at">df=</span>rdf, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">chisq=</span>Pearson.chisq,<span class="at">ratio=</span>prat,<span class="at">rdf=</span>rdf,<span class="at">p=</span>pval)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effect</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  parameter_estimate <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">1</span>]</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  parameter_se <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  parameter_df <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">3</span>]</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  parameter_tval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">4</span>]</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  parameter_pval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="dv">2</span>,<span class="dv">5</span>]</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="co">#age effect</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  age_estimate <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"age"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  age_se <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"age"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  age_df <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"age"</span>, <span class="st">"df"</span>]</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  age_tval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"age"</span>, <span class="st">"t value"</span>]</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  age_pval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"age"</span>, <span class="st">"Pr(&gt;|t|)"</span>]</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="co">#premeth effect</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  pre_estimate <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  pre_se <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  pre_df <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"df"</span>]</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  pre_tval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"t value"</span>]</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  pre_pval <span class="ot">&lt;-</span> summary<span class="sc">$</span>coefficients[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Pr(&gt;|t|)"</span>]</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  rsqc <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_conditional <span class="co">#fixed plus random parameterects relative to overall variance</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  rsqm <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model)<span class="sc">$</span>R2_marginal <span class="co">#fixed parameterects relative to overall variance</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  dispersion.chisq <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">1</span>]</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  dispersion.ratio <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  dispersion.rdf <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">3</span>]</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  dispersion.pval <span class="ot">&lt;-</span> <span class="fu">overdisp.lmer_fun</span>(model)[<span class="dv">1</span>,<span class="dv">4</span>]</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  isSingular <span class="ot">&lt;-</span> <span class="fu">isSingular</span>(model)</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  icc_id_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>  icc_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">chr_pos=</span><span class="fu">as.factor</span>(chr_pos),</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter =</span> <span class="fu">as.factor</span>(parameter),</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                    <span class="at">icc_id_site =</span> <span class="fu">as.numeric</span>(icc_id_site),</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                    <span class="at">icc_site =</span> <span class="fu">as.numeric</span>(icc_site),</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter_estimate =</span> <span class="fu">as.numeric</span>(parameter_estimate),</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter_se =</span> <span class="fu">as.numeric</span>(parameter_se),</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter_df =</span> <span class="fu">as.numeric</span>(parameter_df),</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter_tval =</span> <span class="fu">as.numeric</span>(parameter_tval),</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                    <span class="at">parameter_pval =</span> <span class="fu">as.numeric</span>(parameter_pval),</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                    <span class="at">age_estimate =</span> <span class="fu">as.numeric</span>(age_estimate),</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                    <span class="at">age_se =</span> <span class="fu">as.numeric</span>(age_se),</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                    <span class="at">age_df =</span> <span class="fu">as.numeric</span>(age_df),</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                    <span class="at">age_tval =</span> <span class="fu">as.numeric</span>(age_tval),</span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                    <span class="at">age_pval =</span> <span class="fu">as.numeric</span>(age_pval),</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pre_estimate =</span> <span class="fu">as.numeric</span>(pre_estimate),</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pre_se =</span> <span class="fu">as.numeric</span>(pre_se),</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pre_df =</span> <span class="fu">as.numeric</span>(pre_df),</span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pre_tval =</span> <span class="fu">as.numeric</span>(pre_tval),</span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pre_pval =</span> <span class="fu">as.numeric</span>(pre_pval),</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqc =</span> <span class="fu">as.numeric</span>(rsqc),</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                    <span class="at">rsqm =</span> <span class="fu">as.numeric</span>(rsqm),</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.chisq =</span> <span class="fu">as.numeric</span>(dispersion.chisq),</span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.ratio =</span> <span class="fu">as.numeric</span>(dispersion.ratio),</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.rdf =</span> <span class="fu">as.numeric</span>(dispersion.rdf),</span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                    <span class="at">dispersion.pval =</span> <span class="fu">as.numeric</span>(dispersion.pval),</span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                    <span class="at">isSingular =</span> <span class="fu">as.logical</span>(isSingular)</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>  ))</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"ERROR :"</span>, <span class="fu">conditionMessage</span>(e), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>);<span class="fu">print</span>(chr_pos)})</span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"data/phenotypes/pheno_dif_prepost.RData"</span>)  <span class="do">## differences in physiology</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">### combine delta methylation data with site and behaviour info</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>delta_meth <span class="ot">&lt;-</span> <span class="fu">left_join</span>(delta_meth, <span class="fu">unique</span>(all_pheno_epi[,<span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"site"</span>, <span class="st">"Core"</span>)], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>)))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="do">### z-transform the traits before the model</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>mass_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>mass_dif)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>microf_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>microf_dif)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>trypa_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>trypa_dif)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>ig_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>ig_dif)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>prepost_dif<span class="sc">$</span>hct_dif_scl <span class="ot">&lt;-</span> <span class="fu">scale</span>(prepost_dif<span class="sc">$</span>hct_dif)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="do">### combine data with pre-post delta physio numbers</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>delta_meth <span class="ot">&lt;-</span> <span class="fu">left_join</span>(delta_meth, <span class="fu">unique</span>(prepost_dif[,<span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>, <span class="st">"mass_dif"</span>, <span class="st">"microf_dif"</span>, <span class="st">"trypa_dif"</span>, <span class="st">"ig_dif"</span>, <span class="st">"hct_dif"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"mass_dif_scl"</span>, <span class="st">"microf_dif_scl"</span>, <span class="st">"trypa_dif_scl"</span>, <span class="st">"ig_dif_scl"</span>, <span class="st">"hct_dif_scl"</span>)], <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"id"</span>, <span class="st">"year"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+</section>
+<section id="function-to-run-the-model" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">6.2</span> Function to run the model</h2>
+<p>Below you’ll find the function ran per trait per CpG site, where the LMM ran follows this structure:</p>
+<p><code>lmerTest::lmer(delta_meth ~ scale(delta_trait) + methperc_pre + (1|site/id))</code></p>
+<p>This model is identical to the one presented in <a href="4_effort_meth.html#sec-model-trait"><span>Section&nbsp;5.4</span></a>, except that the trait in question is also a calculation of the difference in the trait (delta; e.g.&nbsp;delta mass) rather than just one measure (e.g.&nbsp;attendance).</p>
 </section>
 <section id="run-the-model-per-trait" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="run-the-model-per-trait"><span class="header-section-number">6.3</span> Run the model per trait</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model per trait</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">### mass</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>delta_out_mass <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_delta, <span class="at">parameter=</span><span class="st">"mass"</span>,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>delta_out_mass <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_mass)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to numeric</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>delta_out_mass<span class="sc">$</span>parameter_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_mass<span class="sc">$</span>parameter_pval)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>delta_out_mass<span class="sc">$</span>age_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_mass<span class="sc">$</span>age_pval)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude those with overdispersion</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>delta_out_mass <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_mass, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>delta_out_mass<span class="sc">$</span>parameter_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_mass<span class="sc">$</span>parameter_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_mass))</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>delta_out_mass<span class="sc">$</span>age_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_mass<span class="sc">$</span>age_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_mass))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Repeat this for all traits:</p>
+<p>Here too, we only include CpG sites if they have at least 20 data points, which is therefore done for physiological trait separately. I’ll give the code for one trait only (delta mass) but the exact same is done for the rest.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### microf</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>delta_out_microf <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_delta, <span class="at">parameter=</span><span class="st">"microf"</span>,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>delta_out_microf <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_microf)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># to numeric</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>delta_out_microf<span class="sc">$</span>parameter_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_microf<span class="sc">$</span>parameter_pval)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>delta_out_microf<span class="sc">$</span>age_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_microf<span class="sc">$</span>age_pval)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude overdispersion</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>delta_out_microf <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_microf, isSingular <span class="sc">==</span> <span class="cn">FALSE</span> <span class="sc">&amp;</span> dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>delta_out_microf<span class="sc">$</span>parameter_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_microf<span class="sc">$</span>parameter_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_microf))</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>delta_out_microf<span class="sc">$</span>age_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_microf<span class="sc">$</span>age_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_microf))</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">### trypa</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>delta_out_trypa <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_delta, <span class="at">parameter=</span><span class="st">"trypa"</span>,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>delta_out_trypa <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_trypa)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># as numeric</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>delta_out_trypa<span class="sc">$</span>parameter_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_trypa<span class="sc">$</span>parameter_pval)</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>delta_out_trypa<span class="sc">$</span>age_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_trypa<span class="sc">$</span>age_pval)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude overdispersion</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>delta_out_trypa <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_trypa, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span>)</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>delta_out_trypa<span class="sc">$</span>parameter_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_trypa<span class="sc">$</span>parameter_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_trypa))</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>delta_out_trypa<span class="sc">$</span>age_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_trypa<span class="sc">$</span>age_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_trypa))</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="do">### ig</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>delta_out_ig <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_delta, <span class="at">parameter=</span><span class="st">"ig"</span>,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>delta_out_ig <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_ig)</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># as numeric</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>delta_out_ig<span class="sc">$</span>parameter_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_ig<span class="sc">$</span>parameter_pval)</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>delta_out_ig<span class="sc">$</span>age_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_ig<span class="sc">$</span>age_pval)</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude overdispersion</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>delta_out_ig <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_ig, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span>)</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>delta_out_ig<span class="sc">$</span>parameter_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_ig<span class="sc">$</span>parameter_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_ig))</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>delta_out_ig<span class="sc">$</span>age_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_ig<span class="sc">$</span>age_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_ig))</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="do">### hct</span></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>delta_out_hct <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_delta, <span class="at">parameter=</span><span class="st">"hct"</span>,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>delta_out_hct <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_hct)</span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="co"># as numeric</span></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>delta_out_hct<span class="sc">$</span>parameter_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_hct<span class="sc">$</span>parameter_pval)</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>delta_out_hct<span class="sc">$</span>age_pval <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_hct<span class="sc">$</span>age_pval)</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude overdispersion</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>delta_out_hct <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_hct, dispersion.ratio <span class="sc">&lt;</span> <span class="fl">1.1</span> <span class="sc">&amp;</span> dispersion.pval <span class="sc">&gt;</span> <span class="fl">0.05</span>)</span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>delta_out_hct<span class="sc">$</span>parameter_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_hct<span class="sc">$</span>parameter_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_hct))</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>delta_out_hct<span class="sc">$</span>age_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_hct<span class="sc">$</span>age_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_hct))</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="do">### combine</span></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>delta_out_all <span class="ot">&lt;-</span> <span class="fu">rbind</span>(delta_out_mass, delta_out_microf, delta_out_trypa, delta_out_ig, delta_out_hct)</span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>delta_out_all<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(delta_out_all<span class="sc">$</span>chr_pos)</span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>delta_out_all<span class="sc">$</span>parameter <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(delta_out_all<span class="sc">$</span>parameter)</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>delta_out_all<span class="sc">$</span>isSingular <span class="ot">&lt;-</span> <span class="fu">as.logical</span>(delta_out_all<span class="sc">$</span>isSingular)</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>delta_out_all[<span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">25</span>, <span class="dv">27</span>,<span class="dv">28</span>)] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(delta_out_all[<span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">25</span>, <span class="dv">27</span><span class="sc">:</span><span class="dv">28</span>)], as.numeric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model per trait</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/function_models.R"</span>) </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">### only select cpg sites with enough data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>delta_meth_n_mass <span class="ot">&lt;-</span> delta_meth <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(chr_pos) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(delta_meth)<span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(mass_dif)) <span class="sc">%&gt;%</span> <span class="fu">tally</span>()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>delta_meth_n_mass <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_meth_n_mass, n <span class="sc">&gt;</span> <span class="dv">20</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>delta_meth_sub_mass <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_meth, chr_pos <span class="sc">%in%</span> delta_meth_n_mass<span class="sc">$</span>chr_pos)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(delta_meth_sub_mass<span class="sc">$</span>chr_pos)) <span class="co">#808 sites</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>delta_meth_sub_mass_ls <span class="ot">&lt;-</span> delta_meth_sub_mass <span class="sc">%&gt;%</span> <span class="fu">group_split</span>(chr_pos)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="do">### mass</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">### no pre ####</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>m_mass_no_pre <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_sub_mass_ls, function_model_delta_pheno, <span class="at">parameter=</span><span class="st">"mass_dif"</span>, <span class="at">pre=</span><span class="st">"no_control"</span>, <span class="at">mc.cores=</span><span class="dv">4</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>m_mass_no_pre_out <span class="ot">&lt;-</span> <span class="fu">function_process_model</span>(m_mass_no_pre, <span class="at">dir_plots =</span> <span class="st">"plots/model_out/physio/mass"</span>, <span class="at">dir_data =</span> <span class="st">"results/modeloutput/physio"</span>,<span class="at">name_file =</span> <span class="st">"mass_dif_no_pre"</span>, <span class="at">pretty_name =</span> <span class="st">"Delta mass"</span>, <span class="at">filter_disp=</span><span class="cn">FALSE</span>) </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">### with pre ####</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>m_mass_with_pre <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_sub_mass_ls, function_model_delta_pheno, <span class="at">parameter=</span><span class="st">"mass_dif"</span>, <span class="at">pre=</span><span class="st">"control"</span>, <span class="at">mc.cores=</span><span class="dv">4</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>m_mass_with_pre_out <span class="ot">&lt;-</span> <span class="fu">function_process_model</span>(m_mass_with_pre, <span class="at">dir_plots =</span> <span class="st">"plots/model_out/physio/mass"</span>, <span class="at">dir_data =</span> <span class="st">"results/modeloutput/physio"</span>,<span class="at">name_file =</span> <span class="st">"mass_dif_with_pre"</span>, <span class="at">pretty_name =</span> <span class="st">"Delta mass"</span>, <span class="at">filter_disp=</span><span class="cn">FALSE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
+<section id="delta-mass" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="delta-mass"><span class="header-section-number">6.3.1</span> Delta mass</h3>
+<p>808 CpG sites had enough phenotypic and epigenetic data to run the body mass model (after filtering for n &gt; 20).</p>
+<section id="with-pre-lekking" class="level4" data-number="6.3.1.1">
+<h4 data-number="6.3.1.1" class="anchored" data-anchor-id="with-pre-lekking"><span class="header-section-number">6.3.1.1</span> With pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta mass with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/mass/hist_raw_disp_pval_mass_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta mass with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/mass/volcawith_mass_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass with pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_with_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass with pre-methylation CpG 2</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_with_pre_2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>CpG site “ScEsiA3_17616__HRSCAF_20466_3956821” is located in a downstream region (gene IDs ANN28634 similar to BPI and ANN28635 similar to ID1).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>BPI: BPI (Bactericidal Permeability Increasing Protein) is a Protein Coding gene. Diseases associated with BPI include Meningococcemia and Reactive Arthritis. Among its related pathways are Innate Immune System and Toll Like Receptor 3 (TLR3) Cascade. Gene Ontology (GO) annotations related to this gene include lipid binding and lipopolysaccharide binding. An important paralog of this gene is LBP.</p>
+<p>ID1: The protein encoded by this gene is a helix-loop-helix (HLH) protein that can form heterodimers with members of the basic HLH family of transcription factors. The encoded protein has no DNA binding activity and therefore can inhibit the DNA binding and transcriptional activation ability of basic HLH proteins with which it interacts. This protein may play a role in cell growth, senescence, and differentiation. Two transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Jul 2008]</p>
+</div>
+</div>
+</div>
+<p>CpG site “ScEsiA3_18278__HRSCAF_21663_133779007” is located in a gene body, exon, upstream region and 5’UTR (gene IDs ANN06028 and ANN06030). This CpG site is the same that is significantly associated with attendance rate where we include pre-lekking methylation % in the model (!).</p>
 </section>
-<section id="results" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="results"><span class="header-section-number">6.4</span> Results</h2>
-<p>Below we can see the volcano plots of all five physiological traits.</p>
-<div class="quarto-figure quarto-figure-left">
-<figure class="figure">
-<figcaption class="figure-caption">Volcano plot physiological change</figcaption>
-<p><img src="../plots/model_out/volcano_physio.png" class="img-fluid figure-img" width="350"></p>
-</figure>
-</div>
-<p>After also subsetting for at least an (absolute) estimate of 0.1, there are 12 significant CpGs for delta <em>Microfilaria spp</em>, 21 for delta <em>Trypanosoma spp.</em>, 23 for delta HCT and 5 for delta IgG, but 8 significant ones for delta body mass. Below you’ll find the raw data plots for each trait and CpG site.</p>
-<section id="microfilaria-spp." class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">6.4.1</span> Microfilaria spp.</h3>
+<section id="without-pre-lekking" class="level4" data-number="6.3.1.2">
+<h4 data-number="6.3.1.2" class="anchored" data-anchor-id="without-pre-lekking"><span class="header-section-number">6.3.1.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Microfilaria a</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_microf_a.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta mass without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/mass/hist_raw_disp_pval_mass_dif_no_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Microfilaria b</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_microf_b.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Volcano plot: delta mass without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/mass/volcano_mass_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass without pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_no_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass without pre-methylation CpG 2</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_no_pre_2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass without pre-methylation CpG 3</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_no_pre_3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass without pre-methylation CpG 4</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_no_pre_4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta mass without pre-methylation CpG 5</figcaption>
+<p><img src="../plots/model_out/physio/mass/mass_no_pre_5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>One of the significant 5 CpG sites overlaps with the model that does include pre-methylation %.</p>
+<p>CpG site “ScEsiA3_15486__HRSCAF_17393_53786697” is located in a gene body and intron (gene ID ANN20472 similar to Six4).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Six4: This gene encodes a member of the homeobox family, subfamily SIX. The drosophila homolog is a nuclear homeoprotein required for eye development. Studies in mouse show that this gene product functions as a transcription factor, and may have a role in the differentiation or maturation of neuronal cells. [provided by RefSeq, May 2010]</p>
+</div>
+</div>
+</div>
+<p>CpG site “ScEsiA3_17616__HRSCAF_20466_3956821” is located in a downstream region (gene ID ANN28634, similar to BPI, and ANN28635 similar to ID1). (see above)</p>
+<p>CpG site “ScEsiA3_18752__HRSCAF_22883_4031831” is located in a gene body and intron (gene ID ANN31264 similar to TET3).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>TET3: Enables methyl-CpG binding activity and zinc ion binding activity. Involved in histone H3-K4 trimethylation; positive regulation of transcription by RNA polymerase II; and protein O-linked glycosylation. Predicted to be located in cytoplasm and male pronucleus. Predicted to be active in nucleus. Biomarker of esophagus squamous cell carcinoma. [provided by Alliance of Genome Resources, Apr 2022]</p>
+</div>
+</div>
+</div>
+<p>CpG site “ScEsiA3_21976__HRSCAF_26926_4403331” is located in a down- and upstream region (gene ID ANN30832, similar to Kiaa0319l).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Kiaa0319l: Predicted to act upstream of or within several processes, including flagellated sperm motility; proacrosomal vesicle fusion; and receptor-mediated endocytosis of virus by host cell. Located in Golgi apparatus; cytoplasmic vesicle; and nucleolus. [provided by Alliance of Genome Resources, Apr 2022]</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="microfilaria-spp." class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="microfilaria-spp."><span class="header-section-number">6.3.2</span> Microfilaria spp.</h3>
+<p>149 CpG sites had enough phenotypic and epigenetic data to run the Microfilaria model (after filtering for n &gt; 20).</p>
+<section id="with-pre-lekking-1" class="level4" data-number="6.3.2.1">
+<h4 data-number="6.3.2.1" class="anchored" data-anchor-id="with-pre-lekking-1"><span class="header-section-number">6.3.2.1</span> With pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta Microfilaria spp. with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta Microfilaria spp. with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/microf/volcawith_microf_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta Microfilaria spp. with pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/microf/microf_with_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta Microfilaria spp. with pre-methylation CpG 2</figcaption>
+<p><img src="../plots/model_out/physio/microf/microf_with_pre_2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta Microfilaria spp. with pre-methylation CpG 3</figcaption>
+<p><img src="../plots/model_out/physio/microf/microf_with_pre_3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>CpG site “ScEsiA3_16771__HRSCAF_19097_2512626” is located in a gene body, exon and 5’UTR (gene ID ANN30965 similar to JAM3).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>JAM3: Tight junctions represent one mode of cell-to-cell adhesion in epithelial or endothelial cell sheets, forming continuous seals around cells and serving as a physical barrier to prevent solutes and water from passing freely through the paracellular space. The protein encoded by this immunoglobulin superfamily gene member is localized in the tight junctions between high endothelial cells. Unlike other proteins in this family, the this protein is unable to adhere to leukocyte cell lines and only forms weak homotypic interactions. The encoded protein is a member of the junctional adhesion molecule protein family and acts as a receptor for another member of this family. A mutation in an intron of this gene is associated with hemorrhagic destruction of the brain, subependymal calcification, and congenital cataracts. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Apr 2011]</p>
+</div>
+</div>
+</div>
+<p>CpG site “ScEsiA3_21978__HRSCAF_26928_6268951” is located in a TSS, promoter (gene id ANN24632 similar to PPP1R1B) and upstream region (gene ID ANN24631 similar to STARD3).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>STARD3: This gene encodes a member of a subfamily of lipid trafficking proteins that are characterized by a C-terminal steroidogenic acute regulatory domain and an N-terminal metastatic lymph node 64 domain. The encoded protein localizes to the membranes of late endosomes and may be involved in exporting cholesterol. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Oct 2009]</p>
+</div>
+</div>
+</div>
+<p>The third CpG site was unannotated.</p>
+</section>
+<section id="without-pre-lekking-1" class="level4" data-number="6.3.2.2">
+<h4 data-number="6.3.2.2" class="anchored" data-anchor-id="without-pre-lekking-1"><span class="header-section-number">6.3.2.2</span> Without pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta Microfilaria spp. without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta Microfilaria spp. without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/microf/volcano_microf_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta Microfilaria spp. without pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/microf/microf_no_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>This is not the same site that was significant in the model with pre-lekking methylation.</p>
+<p>This CpG site was unannotated.</p>
+</section>
+</section>
+<section id="trypanosoma-spp." class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">6.3.3</span> Trypanosoma spp.</h3>
+<p>164 CpG sites had enough phenotypic and epigenetic data to run the Trypanosoma model (after filtering for n &gt; 20).</p>
+<section id="with-pre-lekking-2" class="level4" data-number="6.3.3.1">
+<h4 data-number="6.3.3.1" class="anchored" data-anchor-id="with-pre-lekking-2"><span class="header-section-number">6.3.3.1</span> With pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta Trypanosoma spp. with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta trypailaria spp. with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/trypa/volcawith_trypa_dif_with_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="trypanosoma-spp." class="level3" data-number="6.4.2">
-<h3 data-number="6.4.2" class="anchored" data-anchor-id="trypanosoma-spp."><span class="header-section-number">6.4.2</span> Trypanosoma spp.</h3>
+<section id="without-pre-lekking-2" class="level4" data-number="6.3.3.2">
+<h4 data-number="6.3.3.2" class="anchored" data-anchor-id="without-pre-lekking-2"><span class="header-section-number">6.3.3.2</span> Without pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Trypanosoma a</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_trypa_a.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta trypailaria spp. without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_no_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta Trypanosoma b</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_trypa_b.png" class="img-fluid figure-img"></p>
-</figure>
-</div>
-</section>
-<section id="igg" class="level3" data-number="6.4.3">
-<h3 data-number="6.4.3" class="anchored" data-anchor-id="igg"><span class="header-section-number">6.4.3</span> IgG</h3>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<figcaption class="figure-caption">Raw data delta IgG</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_igg.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Volcano plot: delta trypailaria spp. without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/trypa/volcano_trypa_dif_no_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </section>
-<section id="hct" class="level3" data-number="6.4.4">
-<h3 data-number="6.4.4" class="anchored" data-anchor-id="hct"><span class="header-section-number">6.4.4</span> HCT</h3>
+</section>
+<section id="igg" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="igg"><span class="header-section-number">6.3.4</span> IgG</h3>
+<p>775 CpG sites had enough phenotypic and epigenetic data to run the IgG model (after filtering for n &gt; 20).</p>
+<section id="with-pre-lekking-3" class="level4" data-number="6.3.4.1">
+<h4 data-number="6.3.4.1" class="anchored" data-anchor-id="with-pre-lekking-3"><span class="header-section-number">6.3.4.1</span> With pre-lekking</h4>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta HCT a</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_hct_a.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta IgG with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_with_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data delta HCT b</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_hct_b.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Volcano plot: delta IgG with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/ig/volcawith_ig_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta IgG with pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/ig/ig_with_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta IgG with pre-methylation CpG 2</figcaption>
+<p><img src="../plots/model_out/physio/ig/ig_with_pre_2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>Both CpG site “ScEsiA3_21979__HRSCAF_26929_1282292” (gene ID ANN27654 similar to NFIC) and “ScEsiA3_21979__HRSCAF_26929_1282301” (gene ID ANN27654 similar to NFIC) are located in upstream regions. The first one is the same site that was associated with centrality!</p>
+</section>
+<section id="without-pre-lekking-3" class="level4" data-number="6.3.4.2">
+<h4 data-number="6.3.4.2" class="anchored" data-anchor-id="without-pre-lekking-3"><span class="header-section-number">6.3.4.2</span> Without pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta IgG without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta IgG without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/ig/volcano_ig_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta IgG without pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/ig/ig_no_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta IgG without pre-methylation CpG 2</figcaption>
+<p><img src="../plots/model_out/physio/ig/ig_no_pre_2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>These were the exact same CpG sites that are significant compared to the model that did include pre-methylation levels.</p>
+</section>
+</section>
+<section id="hct" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="hct"><span class="header-section-number">6.3.5</span> HCT</h3>
+<p>146 CpG sites had enough phenotypic and epigenetic data to run the HCT model (after filtering for n &gt; 20).</p>
+<section id="with-pre-lekking-4" class="level4" data-number="6.3.5.1">
+<h4 data-number="6.3.5.1" class="anchored" data-anchor-id="with-pre-lekking-4"><span class="header-section-number">6.3.5.1</span> With pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta HCT with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta HCT with pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/hct/volcawith_hct_dif_with_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data: delta HCT with pre-methylation CpG 1</figcaption>
+<p><img src="../plots/model_out/physio/hct/hct_with_pre_1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>CpG site “ScEsiA3_15486__HRSCAF_17393_15878140” is located in a promoter and upstream region (gene ID ANN19643 similar to GAL: Galanin peptides (C. japonica)).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Caution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>GAL: This gene encodes a neuroendocrine peptide that is widely expressed in the central and peripheral nervous systems and also the gastrointestinal tract, pancreas, adrenal gland and urogenital tract. The encoded protein is a precursor that is proteolytically processed to generate two mature peptides: galanin and galanin message-associated peptide (GMAP). Galanin has diverse physiological functions including nociception, feeding and energy homeostasis, osmotic regulation and water balance. GMAP has been demonstrated to possess antifungal activity and hypothesized to be part of the innate immune system. [provided by RefSeq, Jul 2015]</p>
+</div>
+</div>
+</div>
+</section>
+<section id="without-pre-lekking-4" class="level4" data-number="6.3.5.2">
+<h4 data-number="6.3.5.2" class="anchored" data-anchor-id="without-pre-lekking-4"><span class="header-section-number">6.3.5.2</span> Without pre-lekking</h4>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Histogram dispersion and p-value: delta HCT without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_no_pre.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Volcano plot: delta HCT without pre-methylation</figcaption>
+<p><img src="../plots/model_out/physio/hct/volcano_hct_dif_no_pre.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 
 
+</section>
 </section>
 </section>
 
