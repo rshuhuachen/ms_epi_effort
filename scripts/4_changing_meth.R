@@ -719,8 +719,9 @@ all_models_sig_annotated <- subset(all_models_sig_annotated,
                                            !is.na(similar) &
                                              !grepl("LOC", similar))
 
+all_models_sig_annotated$similar <- toupper(all_models_sig_annotated$similar)
 subset(all_models_sig_annotated, parameter == "all") %>% arrange(parameter_qval) %>%
-  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids_similar.csv", quote=F, row.names=F, col.names = F)
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids_similar.csv", quote=F, row.names=F, col.names = F)
 
 subset(all_models_sig_annotated, parameter == "time_period") %>% arrange(parameter_qval) %>%
-  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing_similar.csv", quote=F, row.names=F, col.names = F)
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing_similar.csv", quote=F, row.names=F, col.names = F)
