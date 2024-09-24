@@ -12,5 +12,4 @@ Epigenetic, morphological, behavioural, and physiological data were obtained fro
 
 Reproductive effort was estimated using three behavioural indicators: lek attendance, fighting rate and lek centrality. Blood was used to quantify the abundance of *Microfilaria spp.* and *Trypanosoma spp.*, two extra-cellular blood parasites, immunoglobulin concentration in blood plasma, and haematocrit concentration. Additionally, body mass was quantified during capture to the nearest 10g.
 
-
 ![DNA methylation](img/methylation.jpeg)
