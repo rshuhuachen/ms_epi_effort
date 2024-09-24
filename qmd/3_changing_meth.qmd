@@ -349,7 +349,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
 
 ```
 
-![Raw data top 5 significantly changing CpG sites](../plots/model_out/changing/rawdata_top_sig.png.png){width="350" fig-align="left"}
+![Raw data top 5 significantly changing CpG sites](../plots/model_out/changing/rawdata_top_sig.png){width="350" fig-align="left"}
 
 ## Annotation
 
@@ -487,126 +487,15 @@ sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 
 ```
 
-```{r, load_annotation, eval=T, echo=F}
+```{r, load_annotation, eval=T, echo=F,message=F,warning=F}
 library(dplyr); library(kableExtra)
 sum_annotated <- read.csv("../results/modeloutput/changing/summary_regions_sig_cpgs.csv")
 sum_annotated %>% kbl() %>%
   kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 ```
 
-![Number of changing CpG sites per region](../plots/model_out/changing/n_sig_cpg_per_region.png)
+![Number of changing CpG sites per region](../plots/model_out/changing/perc_sig_per_region.png)
 
-### Based on the chicken annotation
-
-We can follow the same steps as above but instead of using the black grouse annotation, using the lifted-over chicken annotation that contains official gene symbols. We can use these symbols to run a gene ontology enrichment analysis with GOrilla.
-
-```{r, annotate_chicken, eval=F, echo=T}
-#| code-fold: TRUE
-#### Annotate with gene names based on chicken liftover ####
-### load annotation data
-gff <- makeTxDbFromGFF(paste0(annotation_dir, "/liftoff_gallus_ltet.gff"), 
-                       format="gff3", organism="Lyrurus tetrix") 
-
-promoters_chicken <- promoters(gff, upstream=2000, downstream=200, columns=c("tx_name", "gene_id")) # From NIOO
-genes_chicken <- genes(gff)
-TSS_chicken <- promoters(gff, upstream=300, downstream=50, columns=c("tx_name", "gene_id")) # TSS as in Laine et al., 2016. Nature Communications
-downstream_chicken <- flank(genes(gff), 10000, start=FALSE, both=FALSE, use.names=TRUE)
-upstream_chicken <- promoters(genes(gff), upstream=10000, downstream=0)
-exons_gene_chicken <- unlist(exonsBy(gff, "gene")) # group exons by genes
-introns_chicken <- unlist(intronsByTranscript(gff, use.names=TRUE))
-
-exons <- exonsBy(gff, "gene")
-gene <- data.frame()
-for (i in 1:length(exons)){
-  df <- as.data.frame(exons[[i]])
-  for (j in 1:nrow(df)){
-    if(grepl("XM_015281696.4-1", df$exon_name[j]) == TRUE){
-    gene <- rbind(gene, names(exons[i]))  }
-  }}
-
-#rename seqnames which can't be done in gff
-
-all_models_sig$chr_pos <- gsub("__", ";",all_models_sig$chr_pos)
-all_models_sig$chr_pos <- gsub( "HRSCAF_", "HRSCAF=",all_models_sig$chr_pos)
-
-all_models_sig$chr <- gsub("__", ";",all_models_sig$chr)
-all_models_sig$chr <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr)
-
-sig_gr <- as(all_models_sig, "GRanges")
-
-## annotate with chicken
-sig_promoter_chicken <- mergeByOverlaps(sig_gr, promoters_chicken) 
-sig_promoter_chicken_df <- unique(data.frame(chr_pos = sig_promoter_chicken$chr_pos,
-                                      chr = sig_promoter_chicken$sig_gr@seqnames,
-                                      pos = sig_promoter_chicken$sig_gr$pos,
-                                      parameter = sig_promoter_chicken$parameter,
-                                      parameter_qval = sig_promoter_chicken$parameter_qval,
-                                      gene_id = sig_promoter_chicken$gene_id@unlistData,
-                                      region = "promoter"))
-
-sig_gene_chicken <- mergeByOverlaps(sig_gr, genes_chicken) 
-sig_gene_chicken_df <- unique(data.frame(chr_pos = sig_gene_chicken$chr_pos,
-                                             chr = sig_gene_chicken$sig_gr@seqnames,
-                                             pos = sig_gene_chicken$sig_gr$pos,
-                                             parameter = sig_gene_chicken$parameter,
-                                      parameter_qval = sig_gene_chicken$parameter_qval,
-                                           gene_id = sig_gene_chicken$gene_id,
-                                             region = "gene"))
-
-sig_TSS_chicken <- mergeByOverlaps(sig_gr, TSS_chicken) 
-sig_TSS_chicken_df <- unique(data.frame(chr_pos = sig_TSS_chicken$chr_pos,
-                                         chr = sig_TSS_chicken$sig_gr@seqnames,
-                                         pos = sig_TSS_chicken$sig_gr$pos,
-                                         parameter = sig_TSS_chicken$parameter,
-                                      parameter_qval = sig_TSS_chicken$parameter_qval,
-                                       gene_id = unlist(sig_TSS_chicken$gene_id),
-                                         region = "TSS"))
-
-sig_exon_chicken <- mergeByOverlaps(sig_gr, exons_gene_chicken) 
-sig_exon_chicken_df <- unique(data.frame(chr_pos = sig_exon_chicken$chr_pos,
-                                        chr = sig_exon_chicken$sig_gr@seqnames,
-                                        pos = sig_exon_chicken$sig_gr$pos,
-                                        parameter = sig_exon_chicken$parameter,
-                                      parameter_qval = sig_exon_chicken$parameter_qval,
-                                        gene_id = sig_exon_chicken$exon_name,
-                                        region = "exon"))
-
-sig_intron_chicken <- mergeByOverlaps(sig_gr, introns_chicken) 
-sig_intron_chicken_df <- unique(data.frame(chr_pos = sig_intron_chicken$chr_pos,
-                                         chr = sig_intron_chicken$sig_gr@seqnames,
-                                         pos = sig_intron_chicken$sig_gr$pos,
-                                         parameter = sig_intron_chicken$parameter,
-                                      parameter_qval = sig_intron_chicken$parameter_qval,
-                                        gene_id = NA,
-                                         region = "intron"))
-
-sig_down_chicken <- mergeByOverlaps(sig_gr, downstream_chicken) 
-sig_down_chicken_df <- unique(data.frame(chr_pos = sig_down_chicken$chr_pos,
-                                        chr = sig_down_chicken$sig_gr@seqnames,
-                                        pos = sig_down_chicken$sig_gr$pos,
-                                        parameter = sig_down_chicken$parameter,
-                                      parameter_qval = sig_down_chicken$parameter_qval,
-                                         gene_id = sig_down_chicken$gene_id,
-                                        region = "downstream"))
-
-sig_up_chicken <- mergeByOverlaps(sig_gr, upstream_chicken) 
-sig_up_chicken_df <- unique(data.frame(chr_pos = sig_up_chicken$chr_pos,
-                                         chr = sig_up_chicken$sig_gr@seqnames,
-                                         pos = sig_up_chicken$sig_gr$pos,
-                                        parameter = sig_up_chicken$parameter,
-                                      parameter_qval = sig_up_chicken$parameter_qval,
-                                       gene_id = sig_up_chicken$gene_id,
-                                         region = "upstream"))
-
-
-all_models_sig_annotated_chicken <- rbind(sig_promoter_chicken_df, sig_gene_chicken_df,
-                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_down_chicken_df,
-                                  sig_up_chicken_df) # left out intron due to error
-
-all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
-                                           !is.na(gene_id) &
-                                             !grepl("LOC", gene_id))
-```
 
 ### GOrilla
 
@@ -614,14 +503,16 @@ We next run the list of gene IDs of the significant sites as the target list as 
 
 ```{r sig_go}
 library(readxl)
-table_go_function_changing <- read_excel("../results/modeloutput/changing/GOFUNCTION_changing.xlsx")
+table_go_function_changing <- read_excel("../results/modeloutput/changing/GOFUNCTION_changing_similar.xlsx")
 
 table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
-table_go_process_changing <- read_excel("../results/modeloutput/changing/GOPROCESS_changing.xlsx")
+table_go_process_changing <- read_excel("../results/modeloutput/changing/GOPROCESS_changing_similar.xlsx")
 
 table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_process_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
 ```
 
-Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly!
+Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly! Moreover, the component that was highly significant is the "chylomicron". 
+
+Wikipedia: "Chylomicrons transport lipids absorbed from the intestine to adipose, cardiac, and skeletal muscle tissue, where their triglyceride components are hydrolyzed by the activity of the lipoprotein lipase, allowing the released free fatty acids to be absorbed by the tissues. When a large portion of the triglyceride core has been hydrolyzed, chylomicron remnants are formed and are taken up by the liver, thereby also transferring dietary fat to the liver."

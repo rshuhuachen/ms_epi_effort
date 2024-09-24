@@ -1,0 +1,77 @@
+---
+title: "Introduction and hypotheses"
+---
+
+Trade-offs between reproduction and survival are central to life history theory. The black grouse faces extreme costs of reproduction during lekking periods, in which they intensively fight to hold territories for several weeks per year. This intensive fighting is not only energy-demanding, but also time-intensive, meaning the birds sacrifice valuable time that could be spent on foraging. Therefore, only males that can afford the cost of lekking - i.e. they are in a good enough body condition to attend leks and display - are expected to invest in reproduction.
+
+Trade-offs are often assumed to arise from resource limitation, yet the genetic and molecular pathways that underlie the distribution of resources are relatively little understood. Here, we hypothesize that epigenetic regulation can play a central role in the change of cellular processes that are associated with the respective trade-off. Epigenetic mechanisms can change gene expression without changing the primary nucleotide sequence. Although the majority of epigenetic variation has genetic underpinnings, the epigenome can respond to both external (temperature, toxins) and internal (hormones) environmental variables. Previous research has shown that epigenetic variation has temporal fluctuations, is associated with aggressive behaviour, and X.
+
+Therefore, expect that CpG site methylation changes across the lekking season, as a response to the investment in reproduction. Reproductive investment is known to be costly in black grouse males, as previous research shows that those with high investment lose the most body mass (@lebigrePhysiologicalCostsEnforce2013a). Moreover, reproductive investment is associated with changes in testosterone level and increased parasite vulnerability.
+
+Furthermore, we expect that these methylation changes are associated with investment in reproduction, where those males that invest most experience the biggest methylation changes. Assuming a trade-off between reproductive effort and body maintanance, the methylation changes can also be related to changes in physiological measures that reflect this trade-off, for example those are related to immunology, oxygen transportation, hormonal regulation, and loss in body resources. Moreover, given that reproductive effort is associated with reproductive success, we expect that changes in CpG site methylation can be predictive of mating success as well as survival. This hypothesis is sketched below:
+
+![Hypothesis](../plots/flowcharts/hypothesis.png)
+
+## Phenotypes
+
+First, we explore the trade-offs that we can find in our black grouse data set, independent of epigenetic changes. For this analysis, we use our full phenotypic dataset, which includes samples that are not used for the epigenetic analysis in this paper as they are not sampled before and after the lekking season.
+
+We have a few different questions that we want to test for, to understand what trade-offs can be identified in our species:
+
+1.  Do males invest more in reproduction if they have more resources to start with?
+
+2.  Is reproductive effort associated with body mass losses?
+
+3.  Is reproductive effort and/or losses in body mass associated with mating success and/or survival?
+
+We test these three questions in a Bayesian structural equation model, in which we can test multiple regressions simultaneously.
+
+```{r sem, eval=F}
+### load packages ####
+pacman::p_load(tidyverse, data.table, lmerTest, glmmTMB, brms, bayesplot)
+
+### load data ####
+
+load("data/phenotypes/fulldata_complete_epi_withdates.RData")
+load("data/phenotypes/pheno_dif_prepost.RData")
+
+### test for trade-offs ####
+
+data <- left_join(all_pheno_epi, prepost_dif[,c("id", "year", "mass_dif", "microf_dif", "trypa_dif", "ig_dif", "hct_dif")], by = c("year", "id"))
+data <- data %>% mutate(age_year = as.factor(case_when(Core == "Core" ~ year - born,
+                                                        Core == "No core" ~ NA)),
+                                        age = as.factor(case_when(Core == "Core" & (year - born > 1) ~ "Adult",
+                                                        Core == "Core" & (year - born == 1) ~ "Yearling",
+                                                        Core == "No core" ~ "Adult")))
+
+data$mass <- as.numeric(data$mass)    
+
+## 1) reproductive effort affected by available resources?
+m_1_a <- bf(attend ~ mass + (1|site/id))
+m_1_f <- bf(fight ~ mass + (1|site/id))
+m_1_d <- bf(dist ~ mass + (1|site/id))
+
+## 2) loss in resources affected by reproductive effort?
+m_2 <- bf(mass_dif ~ attend + fight + dist +(1|site/id))
+
+## 3) fitness affected by loss in resources and/or reproductive effort?
+m_3_s <- bf(surv ~ mass_dif + attend + fight + dist + (1|site/id), family = "bernoulli")
+m_3_m <- bf(MS ~ mass_dif + attend + fight + dist +(1|site/id), family = "poisson")
+
+sem <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s + m_3_m
+
+fit <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+
+```
+
+However, if we use all three measures of reproductive effort as predictors for survival, we automatically exclude males had did not attend the lek, as they therefore have unmeasured fighting and centrality rates. Therfore, we also run an alternative model that just uses attendance as a predictor of survival.
+
+```{r alt_sem, eval=FALSE}
+m_3_s_v2 <- bf(surv ~ attend + (1|site/id), family = "bernoulli")
+
+sem2 <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s_v2 + m_3_m
+
+fit_a <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15), prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+
+```

@@ -517,15 +517,23 @@ sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 write.csv(sum_annotated, file="results/modeloutput/changing/summary_regions_sig_cpgs.csv", row.names=F, quote=F)
 
 #### Plot number of sites per region ####
+
+ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = region, y = perc, fill = model)) + geom_bar(stat="identity", position="dodge") + 
+  labs(y="Percentage of CpG sites", x="Region", fill = "Subset")+ coord_flip() + 
+  scale_fill_manual(values=c("grey60", clrs[4])) -> num_perc_region
+ggsave(num_perc_region, file="plots/model_out/changing/perc_sig_per_region.png", width=10, height=12)
+
 ggplot(sum_annotated, aes(x = region, y = n)) + geom_bar(stat="identity") + 
+  labs(y="Number of CpG sites", x="Region")+
   facet_wrap(~model, ncol=2, scales="free") + coord_flip() -> num_region_cpg
 
 ggsave(num_region_cpg, file="plots/model_out/changing/n_sig_cpg_per_region.png", width=10, height=18)
 
 ggplot(sum_annotated, aes(x = region, y = perc)) + geom_bar(stat="identity") + ylim(0,100)+
+  labs(y="Percentage of CpG sites", x="Region")+
   facet_wrap(~model, ncol=2,) + coord_flip() -> perc_region_cpg
 
-ggsave(perc_region_cpg, file="plots/model_out/changing/perc_sig_cpg_per_region.png", width=10, height=18)
+ggsave(perc_region_cpg, file="plots/model_out/changing/perc_sig_cpg_per_region.png", width=20, height=12)
 
 #### Annotate with gene names based on chicken liftover ####
 ### load annotation data
