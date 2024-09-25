@@ -131,7 +131,7 @@ delta_out_ams <- subset(delta_out_fitness, ams_message == "relative convergence 
 delta_out_surv <- subset(delta_out_fitness, surv_message == "relative convergence (4)")
 
 #### AMS ####
-nrow(delta_out_ams) / nrow(delta_out_fitness) * 100 # retain 96.5%, 749
+nrow(delta_out_ams) / nrow(delta_out_fitness) * 100 # retain 96.4%, 749
 
 ##### Overdispersion raw data #####
 
@@ -234,11 +234,11 @@ load(file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
 
 delta_out_ams <- delta_out_ams %>% mutate(sig = case_when(ams_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 
-clrs <- viridisLite::viridis(6)
-ggplot(delta_out_ams_data, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
+#clrs <- viridisLite::viridis(6)
+ggplot(delta_out_ams, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
     labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)") +
     xlim(-21,21)+
-    scale_color_manual(values=c("grey60", clrs[4])) +
+    scale_color_manual(values=c(clrs[5], clrs[17])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
   #  geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -422,3 +422,229 @@ nrow(subset(surv_attend_delta_conv, attend_qval < 0.05)) # n = 0
 nrow(subset(surv_attend_delta_conv, mass_qval < 0.05)) # n = 0
 nrow(subset(surv_attend_delta_conv, inter_delta_attend_qval < 0.05)) # n = 0
 nrow(subset(surv_attend_delta_conv, inter_delta_mass_qval < 0.05)) # n = 0
+
+#### Annotate AMS CpG sites ####
+
+### Packages ####
+pacman::p_load(genomation, GenomicFeatures, rtracklayer, 
+               GenomicRanges)
+
+
+### Combine all sites vs changing sites
+cpg_all <- delta_out_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
+names(cpg_all)[2] <- "parameter_qval"
+cpg_all$parameter <- "all"
+
+cpg_ams_select <- cpg_sig_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
+names(cpg_ams_select)[2] <- "parameter_qval"
+cpg_ams_select$parameter <- "ams"
+
+all_models_sig <- rbind(cpg_all, cpg_ams_select)
+
+### Rename chr_pos and divide ###
+all_models_sig$chr_pos <- gsub("__", ";", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr_pos, )
+
+# Extract the numbers following HRSCAF=XXX_number
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(all_models_sig$chr_pos, "_", fixed = TRUE)
+
+all_models_sig$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2))
+
+all_models_sig$pos <- sapply(split_chr_pos, "[", 3)
+
+all_models_sig <- all_models_sig %>% 
+  relocate(chr, .after = chr_pos) %>%
+  relocate(pos, .after = chr_pos)
+
+#revert scafnames
+all_models_sig$chr_pos <- gsub(";","__", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr_pos)
+
+all_models_sig$chr <- gsub(";","__", all_models_sig$chr)
+all_models_sig$chr <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr)
+
+### Load annotation data
+annotation_dir <- "~/PhD_grouse/grouse-annotation/output"
+
+promoter=unique(gffToGRanges(paste0(annotation_dir, "/promoters.gff3")))
+genes=unique(gffToGRanges(paste0(annotation_dir, "/genes.gff3")))
+TSS=unique(gffToGRanges(paste0(annotation_dir, "/TSS.gff3")))
+exons_gene=unique(gffToGRanges(paste0(annotation_dir, "/exons_gene.gff3")))
+introns=unique(gffToGRanges(paste0(annotation_dir, "/introns_transcripts.gff3")))
+downstream=unique(gffToGRanges(paste0(annotation_dir, "/downstream.gff3")))
+upstream=unique(gffToGRanges(paste0(annotation_dir, "/upstream.gff3")))
+threeUTR =unique(gffToGRanges(paste0(annotation_dir, "/threeUTRs.gff3")))
+fiveUTR=unique(gffToGRanges(paste0(annotation_dir, "/fiveUTRs.gff3")))
+
+#### Annotate ####
+all_models_sig$end <- all_models_sig$pos
+all_models_sig$start <- all_models_sig$pos
+sig_gr <- as(all_models_sig, "GRanges")
+
+sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
+  add_column("region" = "promoter", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
+  add_column("region" = "gene", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
+  add_column("region" = "TSS", .after="parameter") %>%
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_exon <- as.data.frame(subsetByOverlaps(sig_gr, exons_gene)) %>% as.data.frame() %>%
+  add_column("region" = "exon", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_intron <- as.data.frame(subsetByOverlaps(sig_gr, introns))  %>% as.data.frame() %>%
+  add_column("region" = "intron", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_down <- as.data.frame(subsetByOverlaps(sig_gr, downstream)) %>% as.data.frame() %>%
+  add_column("region" = "downstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_up <- as.data.frame(subsetByOverlaps(sig_gr, upstream))  %>% as.data.frame() %>%
+  add_column("region" = "upstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_threeUTR <- as.data.frame(subsetByOverlaps(sig_gr, threeUTR))  %>% as.data.frame() %>%
+  add_column("region" = "threeUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_fiveUTR <- as.data.frame(subsetByOverlaps(sig_gr, fiveUTR))  %>% as.data.frame() %>%
+  add_column("region" = "fiveUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
+                                  sig_tss, sig_exon, sig_intron, sig_down,
+                                  sig_up, sig_threeUTR,  sig_fiveUTR)
+
+summary(as.factor(all_models_sig_annotated$region))
+
+save(all_models_sig_annotated, file="results/modeloutput/fitness/annotated_sig_cpg_ams.RData")
+
+#### Summarise number of sites per region ####
+sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
+names(sum_annotated) <- c("region", "model", "n")
+
+sum_annotated$model <- gsub("all", "All", sum_annotated$model)
+sum_annotated$model <- gsub("ams", "Annual mating success", sum_annotated$model)
+
+sum_annotated$region <- gsub("downstream", "Downstream", sum_annotated$region)
+sum_annotated$region <- gsub("upstream", "Upstream", sum_annotated$region)
+sum_annotated$region <- gsub("exon", "Exon", sum_annotated$region)
+sum_annotated$region <- gsub("fiveUTR", "5' UTR", sum_annotated$region)
+sum_annotated$region <- gsub("gene", "Gene body", sum_annotated$region)
+sum_annotated$region <- gsub("intron", "Intron", sum_annotated$region)
+sum_annotated$region <- gsub("promoter", "Promoter", sum_annotated$region)
+sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
+
+sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
+
+# add total sig CpGs
+sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
+  model == "All" ~ nrow(delta_out_ams),
+  model == "Annual mating success" ~ nrow(cpg_sig_ams)))
+
+sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
+
+write.csv(sum_annotated, file="results/modeloutput/fitness/summary_regions_sig_cpgs_ams.csv", row.names=F, quote=F)
+
+#### Plot number of sites per region ####
+clrs <- viridisLite::viridis(6)
+ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = region, y = perc, fill = model)) + geom_bar(stat="identity", position="dodge") + 
+  labs(y="Percentage of CpG sites", x="Region", fill = "Subset")+ coord_flip() + 
+  scale_fill_manual(values=c(clrs[5], clrs[17])) -> num_perc_region
+ggsave(num_perc_region, file="plots/model_out/fitness/perc_sig_per_region_ams.png", width=10, height=12)
+
+
+#### Based on the 'similar to' column ####
+
+sig_promoter <- mergeByOverlaps(sig_gr, promoter) 
+sig_promoter_df <- unique(data.frame(chr_pos = sig_promoter$chr_pos,
+                                     # chr = sig_promoter$sig_gr@seqnames,
+                                     # pos = sig_promoter$sig_gr$pos,
+                                      parameter = sig_promoter$parameter,
+                                      parameter_qval = sig_promoter$parameter_qval,
+                                      gene_id = sig_promoter$gene_id,
+                                      region = "promoter"))
+
+sig_gene <- mergeByOverlaps(sig_gr, genes) 
+sig_gene_df <- unique(data.frame(chr_pos = sig_gene$chr_pos,
+                                          #   chr = sig_gene$sig_gr@seqnames,
+                                          #   pos = sig_gene$sig_gr$pos,
+                                             parameter = sig_gene$parameter,
+                                      parameter_qval = sig_gene$parameter_qval,
+                                           gene_id = sig_gene$gene_id,
+                                             region = "gene"))
+
+sig_TSS <- mergeByOverlaps(sig_gr, TSS) 
+sig_TSS_df <- unique(data.frame(chr_pos = sig_TSS$chr_pos,
+                                        # chr = sig_TSS$sig_gr@seqnames,
+                                        # pos = sig_TSS$sig_gr$pos,
+                                         parameter = sig_TSS$parameter,
+                                      parameter_qval = sig_TSS$parameter_qval,
+                                       gene_id = unlist(sig_TSS$gene_id),
+                                         region = "TSS"))
+
+sig_exon <- mergeByOverlaps(sig_gr, exons_gene) 
+sig_exon_df <- unique(data.frame(chr_pos = sig_exon$chr_pos,
+                                       # chr = sig_exon$sig_gr@seqnames,
+                                       # pos = sig_exon$sig_gr$pos,
+                                        parameter = sig_exon$parameter,
+                                      parameter_qval = sig_exon$parameter_qval,
+                                        gene_id = sig_exon$exon_name,
+                                        region = "exon"))
+
+sig_intron <- mergeByOverlaps(sig_gr, introns) 
+sig_intron_df <- unique(data.frame(chr_pos = sig_intron$chr_pos,
+                                      #   chr = sig_intron$sig_gr@seqnames,
+                                      #   pos = sig_intron$sig_gr$pos,
+                                         parameter = sig_intron$parameter,
+                                      parameter_qval = sig_intron$parameter_qval,
+                                        gene_id = NA,
+                                         region = "intron"))
+
+sig_down <- mergeByOverlaps(sig_gr, downstream) 
+sig_down_df <- unique(data.frame(chr_pos = sig_down$chr_pos,
+                                    #    chr = sig_down$sig_gr@seqnames,
+                                     #   pos = sig_down$sig_gr$pos,
+                                        parameter = sig_down$parameter,
+                                      parameter_qval = sig_down$parameter_qval,
+                                         gene_id = sig_down$gene_id,
+                                        region = "downstream"))
+
+sig_up <- mergeByOverlaps(sig_gr, upstream) 
+sig_up_df <- unique(data.frame(chr_pos = sig_up$chr_pos,
+                                    #     chr = sig_up$sig_gr@seqnames,
+                                      #   pos = sig_up$sig_gr$pos,
+                                        parameter = sig_up$parameter,
+                                      parameter_qval = sig_up$parameter_qval,
+                                       gene_id = sig_up$gene_id,
+                                         region = "upstream"))
+
+
+all_models_sig_annotated <- rbind(sig_promoter_df, sig_gene_df,
+                                          sig_TSS_df, sig_exon_df, sig_down_df,
+                                  sig_up_df) # left out intron due to error
+
+### merge with 'similar to' column
+lookup <- fread("/home/nioo/rebeccash/PhD_grouse/grouse-annotation/data/lookup_ANN_gene_id.txt")
+names(lookup) <- c("original", "similar")
+
+all_models_sig_annotated <- left_join(all_models_sig_annotated, lookup, by = c("gene_id" = "original"))
+
+all_models_sig_annotated <- subset(all_models_sig_annotated,
+                                           !is.na(similar) &
+                                             !grepl("LOC", similar))
+
+all_models_sig_annotated$similar <- toupper(all_models_sig_annotated$similar)
+subset(all_models_sig_annotated, parameter == "all") %>% arrange(parameter_qval) %>%
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/fitness/all_gene_ids_changing_similar.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated, parameter == "ams") %>% arrange(parameter_qval) %>%
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/fitness/gene_ids_sig_ams_similar.csv", quote=F, row.names=F, col.names = F)
