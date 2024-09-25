@@ -54,7 +54,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -143,7 +162,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -188,6 +207,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -224,7 +249,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>Trade-offs between reproduction and survival are central to life history theory. The black grouse faces extreme costs of reproduction during lekking periods, in which they intensively fight to hold territories for several weeks per year. This intensive fighting is not only energy-demanding, but also time-intensive, meaning the birds sacrifice valuable time that could be spent on foraging. Therefore, only males that can afford the cost of lekking - i.e.&nbsp;they are in a good enough body condition to attend leks and display - are expected to invest in reproduction.</p>
 <p>Trade-offs are often assumed to arise from resource limitation, yet the genetic and molecular pathways that underlie the distribution of resources are relatively little understood. Here, we hypothesize that epigenetic regulation can play a central role in the change of cellular processes that are associated with the respective trade-off. Epigenetic mechanisms can change gene expression without changing the primary nucleotide sequence. Although the majority of epigenetic variation has genetic underpinnings, the epigenome can respond to both external (temperature, toxins) and internal (hormones) environmental variables. Previous research has shown that epigenetic variation has temporal fluctuations, is associated with aggressive behaviour, and X.</p>
-<p>Therefore, expect that CpG site methylation changes across the lekking season, as a response to the investment in reproduction. Reproductive investment is known to be costly in black grouse males, as previous research shows that those with high investment lose the most body mass (<span class="citation" data-cites="Lebigre">(<a href="#ref-Lebigre" role="doc-biblioref"><strong>Lebigre?</strong></a>)</span>). Moreover, reproductive investment is associated with changes in testosterone level and increased parasite vulnerability.</p>
+<p>Therefore, expect that CpG site methylation changes across the lekking season, as a response to the investment in reproduction. Reproductive investment is known to be costly in black grouse males, as previous research shows that those with high investment lose the most body mass (<span class="citation" data-cites="lebigrePhysiologicalCostsEnforce2013a">Lebigre, Alatalo, and Siitari (<a href="#ref-lebigrePhysiologicalCostsEnforce2013a" role="doc-biblioref">2013</a>)</span>). Moreover, reproductive investment is associated with changes in testosterone level and increased parasite vulnerability.</p>
 <p>Furthermore, we expect that these methylation changes are associated with investment in reproduction, where those males that invest most experience the biggest methylation changes. Assuming a trade-off between reproductive effort and body maintanance, the methylation changes can also be related to changes in physiological measures that reflect this trade-off, for example those are related to immunology, oxygen transportation, hormonal regulation, and loss in body resources. Moreover, given that reproductive effort is associated with reproductive success, we expect that changes in CpG site methylation can be predictive of mating success as well as survival. This hypothesis is sketched below:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -289,6 +314,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-lebigrePhysiologicalCostsEnforce2013a" class="csl-entry" role="listitem">
+Lebigre, Christophe, Rauno V. Alatalo, and Heli Siitari. 2013. <span>“Physiological Costs Enforce the Honesty of Lek Display in the Black Grouse (<span>Tetrao</span> Tetrix).”</span> <em>Oecologia</em> 172 (4): 983–93. <a href="https://doi.org/10.1007/s00442-012-2548-9">https://doi.org/10.1007/s00442-012-2548-9</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -528,7 +558,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="../index.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

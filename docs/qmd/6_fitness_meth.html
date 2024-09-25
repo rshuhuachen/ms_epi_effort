@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../qmd/8_mutual_sites.html" rel="next">
 <link href="../qmd/5_physio_meth.html" rel="prev">
 <link href="../img/grouse_silhouette.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -94,6 +95,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit"
   }
 }</script>
+
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
 
 </head>
@@ -142,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -187,6 +191,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Fitness effects</span></span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../qmd/8_mutual_sites.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -200,7 +210,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#prepare-the-data" id="toc-prepare-the-data" class="nav-link active" data-scroll-target="#prepare-the-data"><span class="header-section-number">8.1</span> Prepare the data</a></li>
   <li><a href="#function-to-run-the-model" id="toc-function-to-run-the-model" class="nav-link" data-scroll-target="#function-to-run-the-model"><span class="header-section-number">8.2</span> Function to run the model</a></li>
   <li><a href="#run-the-model" id="toc-run-the-model" class="nav-link" data-scroll-target="#run-the-model"><span class="header-section-number">8.3</span> Run the model</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">8.4</span> Results</a></li>
+  <li><a href="#exclude-models-that-did-not-convergence" id="toc-exclude-models-that-did-not-convergence" class="nav-link" data-scroll-target="#exclude-models-that-did-not-convergence"><span class="header-section-number">8.4</span> Exclude models that did not convergence</a></li>
+  <li><a href="#explore-and-filter-for-overdispersion" id="toc-explore-and-filter-for-overdispersion" class="nav-link" data-scroll-target="#explore-and-filter-for-overdispersion"><span class="header-section-number">8.5</span> Explore and filter for overdispersion</a></li>
+  <li><a href="#fdr-correction" id="toc-fdr-correction" class="nav-link" data-scroll-target="#fdr-correction"><span class="header-section-number">8.6</span> FDR-correction</a></li>
+  <li><a href="#annotation" id="toc-annotation" class="nav-link" data-scroll-target="#annotation"><span class="header-section-number">8.7</span> Annotation</a>
+  <ul class="collapse">
+  <li><a href="#based-on-black-grouse-annotation" id="toc-based-on-black-grouse-annotation" class="nav-link" data-scroll-target="#based-on-black-grouse-annotation"><span class="header-section-number">8.7.1</span> Based on black grouse annotation</a></li>
+  <li><a href="#gorilla" id="toc-gorilla" class="nav-link" data-scroll-target="#gorilla"><span class="header-section-number">8.7.2</span> GOrilla</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -253,8 +270,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="function-to-run-the-model" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="function-to-run-the-model"><span class="header-section-number">8.2</span> Function to run the model</h2>
 <p>Below you’ll find the full function to run the model per CpG site, where two models are run:</p>
-<p>One for annual mating success (AMS): <code>glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)</code></p>
-<p>And one for survival: <code>glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")</code></p>
+<p>One for annual mating success (AMS): <code>glmmTMB(MS ~ delta_meth + (1|site/id), family = "poisson")</code></p>
+<p>And one for survival: <code>glmmTMB(surv ~ delta_meth + (1|site/id), family = "binomial")</code></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -266,161 +283,468 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  df<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(df<span class="sc">$</span>id)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="do">### AMS</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  formula_ams <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste0</span>(<span class="st">"MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id) "</span>))</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  model_ams <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula_ams, <span class="at">data=</span>df, <span class="at">family =</span> <span class="st">"poisson"</span>, <span class="at">ziformula=</span><span class="sc">~</span><span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  formula_ams <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste0</span>(<span class="st">"MS ~ delta_meth + (1|site/id) "</span>))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  model_ams <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula_ams, <span class="at">data=</span>df, <span class="at">family =</span> <span class="st">"poisson"</span>)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  summary_ams <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_ams)</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effect</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  parameter_estimate <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  parameter_se <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>,<span class="st">"Std. Error"</span>]</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  parameter_zval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>,<span class="st">"z value"</span>]</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  parameter_pval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#age effect</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  age_estimate <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  age_se <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  age_zval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"z value"</span>]</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  age_pval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#premeth effect</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  pre_estimate <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  pre_se <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  pre_zval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"z value"</span>]</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  pre_pval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  rsqc <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model_ams)<span class="sc">$</span>R2_conditional <span class="co">#fixed plus random parameterects relative to overall variance</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  rsqm <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model_ams)<span class="sc">$</span>R2_marginal <span class="co">#fixed parameterects relative to overall variance</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  message <span class="ot">&lt;-</span> model_ams<span class="sc">$</span>fit<span class="sc">$</span>message</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  icc_id_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model_ams, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  icc_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model_ams, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  ams <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">chr_pos=</span><span class="fu">as.factor</span>(chr_pos),</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_icc_id_site =</span> <span class="fu">as.numeric</span>(icc_id_site),</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_icc_site =</span> <span class="fu">as.numeric</span>(icc_site),</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_estimate =</span> <span class="fu">as.numeric</span>(parameter_estimate),</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_se =</span> <span class="fu">as.numeric</span>(parameter_se),</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_zval =</span> <span class="fu">as.numeric</span>(parameter_zval),</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_pval =</span> <span class="fu">as.numeric</span>(parameter_pval),</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_age_estimate =</span> <span class="fu">as.numeric</span>(age_estimate),</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_age_se =</span> <span class="fu">as.numeric</span>(age_se),</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_age_zval =</span> <span class="fu">as.numeric</span>(age_zval),</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_age_pval =</span> <span class="fu">as.numeric</span>(age_pval),</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_pre_estimate =</span> <span class="fu">as.numeric</span>(pre_estimate),</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_pre_se =</span> <span class="fu">as.numeric</span>(pre_se),</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_pre_zval =</span> <span class="fu">as.numeric</span>(pre_zval),</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_pre_pval =</span> <span class="fu">as.numeric</span>(pre_pval),</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_rsqc =</span> <span class="fu">as.numeric</span>(rsqc),</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_rsqm =</span> <span class="fu">as.numeric</span>(rsqm),</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_message =</span> message              </span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  ) </span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  <span class="do">### surv</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  formula_surv <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste0</span>(<span class="st">"surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id) "</span>))</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>  model_surv <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula_surv, <span class="at">data=</span>df, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>  summary_surv <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_surv)</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effect</span></span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  parameter_estimate <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  parameter_se <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>,<span class="st">"Std. Error"</span>]</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>  parameter_zval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>,<span class="st">"z value"</span>]</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>  parameter_pval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(delta_meth)"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  <span class="co">#age effect</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  age_estimate <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  age_se <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>  age_zval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"z value"</span>]</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>  age_pval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"age"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  <span class="co">#premeth effect</span></span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  pre_estimate <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Estimate"</span>]</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  pre_se <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Std. Error"</span>]</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>  pre_zval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"z value"</span>]</span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>  pre_pval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"scale(methperc_pre)"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>  rsqc <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model_surv)<span class="sc">$</span>R2_conditional <span class="co">#fixed plus random parameterects relative to overall variance</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>  rsqm <span class="ot">&lt;-</span> performance<span class="sc">::</span><span class="fu">r2</span>(model_surv)<span class="sc">$</span>R2_marginal <span class="co">#fixed parameterects relative to overall variance</span></span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>  message <span class="ot">&lt;-</span> model_surv<span class="sc">$</span>fit<span class="sc">$</span>message</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>  icc_id_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model_surv, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">1</span>,<span class="dv">2</span>]</span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>  icc_site <span class="ot">&lt;-</span><span class="fu">icc</span>(model_surv, <span class="at">by_group =</span> <span class="cn">TRUE</span>, <span class="at">tolerance =</span> <span class="dv">0</span>)[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>  surv <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">surv_icc_id_site =</span> <span class="fu">as.numeric</span>(icc_id_site),</span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_icc_site =</span> <span class="fu">as.numeric</span>(icc_site),</span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_estimate =</span> <span class="fu">as.numeric</span>(parameter_estimate),</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_se =</span> <span class="fu">as.numeric</span>(parameter_se),</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_zval =</span> <span class="fu">as.numeric</span>(parameter_zval),</span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_pval =</span> <span class="fu">as.numeric</span>(parameter_pval),</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_age_estimate =</span> <span class="fu">as.numeric</span>(age_estimate),</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_age_se =</span> <span class="fu">as.numeric</span>(age_se),</span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_age_zval =</span> <span class="fu">as.numeric</span>(age_zval),</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_age_pval =</span> <span class="fu">as.numeric</span>(age_pval),</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_pre_estimate =</span> <span class="fu">as.numeric</span>(pre_estimate),</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_pre_se =</span> <span class="fu">as.numeric</span>(pre_se),</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_pre_zval =</span> <span class="fu">as.numeric</span>(pre_zval),</span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_pre_pval =</span> <span class="fu">as.numeric</span>(pre_pval),</span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_rsqc =</span> <span class="fu">as.numeric</span>(rsqc),</span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_rsqm =</span> <span class="fu">as.numeric</span>(rsqm),</span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_message =</span> message              </span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>  ) </span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ams, surv)</span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"ERROR :"</span>, <span class="fu">conditionMessage</span>(e), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>);<span class="fu">print</span>(chr_pos)})</span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  intercept_ams <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"(Intercept)"</span>, <span class="st">"Estimate"</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effect</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  parameter_estimate <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>, <span class="st">"Estimate"</span>]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  parameter_se <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>,<span class="st">"Std. Error"</span>]</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  parameter_zval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>,<span class="st">"z value"</span>]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  parameter_pval <span class="ot">&lt;-</span> summary_ams<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  message_ams <span class="ot">&lt;-</span> model_ams<span class="sc">$</span>fit<span class="sc">$</span>message</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  dispersion_ams <span class="ot">&lt;-</span> <span class="fu">overdisp_fun</span>(model_ams)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  ams <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">chr_pos=</span><span class="fu">as.factor</span>(chr_pos),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">intercept_ams =</span> intercept_ams,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_estimate =</span> <span class="fu">as.numeric</span>(parameter_estimate),</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_se =</span> <span class="fu">as.numeric</span>(parameter_se),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_zval =</span> <span class="fu">as.numeric</span>(parameter_zval),</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_delta_meth_pval =</span> <span class="fu">as.numeric</span>(parameter_pval),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_message =</span> message_ams,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_disp_chi =</span> dispersion_ams[<span class="dv">1</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_disp_ratio =</span> dispersion_ams[<span class="dv">2</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_disp_rdf =</span> dispersion_ams[<span class="dv">3</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ams_disp_p =</span> dispersion_ams[<span class="dv">4</span>][[<span class="dv">1</span>]]</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="do">### surv</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  formula_surv <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste0</span>(<span class="st">"surv ~ delta_meth + (1|site/id) "</span>))</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  model_surv <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(formula_surv, <span class="at">data=</span>df, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  summary_surv <span class="ot">&lt;-</span> <span class="fu">summary</span>(model_surv)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  intercept_surv <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"(Intercept)"</span>, <span class="st">"Estimate"</span>]</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="co">#fixed effect</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  parameter_estimate <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>, <span class="st">"Estimate"</span>]</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  parameter_se <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>,<span class="st">"Std. Error"</span>]</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  parameter_zval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>,<span class="st">"z value"</span>]</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  parameter_pval <span class="ot">&lt;-</span> summary_surv<span class="sc">$</span>coefficients<span class="sc">$</span>cond[<span class="st">"delta_meth"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  message <span class="ot">&lt;-</span> model_surv<span class="sc">$</span>fit<span class="sc">$</span>message</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  dispersion_surv <span class="ot">&lt;-</span> <span class="fu">overdisp_fun</span>(model_surv)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>  surv <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">intercept_surv =</span> intercept_surv,</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surv_delta_meth_estimate =</span> <span class="fu">as.numeric</span>(parameter_estimate),</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_se =</span> <span class="fu">as.numeric</span>(parameter_se),</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_zval =</span> <span class="fu">as.numeric</span>(parameter_zval),</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_delta_meth_pval =</span> <span class="fu">as.numeric</span>(parameter_pval),</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                    <span class="at">surv_message =</span> message,</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surv_disp_chi =</span> dispersion_surv[<span class="dv">1</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surv_disp_ratio =</span> dispersion_surv[<span class="dv">2</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surv_disp_rdf =</span> dispersion_surv[<span class="dv">3</span>][[<span class="dv">1</span>]],</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                  <span class="at">surv_disp_p =</span> dispersion_surv[<span class="dv">4</span>][[<span class="dv">1</span>]]</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">cbind</span>(ams, surv)</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e){<span class="fu">cat</span>(<span class="st">"ERROR :"</span>, <span class="fu">conditionMessage</span>(e), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>);<span class="fu">print</span>(chr_pos)})</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="run-the-model" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="run-the-model"><span class="header-section-number">8.3</span> Run the model</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### run the model </span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>delta_out_fitness <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_fitness,<span class="at">mc.cores=</span><span class="dv">12</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>delta_out_fitness <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_fitness)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to numeric</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>delta_out_fitness<span class="sc">$</span>ams_delta_meth_estimate <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_fitness<span class="sc">$</span>ams_delta_meth_estimate)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>delta_out_fitness<span class="sc">$</span>surv_delta_meth_estimate <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(delta_out_fitness<span class="sc">$</span>surv_delta_meth_estimate)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude those with convergence errors</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>delta_out_ams <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_fitness, ams_message <span class="sc">==</span> <span class="st">"relative convergence (4)"</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>delta_out_surv <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_fitness, surv_message <span class="sc">==</span> <span class="st">"relative convergence (4)"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR correction</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>delta_out_ams<span class="sc">$</span>ams_delta_meth_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_ams<span class="sc">$</span>ams_delta_meth_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_ams))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>delta_out_surv<span class="sc">$</span>surv_delta_meth_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_surv<span class="sc">$</span>surv_delta_meth_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_surv))</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>delta_out_ams<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(delta_out_ams<span class="sc">$</span>chr_pos)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>delta_out_surv<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(delta_out_surv<span class="sc">$</span>chr_pos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>delta_out_fitness <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(delta_meth_ls, function_model_fitness,<span class="at">mc.cores=</span><span class="dv">4</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>delta_out_fitness <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind.data.frame, delta_out_fitness)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(delta_out_fitness, <span class="at">file=</span><span class="st">"results/modeloutput/fitness/out_fitness_nopre_raw.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="results" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="results"><span class="header-section-number">8.4</span> Results</h2>
-<p>There are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.</p>
+<section id="exclude-models-that-did-not-convergence" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="exclude-models-that-did-not-convergence"><span class="header-section-number">8.4</span> Exclude models that did not convergence</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Subset models and exclude models that did not converge ####</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>delta_out_ams <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_fitness, ams_message <span class="sc">==</span> <span class="st">"relative convergence (4)"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>delta_out_surv <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_fitness, surv_message <span class="sc">==</span> <span class="st">"relative convergence (4)"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">#### AMS ####</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(delta_out_ams) <span class="sc">/</span> <span class="fu">nrow</span>(delta_out_fitness) <span class="sc">*</span> <span class="dv">100</span> <span class="co"># retain 96.4%, 749</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">#### Survival ####</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(delta_out_surv) <span class="sc">/</span> <span class="fu">nrow</span>(delta_out_fitness) <span class="sc">*</span> <span class="dv">100</span> <span class="co"># retain 99.7%, 775</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When excluding models with convergence warnings/errors, we retain 96.4% and 99.7% of CpG site models for AMS and survival respectively.</p>
+</section>
+<section id="explore-and-filter-for-overdispersion" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="explore-and-filter-for-overdispersion"><span class="header-section-number">8.5</span> Explore and filter for overdispersion</h2>
+<p>We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is overdispersion and how to best filter for it.</p>
+<p><img src="../plots/model_out/fitness/ams/hist_raw_ams.png" class="img-fluid" alt="Histogram dispersion ratio and p-values AMS"> <img src="../plots/model_out/fitness/ams/qqplot_raw_ams.png" class="img-fluid" alt="QQ plot model changing CpG sites AMS"></p>
+<p><img src="../plots/model_out/fitness/surv/hist_raw_surv.png" class="img-fluid" alt="Histogram dispersion ratio and p-values survival"> <img src="../plots/model_out/fitness/surv/qqplot_raw_surv.png" class="img-fluid" alt="QQ plot model changing CpG sites survival"></p>
+<p>As overdispersion only seems to be a potential issue for the AMS model, we filter out the sites with an overdispersion ratio higher than the 95 percentile for AMS only.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## filter for 95 percentile AMS</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>delta_out_ams_clean <span class="ot">&lt;-</span> <span class="fu">subset</span>(delta_out_ams, ams_disp_ratio <span class="sc">&lt;</span> <span class="fu">as.vector</span>(<span class="fu">quantile</span>(delta_out_ams<span class="sc">$</span>ams_disp_ratio, <span class="fl">0.95</span>)))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(delta_out_ams_clean) <span class="co"># 711</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We are then left with a total of 711 CpG site models. <img src="../plots/model_out/fitness/ams/hist_filtered_ams.png" class="img-fluid" alt="Histogram dispersion ratio and p-values filtered models AMS"> <img src="../plots/model_out/fitness/ams/qqplot_filtered_ams.png" class="img-fluid" alt="QQ plot model changing CpG sites filtered models AMS"></p>
+</section>
+<section id="fdr-correction" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="fdr-correction"><span class="header-section-number">8.6</span> FDR-correction</h2>
+<p>After excluding CpG site models with overdispersion, we apply a multiple-testing correction using the false discovery rate (FDR).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## FDR correction</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>delta_out_ams_clean<span class="sc">$</span>ams_delta_meth_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_ams_clean<span class="sc">$</span>ams_delta_meth_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_ams_clean))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>delta_out_surv<span class="sc">$</span>surv_delta_meth_qval <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(delta_out_surv<span class="sc">$</span>surv_delta_meth_pval, <span class="at">method =</span> <span class="st">"fdr"</span>, <span class="at">n =</span> <span class="fu">nrow</span>(delta_out_surv))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">#### How many significant? ####</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">subset</span>(delta_out_ams_clean, ams_delta_meth_qval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="co">#362</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">subset</span>(delta_out_surv, surv_delta_meth_qval <span class="sc">&lt;</span> <span class="fl">0.05</span>)) <span class="co">#0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>There are 362 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the five most significant CpG sites.</p>
+<p><img src="../plots/model_out/fitness/ams/volcano_ams.png" class="img-fluid" alt="Volcano plot AMS"> <img src="../plots/model_out/fitness/surv/volcano_surv.png" class="img-fluid" alt="Volcano plot survival"></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Volcano plot fitness</figcaption>
-<p><img src="../plots/model_out/volcano_fitness.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Raw data AMS CpG site 1</figcaption>
+<p><img src="../plots/model_out/fitness/ams/rawdata_cpg_1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data AMS top 10 CpGs a</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_AMS_cpg_top10.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Raw data AMS CpG site 2</figcaption>
+<p><img src="../plots/model_out/fitness/ams/rawdata_cpg_2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<figcaption class="figure-caption">Raw data AMS top 10 CpGs b</figcaption>
-<p><img src="../plots/model_out/rawdata_plot_AMS_cpg_top20.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Raw data AMS CpG site 3</figcaption>
+<p><img src="../plots/model_out/fitness/ams/rawdata_cpg_3.png" class="img-fluid figure-img"></p>
 </figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data AMS CpG site 4</figcaption>
+<p><img src="../plots/model_out/fitness/ams/rawdata_cpg_4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Raw data AMS CpG site 5</figcaption>
+<p><img src="../plots/model_out/fitness/ams/rawdata_cpg_5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="annotation" class="level2" data-number="8.7">
+<h2 data-number="8.7" class="anchored" data-anchor-id="annotation"><span class="header-section-number">8.7</span> Annotation</h2>
+<section id="based-on-black-grouse-annotation" class="level3" data-number="8.7.1">
+<h3 data-number="8.7.1" class="anchored" data-anchor-id="based-on-black-grouse-annotation"><span class="header-section-number">8.7.1</span> Based on black grouse annotation</h3>
+<p>Next, we annotate in which regions these changing CpG sites are located in based on the black grouse annotation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### Annotate AMS CpG sites ####</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="do">### Packages ####</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(genomation, GenomicFeatures, rtracklayer, </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>               GenomicRanges)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="do">### Combine all sites vs changing sites</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>cpg_all <span class="ot">&lt;-</span> delta_out_ams <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(chr_pos, ams_delta_meth_qval))</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cpg_all)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"parameter_qval"</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>cpg_all<span class="sc">$</span>parameter <span class="ot">&lt;-</span> <span class="st">"all"</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>cpg_ams_select <span class="ot">&lt;-</span> cpg_sig_ams <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(chr_pos, ams_delta_meth_qval))</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cpg_ams_select)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"parameter_qval"</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>cpg_ams_select<span class="sc">$</span>parameter <span class="ot">&lt;-</span> <span class="st">"ams"</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>all_models_sig <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cpg_all, cpg_ams_select)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="do">### Rename chr_pos and divide </span><span class="al">###</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"__"</span>, <span class="st">";"</span>, all_models_sig<span class="sc">$</span>chr_pos)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"HRSCAF_"</span>, <span class="st">"HRSCAF="</span>, all_models_sig<span class="sc">$</span>chr_pos, )</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the numbers following HRSCAF=XXX_number</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the chr_pos column into two columns based on the first "_"</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>split_chr_pos <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(all_models_sig<span class="sc">$</span>chr_pos, <span class="st">"_"</span>, <span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">sapply</span>(split_chr_pos, <span class="st">"["</span>, <span class="dv">1</span>), <span class="st">"_"</span>,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">sapply</span>(split_chr_pos, <span class="st">"["</span>, <span class="dv">2</span>))</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>pos <span class="ot">&lt;-</span> <span class="fu">sapply</span>(split_chr_pos, <span class="st">"["</span>, <span class="dv">3</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>all_models_sig <span class="ot">&lt;-</span> all_models_sig <span class="sc">%&gt;%</span> </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(chr, <span class="at">.after =</span> chr_pos) <span class="sc">%&gt;%</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(pos, <span class="at">.after =</span> chr_pos)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co">#revert scafnames</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">";"</span>,<span class="st">"__"</span>, all_models_sig<span class="sc">$</span>chr_pos)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr_pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"HRSCAF="</span>, <span class="st">"HRSCAF_"</span>, all_models_sig<span class="sc">$</span>chr_pos)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">";"</span>,<span class="st">"__"</span>, all_models_sig<span class="sc">$</span>chr)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>chr <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"HRSCAF="</span>, <span class="st">"HRSCAF_"</span>, all_models_sig<span class="sc">$</span>chr)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="do">### Load annotation data</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>annotation_dir <span class="ot">&lt;-</span> <span class="st">"~/PhD_grouse/grouse-annotation/output"</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>promoter<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/promoters.gff3"</span>)))</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>genes<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/genes.gff3"</span>)))</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>TSS<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/TSS.gff3"</span>)))</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>exons_gene<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/exons_gene.gff3"</span>)))</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>introns<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/introns_transcripts.gff3"</span>)))</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>downstream<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/downstream.gff3"</span>)))</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>upstream<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/upstream.gff3"</span>)))</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>threeUTR <span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/threeUTRs.gff3"</span>)))</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>fiveUTR<span class="ot">=</span><span class="fu">unique</span>(<span class="fu">gffToGRanges</span>(<span class="fu">paste0</span>(annotation_dir, <span class="st">"/fiveUTRs.gff3"</span>)))</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="do">#### Annotate ####</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>end <span class="ot">&lt;-</span> all_models_sig<span class="sc">$</span>pos</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>all_models_sig<span class="sc">$</span>start <span class="ot">&lt;-</span> all_models_sig<span class="sc">$</span>pos</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>sig_gr <span class="ot">&lt;-</span> <span class="fu">as</span>(all_models_sig, <span class="st">"GRanges"</span>)</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>sig_promoter <span class="ot">&lt;-</span> <span class="fu">subsetByOverlaps</span>(sig_gr, promoter) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"promoter"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>sig_gene <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, genes)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"gene"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>sig_tss <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, TSS)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"TSS"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>sig_exon <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, exons_gene)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"exon"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>sig_intron <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, introns))  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"intron"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>sig_down <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, downstream)) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"downstream"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>sig_up <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, upstream))  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"upstream"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>sig_threeUTR <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, threeUTR))  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"threeUTR"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>sig_fiveUTR <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">subsetByOverlaps</span>(sig_gr, fiveUTR))  <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_column</span>(<span class="st">"region"</span> <span class="ot">=</span> <span class="st">"fiveUTR"</span>, <span class="at">.after=</span><span class="st">"parameter"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(seqnames<span class="sc">:</span>strand)) </span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>all_models_sig_annotated <span class="ot">&lt;-</span> <span class="fu">rbind</span>(sig_promoter, sig_gene,</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>                                  sig_tss, sig_exon, sig_intron, sig_down,</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>                                  sig_up, sig_threeUTR,  sig_fiveUTR)</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">as.factor</span>(all_models_sig_annotated<span class="sc">$</span>region))</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(all_models_sig_annotated, <span class="at">file=</span><span class="st">"results/modeloutput/fitness/annotated_sig_cpg_ams.RData"</span>)</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="do">#### Summarise number of sites per region ####</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>sum_annotated <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(<span class="fu">as.factor</span>(all_models_sig_annotated<span class="sc">$</span>region), all_models_sig_annotated<span class="sc">$</span>parameter))</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(sum_annotated) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"region"</span>, <span class="st">"model"</span>, <span class="st">"n"</span>)</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"all"</span>, <span class="st">"All"</span>, sum_annotated<span class="sc">$</span>model)</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"ams"</span>, <span class="st">"Annual mating success"</span>, sum_annotated<span class="sc">$</span>model)</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"downstream"</span>, <span class="st">"Downstream"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"upstream"</span>, <span class="st">"Upstream"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"exon"</span>, <span class="st">"Exon"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"fiveUTR"</span>, <span class="st">"5' UTR"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"gene"</span>, <span class="st">"Gene body"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"intron"</span>, <span class="st">"Intron"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"promoter"</span>, <span class="st">"Promoter"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"threeUTR"</span>, <span class="st">"3' UTR"</span>, sum_annotated<span class="sc">$</span>region)</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>sum_annotated<span class="sc">$</span>region <span class="ot">&lt;-</span> <span class="fu">factor</span>(sum_annotated<span class="sc">$</span>region, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"3' UTR"</span>, <span class="st">"5' UTR"</span>, <span class="st">"Downstream"</span>, <span class="st">"Upstream"</span>, <span class="st">"Gene body"</span>, <span class="st">"Exon"</span>, <span class="st">"Intron"</span>, <span class="st">"Promoter"</span>, <span class="st">"TSS"</span>))</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="co"># add total sig CpGs</span></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>sum_annotated <span class="ot">&lt;-</span> sum_annotated <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">n_total =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">==</span> <span class="st">"All"</span> <span class="sc">~</span> <span class="fu">nrow</span>(delta_out_ams),</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>  model <span class="sc">==</span> <span class="st">"Annual mating success"</span> <span class="sc">~</span> <span class="fu">nrow</span>(cpg_sig_ams)))</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a>sum_annotated <span class="ot">&lt;-</span> sum_annotated <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">perc =</span> n <span class="sc">/</span> n_total <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<figcaption class="figure-caption">Number of significant CpG sites for AMS per gene region</figcaption>
+<p><img src="../plots/model_out/fitness/perc_sig_per_region_ams.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="gorilla" class="level3" data-number="8.7.2">
+<h3 data-number="8.7.2" class="anchored" data-anchor-id="gorilla"><span class="header-section-number">8.7.2</span> GOrilla</h3>
+<p>We next run the list of gene IDs of the significant sites as the target list, using just this sorted target list and not a background list. I used default settings and the analysis was done based on a human model (<em>Homo sapiens</em>). The result can be seen below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl); <span class="fu">library</span>(dplyr); <span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/fitness/GOFUNCTION_ams.xlsx"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_function_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
+<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">GO Term</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">P-value</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">FDR q-value</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">Enrichment</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">N</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">B</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">n</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">b</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">GO:0102991</td>
+<td style="text-align: left;">myristoyl-CoA hydrolase activity</td>
+<td style="text-align: right;">0.000145</td>
+<td style="text-align: right;">0.1060</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0016290</td>
+<td style="text-align: left;">palmitoyl-CoA hydrolase activity</td>
+<td style="text-align: right;">0.000145</td>
+<td style="text-align: right;">0.0528</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0016289</td>
+<td style="text-align: left;">CoA hydrolase activity</td>
+<td style="text-align: right;">0.000145</td>
+<td style="text-align: right;">0.0352</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0047617</td>
+<td style="text-align: left;">acyl-CoA hydrolase activity</td>
+<td style="text-align: right;">0.000145</td>
+<td style="text-align: right;">0.0264</td>
+<td style="text-align: right;">72.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0016788</td>
+<td style="text-align: left;">hydrolase activity, acting on ester bonds</td>
+<td style="text-align: right;">0.000654</td>
+<td style="text-align: right;">0.0952</td>
+<td style="text-align: right;">21.6</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:0016790</td>
+<td style="text-align: left;">thiolester hydrolase activity</td>
+<td style="text-align: right;">0.000796</td>
+<td style="text-align: right;">0.0966</td>
+<td style="text-align: right;">48.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0052689</td>
+<td style="text-align: left;">carboxylic ester hydrolase activity</td>
+<td style="text-align: right;">0.000796</td>
+<td style="text-align: right;">0.0828</td>
+<td style="text-align: right;">48.0</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
 </div>
 
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/fitness/GOPROCESS_ams.xlsx"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_process_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
+<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">GO Term</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Description</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">P-value</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">FDR q-value</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">Enrichment</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">N</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">B</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">n</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">b</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">GO:0001676</td>
+<td style="text-align: left;">long-chain fatty acid metabolic process</td>
+<td style="text-align: right;">0.000796</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">288</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
 
+</div>
+</div>
+<p>There doesn’t seem to be that many significant GO terms, but do seem to be related to fatty acid regulation.</p>
+
+
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -678,6 +1002,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../qmd/8_mutual_sites.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Mutual CpG sites</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

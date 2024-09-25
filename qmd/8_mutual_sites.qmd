@@ -17,7 +17,9 @@ I checked whether there are mutual significant CpG sites among models, and find 
 -   1 CpG site is both significant for lek attendance and annual mating success
 
 -   2 CpG sites are significant for changes in body mass and annual mating success
+
 -   2 CpG sites are significant for changes in Microfilaria spp. and annual mating success
+
 -   1 CpG site is both significant for changes in HCT and annual mating success
 
 -   1 CpG site is both significant for lek attendance and changes in body mass
@@ -34,16 +36,12 @@ I plotted the raw data below, where on the left panels you can see the relations
 
 ### Physiological changes vs AMS
 
-![Raw data mutual significant CpG site body mass and AMS - 1](../plots/model_out/overlap/rawdata_overlap_cpg_3.png)
-![Raw data mutual significant CpG site body mass and AMS - 2](../plots/model_out/overlap/rawdata_overlap_cpg_4.png)
-![Raw data mutual significant CpG site Microfilaria spp. and AMS - 1](../plots/model_out/overlap/rawdata_overlap_cpg_6.png)
-![Raw data mutual significant CpG site Microfilaria spp. and AMS - 2](../plots/model_out/overlap/rawdata_overlap_cpg_7.png)
-![Raw data mutual significant CpG site HCT and AMS](../plots/model_out/overlap/rawdata_overlap_cpg_8.png)
+![Raw data mutual significant CpG site body mass and AMS - 1](../plots/model_out/overlap/rawdata_overlap_cpg_3.png) ![Raw data mutual significant CpG site body mass and AMS - 2](../plots/model_out/overlap/rawdata_overlap_cpg_4.png) ![Raw data mutual significant CpG site Microfilaria spp. and AMS - 1](../plots/model_out/overlap/rawdata_overlap_cpg_6.png) ![Raw data mutual significant CpG site Microfilaria spp. and AMS - 2](../plots/model_out/overlap/rawdata_overlap_cpg_7.png) ![Raw data mutual significant CpG site HCT and AMS](../plots/model_out/overlap/rawdata_overlap_cpg_8.png)
 
 ### Reproductive effort vs physiological changes
+
 ![Raw data mutual significant CpG site attendance and body mass](../plots/model_out/overlap/rawdata_overlap_cpg_5.png)
 
 ### Highlight
 
-There is one CpG site significant for three things: lek centrality, changes in IgG and annual mating success
-![Raw data mutual significant CpG site lek centrality, IgG and AMS](../plots/model_out/overlap/rawdata_overlap_cpg_2.png)
+There is one CpG site significant for three things: lek centrality, changes in IgG and annual mating success ![Raw data mutual significant CpG site lek centrality, IgG and AMS](../plots/model_out/overlap/rawdata_overlap_cpg_2.png)

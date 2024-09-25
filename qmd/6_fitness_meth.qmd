@@ -135,7 +135,7 @@ save(delta_out_fitness, file="results/modeloutput/fitness/out_fitness_nopre_raw.
 
 ## Exclude models that did not convergence
 
-```{r converge}
+```{r converge, echo=T, eval=F}
 #### Subset models and exclude models that did not converge ####
 
 delta_out_ams <- subset(delta_out_fitness, ams_message == "relative convergence (4)")
@@ -153,16 +153,13 @@ When excluding models with convergence warnings/errors, we retain 96.4% and 99.7
 
 ## Explore and filter for overdispersion
 
-
 We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is overdispersion and how to best filter for it.
 
 ![Histogram dispersion ratio and p-values AMS](../plots/model_out/fitness/ams/hist_raw_ams.png) 
 ![QQ plot model changing CpG sites AMS](../plots/model_out/fitness/ams/qqplot_raw_ams.png)
 
-
 ![Histogram dispersion ratio and p-values survival](../plots/model_out/fitness/surv/hist_raw_surv.png) 
 ![QQ plot model changing CpG sites survival](../plots/model_out/fitness/surv/qqplot_raw_surv.png)
-
 
 As overdispersion only seems to be a potential issue for the AMS model, we filter out the sites with an overdispersion ratio higher than the 95 percentile for AMS only.
 
@@ -172,9 +169,7 @@ delta_out_ams_clean <- subset(delta_out_ams, ams_disp_ratio < as.vector(quantile
 nrow(delta_out_ams_clean) # 711
 ```
 
-We are then left with a total of 711 CpG site models.
-![Histogram dispersion ratio and p-values filtered models AMS](../plots/model_out/fitness/ams/hist_filtered_ams.png) 
-![QQ plot model changing CpG sites filtered models AMS](../plots/model_out/fitness/ams/qqplot_filtered_ams.png)
+We are then left with a total of 711 CpG site models. ![Histogram dispersion ratio and p-values filtered models AMS](../plots/model_out/fitness/ams/hist_filtered_ams.png) ![QQ plot model changing CpG sites filtered models AMS](../plots/model_out/fitness/ams/qqplot_filtered_ams.png)
 
 ## FDR-correction
 
@@ -194,8 +189,7 @@ nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05)) #0
 
 There are 362 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the five most significant CpG sites.
 
-![Volcano plot AMS](../plots/model_out/fitness/ams/volcano_ams.png)
-![Volcano plot survival](../plots/model_out/fitness/surv/volcano_surv.png)
+![Volcano plot AMS](../plots/model_out/fitness/ams/volcano_ams.png) ![Volcano plot survival](../plots/model_out/fitness/surv/volcano_surv.png)
 
 ![Raw data AMS CpG site 1](../plots/model_out/fitness/ams/rawdata_cpg_1.png)
 
@@ -206,7 +200,6 @@ There are 362 significant CpG sites for AMS but none for survival. Below you can
 ![Raw data AMS CpG site 4](../plots/model_out/fitness/ams/rawdata_cpg_4.png)
 
 ![Raw data AMS CpG site 5](../plots/model_out/fitness/ams/rawdata_cpg_5.png)
-
 
 ## Annotation
 
@@ -349,13 +342,12 @@ sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 
 ![Number of significant CpG sites for AMS per gene region](../plots/model_out/fitness/perc_sig_per_region_ams.png)
 
-
 ### GOrilla
 
 We next run the list of gene IDs of the significant sites as the target list, using just this sorted target list and not a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
 
 ```{r sig_go}
-library(readxl)
+library(readxl); library(dplyr); library(kableExtra)
 table_go_function_changing <- read_excel("../results/modeloutput/fitness/GOFUNCTION_ams.xlsx")
 
 table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
