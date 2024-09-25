@@ -9,7 +9,7 @@ pacman::p_load(tidyverse, data.table, tibble, performance,
 
 ### Plotting ###
 source("scripts/plotting_theme.R")
-clrs <- viridisLite::viridis(6)
+#clrs <- viridisLite::viridis(6)
 
 ### Data ####
 
@@ -239,7 +239,7 @@ out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth)
 ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig))) +
     labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
-    scale_color_manual(values=c("grey60", clrs[4])) +
+    scale_color_manual(values=c(clrs[5], clrs[17])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -289,7 +289,7 @@ shade <- out_glmer %>%
                           scaf_nr == 22 | scaf_nr == 24 | scaf_nr == 26 | scaf_nr == 28 | scaf_nr == 30  ~ 0,
                          TRUE ~ max))
                                         
-clrs <- viridisLite::viridis(6)
+#clrs <- viridisLite::viridis(6)
 out_glmer %>% subset(scaf_nr <= 30) %>% 
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
     geom_point(size=5, alpha=0.5, aes(col = as.factor(col), fill = as.factor(col))) +
@@ -298,8 +298,8 @@ out_glmer %>% subset(scaf_nr <= 30) %>%
     #geom_rect(data=shade, aes(xmin=min, xmax=max, ymin=0, ymax=-log10(as.numeric(test$prepost_pval))), 
     #        alpha=0.5, fill = "#eceff4") + # "#f7f7f7" "#eceff4"
     #xlim(-1, 1)+
-    scale_color_manual(values=c(clrs[2], clrs[4])) +
-    scale_fill_manual(values=alpha(c(clrs[2], clrs[4]), 0.5)) +
+    scale_color_manual(values=c(clrs[5], clrs[17])) +
+    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.5)) +
     geom_hline(yintercept = -log10(0.05/nrow(out_glmer)), col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
@@ -325,7 +325,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[1]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_1
@@ -335,7 +335,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[2]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_2
@@ -345,7 +345,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[3]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[3]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_3
@@ -355,7 +355,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[4]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_4
@@ -365,7 +365,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[5]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_5
@@ -375,7 +375,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[6]) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
-  geom_point(aes(alpha = 0.8, size=cov), col = clrs[4], position = position_jitter(width = 0.1, seed = 3922)) + 
+  geom_point(aes(alpha = 0.8, size=cov), col = clrs[17], position = position_jitter(width = 0.1, seed = 3922)) + 
   labs(x = "Time period", y = "Methylation percentage", subtitle = out_glmer$chr_pos[6]) +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_6

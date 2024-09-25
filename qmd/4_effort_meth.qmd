@@ -259,6 +259,10 @@ m_attend_pre_out <- function_process_model(m_attend_pre, dir_plots = "plots/mode
 
 CpG site "ScEsiA3_17655__HRSCAF_20552_371333" is located in an upstream region (gene ID ANN24887, similar to GPR87).
 
+::: {.callout-caution collapse="true"}
+GPR87: This gene encodes a G protein-coupled receptor and is located in a cluster of G protein-couple receptor genes on chromosome 3. The encoded protein has been shown to be overexpressed in lung squamous cell carcinoma (PMID:18057535) and regulated by p53 (PMID:19602589). [provided by RefSeq, Nov 2011]
+:::
+
 CpG site "ScEsiA3_18278__HRSCAF_21663_133779007" is located in a gene body, exon, upstream and 5'UTR region (gene ID ANN06030 (unknown function)). This is the same CpG site that is associated with changes in body mass (when including pre-lekking meth %)!
 
 CpG site "ScEsiA3_18752__HRSCAF_22883_2574288" is located in an up- and downstream region (gene ID ANN31167 similar to PPP2R2A)

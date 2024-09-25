@@ -116,6 +116,8 @@ all_models_sig$chr_pos <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr_pos)
 all_models_sig$chr <- gsub(";","__", all_models_sig$chr)
 all_models_sig$chr <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr)
 
+save(all_models_sig, file = "results/annotated_model_sig.RData")
+
 ####### Gene regions ###########
 
 ### load annotation data
@@ -204,21 +206,6 @@ sum_annotated$region <- gsub("promoter", "Promoter", sum_annotated$region)
 sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
 
 sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
-
-# add total sig CpGs
-##sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
-#  model == "All" ~ 354649,
-#  model == "Annual mating success" ~ nrow(cpg_ams),
-#  model == "Attendance" ~ nrow(subset(cpg_effort, parameter == "attend")),
-#  model == "Centrality" ~ nrow(subset(cpg_effort, parameter == "dist")),
-#  model == "Fighting rate" ~ nrow(subset(cpg_effort, parameter == "fight")),
-#  model == "Time period" ~ nrow(cpg_change),
-#  model == "Delta body mass" ~ nrow(subset(cpg_physio, parameter == "Delta body mass")),
-#  model == "Delta HCT" ~ nrow(subset(cpg_physio, parameter == "Delta HCT")),
-#  model == "Delta IgG" ~ nrow(subset(cpg_physio, parameter == "Delta IgG")),
-#  model == "Delta Microfilaria spp." ~ nrow(subset(cpg_physio, parameter == "Delta Microfilaria spp.")),
-#  model == "Delta Trypanosoma spp." ~ nrow(subset(cpg_physio, parameter == "Delta Trypanosoma spp."))
-#))
 
 #sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
 sum_annotated <- subset(sum_annotated, n > 0)
@@ -394,4 +381,3 @@ subset(all_models_sig_annotated_chicken, parameter == "Delta Microfilaria spp." 
 
 subset(all_models_sig_annotated_chicken, parameter == "Delta body mass" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_mass.csv", quote=F, row.names=F, col.names = F)
-

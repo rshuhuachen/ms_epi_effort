@@ -56,7 +56,7 @@ function_model_fitness <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   ### AMS
-  formula_ams <- formula(paste0("MS ~ delta_meth + (1|id) "))
+  formula_ams <- formula(paste0("MS ~ delta_meth + (1|site/id) "))
   model_ams <- glmmTMB(formula_ams, data=df, family = "poisson")
   summary_ams <- summary(model_ams)
   
@@ -85,7 +85,7 @@ function_model_fitness <- function(df){tryCatch({
   ) 
   
   ### surv
-  formula_surv <- formula(paste0("surv ~ delta_meth + (1|id) "))
+  formula_surv <- formula(paste0("surv ~ delta_meth + (1|site/id) "))
   model_surv <- glmmTMB(formula_surv, data=df, family = "binomial")
   summary_surv <- summary(model_surv)
   

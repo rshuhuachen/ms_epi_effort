@@ -43,12 +43,13 @@ delta_meth_ls <- delta_meth %>% group_split(chr_pos)
 
 Below you'll find the full function to run the model per CpG site, where two models are run:
 
-One for annual mating success (AMS): `glmmTMB(MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "poisson", ziformula=~1)`
+One for annual mating success (AMS): `glmmTMB(MS ~ delta_meth + (1|site/id), family = "poisson")`
 
-And one for survival: `glmmTMB(surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id), family = "binomial")`
+And one for survival: `glmmTMB(surv ~ delta_meth + (1|site/id), family = "binomial")`
 
 ```{r function, eval=F}
 #| code-fold: true
+
 # function to run the model
 function_model_fitness <- function(df){tryCatch({
   chr_pos <- as.character(df[1,1])
@@ -57,105 +58,61 @@ function_model_fitness <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   ### AMS
-  formula_ams <- formula(paste0("MS ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id) "))
-  model_ams <- glmmTMB(formula_ams, data=df, family = "poisson", ziformula=~1)
+  formula_ams <- formula(paste0("MS ~ delta_meth + (1|site/id) "))
+  model_ams <- glmmTMB(formula_ams, data=df, family = "poisson")
   summary_ams <- summary(model_ams)
   
+  intercept_ams <- summary_ams$coefficients$cond["(Intercept)", "Estimate"]
+
   #fixed effect
-  parameter_estimate <- summary_ams$coefficients$cond["scale(delta_meth)", "Estimate"]
-  parameter_se <- summary_ams$coefficients$cond["scale(delta_meth)","Std. Error"]
-  parameter_zval <- summary_ams$coefficients$cond["scale(delta_meth)","z value"]
-  parameter_pval <- summary_ams$coefficients$cond["scale(delta_meth)", "Pr(>|z|)"]
+  parameter_estimate <- summary_ams$coefficients$cond["delta_meth", "Estimate"]
+  parameter_se <- summary_ams$coefficients$cond["delta_meth","Std. Error"]
+  parameter_zval <- summary_ams$coefficients$cond["delta_meth","z value"]
+  parameter_pval <- summary_ams$coefficients$cond["delta_meth", "Pr(>|z|)"]
   
-  #age effect
-  age_estimate <- summary_ams$coefficients$cond["age", "Estimate"]
-  age_se <- summary_ams$coefficients$cond["age", "Std. Error"]
-  age_zval <- summary_ams$coefficients$cond["age", "z value"]
-  age_pval <- summary_ams$coefficients$cond["age", "Pr(>|z|)"]
-  
-  #premeth effect
-  pre_estimate <- summary_ams$coefficients$cond["scale(methperc_pre)", "Estimate"]
-  pre_se <- summary_ams$coefficients$cond["scale(methperc_pre)", "Std. Error"]
-  pre_zval <- summary_ams$coefficients$cond["scale(methperc_pre)", "z value"]
-  pre_pval <- summary_ams$coefficients$cond["scale(methperc_pre)", "Pr(>|z|)"]
-  
-  rsqc <- performance::r2(model_ams)$R2_conditional #fixed plus random parameterects relative to overall variance
-  rsqm <- performance::r2(model_ams)$R2_marginal #fixed parameterects relative to overall variance
-  
-  message <- model_ams$fit$message
-  
-  icc_id_site <-icc(model_ams, by_group = TRUE, tolerance = 0)[1,2]
-  icc_site <-icc(model_ams, by_group = TRUE, tolerance = 0)[2,2]
-  
+  message_ams <- model_ams$fit$message
+  dispersion_ams <- overdisp_fun(model_ams)
  
   ams <- data.frame(chr_pos=as.factor(chr_pos),
-                    ams_icc_id_site = as.numeric(icc_id_site),
-                    ams_icc_site = as.numeric(icc_site),
+                    intercept_ams = intercept_ams,
                     ams_delta_meth_estimate = as.numeric(parameter_estimate),
                     ams_delta_meth_se = as.numeric(parameter_se),
                     ams_delta_meth_zval = as.numeric(parameter_zval),
                     ams_delta_meth_pval = as.numeric(parameter_pval),
-                    ams_age_estimate = as.numeric(age_estimate),
-                    ams_age_se = as.numeric(age_se),
-                    ams_age_zval = as.numeric(age_zval),
-                    ams_age_pval = as.numeric(age_pval),
-                    ams_pre_estimate = as.numeric(pre_estimate),
-                    ams_pre_se = as.numeric(pre_se),
-                    ams_pre_zval = as.numeric(pre_zval),
-                    ams_pre_pval = as.numeric(pre_pval),
-                    ams_rsqc = as.numeric(rsqc),
-                    ams_rsqm = as.numeric(rsqm),
-                    ams_message = message              
+                    ams_message = message_ams,
+                    ams_disp_chi = dispersion_ams[1][[1]],
+                    ams_disp_ratio = dispersion_ams[2][[1]],
+                    ams_disp_rdf = dispersion_ams[3][[1]],
+                    ams_disp_p = dispersion_ams[4][[1]]
   ) 
   
   ### surv
-  formula_surv <- formula(paste0("surv ~ scale(delta_meth) + age + scale(methperc_pre) + (1|site/id) "))
+  formula_surv <- formula(paste0("surv ~ delta_meth + (1|site/id) "))
   model_surv <- glmmTMB(formula_surv, data=df, family = "binomial")
   summary_surv <- summary(model_surv)
   
+  intercept_surv <- summary_surv$coefficients$cond["(Intercept)", "Estimate"]
+
   #fixed effect
-  parameter_estimate <- summary_surv$coefficients$cond["scale(delta_meth)", "Estimate"]
-  parameter_se <- summary_surv$coefficients$cond["scale(delta_meth)","Std. Error"]
-  parameter_zval <- summary_surv$coefficients$cond["scale(delta_meth)","z value"]
-  parameter_pval <- summary_surv$coefficients$cond["scale(delta_meth)", "Pr(>|z|)"]
-  
-  #age effect
-  age_estimate <- summary_surv$coefficients$cond["age", "Estimate"]
-  age_se <- summary_surv$coefficients$cond["age", "Std. Error"]
-  age_zval <- summary_surv$coefficients$cond["age", "z value"]
-  age_pval <- summary_surv$coefficients$cond["age", "Pr(>|z|)"]
-  
-  #premeth effect
-  pre_estimate <- summary_surv$coefficients$cond["scale(methperc_pre)", "Estimate"]
-  pre_se <- summary_surv$coefficients$cond["scale(methperc_pre)", "Std. Error"]
-  pre_zval <- summary_surv$coefficients$cond["scale(methperc_pre)", "z value"]
-  pre_pval <- summary_surv$coefficients$cond["scale(methperc_pre)", "Pr(>|z|)"]
-  
-  rsqc <- performance::r2(model_surv)$R2_conditional #fixed plus random parameterects relative to overall variance
-  rsqm <- performance::r2(model_surv)$R2_marginal #fixed parameterects relative to overall variance
+  parameter_estimate <- summary_surv$coefficients$cond["delta_meth", "Estimate"]
+  parameter_se <- summary_surv$coefficients$cond["delta_meth","Std. Error"]
+  parameter_zval <- summary_surv$coefficients$cond["delta_meth","z value"]
+  parameter_pval <- summary_surv$coefficients$cond["delta_meth", "Pr(>|z|)"]
   
   message <- model_surv$fit$message
   
-  icc_id_site <-icc(model_surv, by_group = TRUE, tolerance = 0)[1,2]
-  icc_site <-icc(model_surv, by_group = TRUE, tolerance = 0)[2,2]
+  dispersion_surv <- overdisp_fun(model_surv)
   
-  surv <- data.frame(surv_icc_id_site = as.numeric(icc_id_site),
-                    surv_icc_site = as.numeric(icc_site),
-                    surv_delta_meth_estimate = as.numeric(parameter_estimate),
+  surv <- data.frame(intercept_surv = intercept_surv,
+                  surv_delta_meth_estimate = as.numeric(parameter_estimate),
                     surv_delta_meth_se = as.numeric(parameter_se),
                     surv_delta_meth_zval = as.numeric(parameter_zval),
                     surv_delta_meth_pval = as.numeric(parameter_pval),
-                    surv_age_estimate = as.numeric(age_estimate),
-                    surv_age_se = as.numeric(age_se),
-                    surv_age_zval = as.numeric(age_zval),
-                    surv_age_pval = as.numeric(age_pval),
-                    surv_pre_estimate = as.numeric(pre_estimate),
-                    surv_pre_se = as.numeric(pre_se),
-                    surv_pre_zval = as.numeric(pre_zval),
-                    surv_pre_pval = as.numeric(pre_pval),
-                    surv_rsqc = as.numeric(rsqc),
-                    surv_rsqm = as.numeric(rsqm),
-                    surv_message = message              
+                    surv_message = message,
+                  surv_disp_chi = dispersion_surv[1][[1]],
+                  surv_disp_ratio = dispersion_surv[2][[1]],
+                  surv_disp_rdf = dispersion_surv[3][[1]],
+                  surv_disp_p = dispersion_surv[4][[1]]
   ) 
   out <- cbind(ams, surv)
   return(out)
@@ -163,39 +120,250 @@ function_model_fitness <- function(df){tryCatch({
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
 
+
 ```
 
 ## Run the model
 
 ```{r run_model, echo=T, eval=F}
-### run the model 
 # run model
-delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=12)
+delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=4)
 delta_out_fitness <- do.call(rbind.data.frame, delta_out_fitness)
 
-# convert to numeric
-delta_out_fitness$ams_delta_meth_estimate <- as.numeric(delta_out_fitness$ams_delta_meth_estimate)
-delta_out_fitness$surv_delta_meth_estimate <- as.numeric(delta_out_fitness$surv_delta_meth_estimate)
+save(delta_out_fitness, file="results/modeloutput/fitness/out_fitness_nopre_raw.RData")
+```
 
-# exclude those with convergence errors
+## Exclude models that did not convergence
+
+```{r converge}
+#### Subset models and exclude models that did not converge ####
+
 delta_out_ams <- subset(delta_out_fitness, ams_message == "relative convergence (4)")
 delta_out_surv <- subset(delta_out_fitness, surv_message == "relative convergence (4)")
 
-# FDR correction
-delta_out_ams$ams_delta_meth_qval <- p.adjust(delta_out_ams$ams_delta_meth_pval, method = "fdr", n = nrow(delta_out_ams))
-delta_out_surv$surv_delta_meth_qval <- p.adjust(delta_out_surv$surv_delta_meth_pval, method = "fdr", n = nrow(delta_out_surv))
+#### AMS ####
+nrow(delta_out_ams) / nrow(delta_out_fitness) * 100 # retain 96.4%, 749
 
-delta_out_ams$chr_pos <- as.factor(delta_out_ams$chr_pos)
-delta_out_surv$chr_pos <- as.factor(delta_out_surv$chr_pos)
+#### Survival ####
+nrow(delta_out_surv) / nrow(delta_out_fitness) * 100 # retain 99.7%, 775
 
 ```
 
-## Results
+When excluding models with convergence warnings/errors, we retain 96.4% and 99.7% of CpG site models for AMS and survival respectively.
 
-There are 481 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the four most significant CpG sites.
+## Explore and filter for overdispersion
 
-![Volcano plot fitness](../plots/model_out/volcano_fitness.png)
 
-![Raw data AMS top 10 CpGs a](../plots/model_out/rawdata_plot_AMS_cpg_top10.png)
+We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is overdispersion and how to best filter for it.
 
-![Raw data AMS top 10 CpGs b](../plots/model_out/rawdata_plot_AMS_cpg_top20.png)
+![Histogram dispersion ratio and p-values AMS](../plots/model_out/fitness/ams/hist_raw_ams.png) 
+![QQ plot model changing CpG sites AMS](../plots/model_out/fitness/ams/qqplot_raw_ams.png)
+
+
+![Histogram dispersion ratio and p-values survival](../plots/model_out/fitness/surv/hist_raw_surv.png) 
+![QQ plot model changing CpG sites survival](../plots/model_out/fitness/surv/qqplot_raw_surv.png)
+
+
+As overdispersion only seems to be a potential issue for the AMS model, we filter out the sites with an overdispersion ratio higher than the 95 percentile for AMS only.
+
+```{r filter_dispersion, echo=T, eval=F}
+## filter for 95 percentile AMS
+delta_out_ams_clean <- subset(delta_out_ams, ams_disp_ratio < as.vector(quantile(delta_out_ams$ams_disp_ratio, 0.95)))
+nrow(delta_out_ams_clean) # 711
+```
+
+We are then left with a total of 711 CpG site models.
+![Histogram dispersion ratio and p-values filtered models AMS](../plots/model_out/fitness/ams/hist_filtered_ams.png) 
+![QQ plot model changing CpG sites filtered models AMS](../plots/model_out/fitness/ams/qqplot_filtered_ams.png)
+
+## FDR-correction
+
+After excluding CpG site models with overdispersion, we apply a multiple-testing correction using the false discovery rate (FDR).
+
+```{r fdr, echo=T, eval=F}
+## FDR correction
+
+delta_out_ams_clean$ams_delta_meth_qval <- p.adjust(delta_out_ams_clean$ams_delta_meth_pval, method = "fdr", n = nrow(delta_out_ams_clean))
+delta_out_surv$surv_delta_meth_qval <- p.adjust(delta_out_surv$surv_delta_meth_pval, method = "fdr", n = nrow(delta_out_surv))
+
+#### How many significant? ####
+nrow(subset(delta_out_ams_clean, ams_delta_meth_qval < 0.05)) #362
+nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05)) #0
+
+```
+
+There are 362 significant CpG sites for AMS but none for survival. Below you can see the volcano plot and the raw data plots of the five most significant CpG sites.
+
+![Volcano plot AMS](../plots/model_out/fitness/ams/volcano_ams.png)
+![Volcano plot survival](../plots/model_out/fitness/surv/volcano_surv.png)
+
+![Raw data AMS CpG site 1](../plots/model_out/fitness/ams/rawdata_cpg_1.png)
+
+![Raw data AMS CpG site 2](../plots/model_out/fitness/ams/rawdata_cpg_2.png)
+
+![Raw data AMS CpG site 3](../plots/model_out/fitness/ams/rawdata_cpg_3.png)
+
+![Raw data AMS CpG site 4](../plots/model_out/fitness/ams/rawdata_cpg_4.png)
+
+![Raw data AMS CpG site 5](../plots/model_out/fitness/ams/rawdata_cpg_5.png)
+
+
+## Annotation
+
+### Based on black grouse annotation
+
+Next, we annotate in which regions these changing CpG sites are located in based on the black grouse annotation.
+
+```{r annotate_grouse, eval=F}
+
+#### Annotate AMS CpG sites ####
+
+### Packages ####
+pacman::p_load(genomation, GenomicFeatures, rtracklayer, 
+               GenomicRanges)
+
+
+### Combine all sites vs changing sites
+cpg_all <- delta_out_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
+names(cpg_all)[2] <- "parameter_qval"
+cpg_all$parameter <- "all"
+
+cpg_ams_select <- cpg_sig_ams %>% dplyr::select(c(chr_pos, ams_delta_meth_qval))
+names(cpg_ams_select)[2] <- "parameter_qval"
+cpg_ams_select$parameter <- "ams"
+
+all_models_sig <- rbind(cpg_all, cpg_ams_select)
+
+### Rename chr_pos and divide ###
+all_models_sig$chr_pos <- gsub("__", ";", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr_pos, )
+
+# Extract the numbers following HRSCAF=XXX_number
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(all_models_sig$chr_pos, "_", fixed = TRUE)
+
+all_models_sig$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2))
+
+all_models_sig$pos <- sapply(split_chr_pos, "[", 3)
+
+all_models_sig <- all_models_sig %>% 
+  relocate(chr, .after = chr_pos) %>%
+  relocate(pos, .after = chr_pos)
+
+#revert scafnames
+all_models_sig$chr_pos <- gsub(";","__", all_models_sig$chr_pos)
+all_models_sig$chr_pos <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr_pos)
+
+all_models_sig$chr <- gsub(";","__", all_models_sig$chr)
+all_models_sig$chr <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr)
+
+### Load annotation data
+annotation_dir <- "~/PhD_grouse/grouse-annotation/output"
+
+promoter=unique(gffToGRanges(paste0(annotation_dir, "/promoters.gff3")))
+genes=unique(gffToGRanges(paste0(annotation_dir, "/genes.gff3")))
+TSS=unique(gffToGRanges(paste0(annotation_dir, "/TSS.gff3")))
+exons_gene=unique(gffToGRanges(paste0(annotation_dir, "/exons_gene.gff3")))
+introns=unique(gffToGRanges(paste0(annotation_dir, "/introns_transcripts.gff3")))
+downstream=unique(gffToGRanges(paste0(annotation_dir, "/downstream.gff3")))
+upstream=unique(gffToGRanges(paste0(annotation_dir, "/upstream.gff3")))
+threeUTR =unique(gffToGRanges(paste0(annotation_dir, "/threeUTRs.gff3")))
+fiveUTR=unique(gffToGRanges(paste0(annotation_dir, "/fiveUTRs.gff3")))
+
+#### Annotate ####
+all_models_sig$end <- all_models_sig$pos
+all_models_sig$start <- all_models_sig$pos
+sig_gr <- as(all_models_sig, "GRanges")
+
+sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
+  add_column("region" = "promoter", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
+  add_column("region" = "gene", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
+  add_column("region" = "TSS", .after="parameter") %>%
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_exon <- as.data.frame(subsetByOverlaps(sig_gr, exons_gene)) %>% as.data.frame() %>%
+  add_column("region" = "exon", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_intron <- as.data.frame(subsetByOverlaps(sig_gr, introns))  %>% as.data.frame() %>%
+  add_column("region" = "intron", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_down <- as.data.frame(subsetByOverlaps(sig_gr, downstream)) %>% as.data.frame() %>%
+  add_column("region" = "downstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_up <- as.data.frame(subsetByOverlaps(sig_gr, upstream))  %>% as.data.frame() %>%
+  add_column("region" = "upstream", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_threeUTR <- as.data.frame(subsetByOverlaps(sig_gr, threeUTR))  %>% as.data.frame() %>%
+  add_column("region" = "threeUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+sig_fiveUTR <- as.data.frame(subsetByOverlaps(sig_gr, fiveUTR))  %>% as.data.frame() %>%
+  add_column("region" = "fiveUTR", .after="parameter") %>% 
+  dplyr::select(-c(seqnames:strand)) 
+
+all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
+                                  sig_tss, sig_exon, sig_intron, sig_down,
+                                  sig_up, sig_threeUTR,  sig_fiveUTR)
+
+summary(as.factor(all_models_sig_annotated$region))
+
+save(all_models_sig_annotated, file="results/modeloutput/fitness/annotated_sig_cpg_ams.RData")
+
+#### Summarise number of sites per region ####
+sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
+names(sum_annotated) <- c("region", "model", "n")
+
+sum_annotated$model <- gsub("all", "All", sum_annotated$model)
+sum_annotated$model <- gsub("ams", "Annual mating success", sum_annotated$model)
+
+sum_annotated$region <- gsub("downstream", "Downstream", sum_annotated$region)
+sum_annotated$region <- gsub("upstream", "Upstream", sum_annotated$region)
+sum_annotated$region <- gsub("exon", "Exon", sum_annotated$region)
+sum_annotated$region <- gsub("fiveUTR", "5' UTR", sum_annotated$region)
+sum_annotated$region <- gsub("gene", "Gene body", sum_annotated$region)
+sum_annotated$region <- gsub("intron", "Intron", sum_annotated$region)
+sum_annotated$region <- gsub("promoter", "Promoter", sum_annotated$region)
+sum_annotated$region <- gsub("threeUTR", "3' UTR", sum_annotated$region)
+
+sum_annotated$region <- factor(sum_annotated$region, levels = c("3' UTR", "5' UTR", "Downstream", "Upstream", "Gene body", "Exon", "Intron", "Promoter", "TSS"))
+
+# add total sig CpGs
+sum_annotated <- sum_annotated %>% mutate(n_total = case_when(
+  model == "All" ~ nrow(delta_out_ams),
+  model == "Annual mating success" ~ nrow(cpg_sig_ams)))
+
+sum_annotated <- sum_annotated %>% mutate(perc = n / n_total * 100)
+
+```
+
+![Number of significant CpG sites for AMS per gene region](../plots/model_out/fitness/perc_sig_per_region_ams.png)
+
+
+### GOrilla
+
+We next run the list of gene IDs of the significant sites as the target list, using just this sorted target list and not a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
+
+```{r sig_go}
+library(readxl)
+table_go_function_changing <- read_excel("../results/modeloutput/fitness/GOFUNCTION_ams.xlsx")
+
+table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
+
+table_go_process_changing <- read_excel("../results/modeloutput/fitness/GOPROCESS_ams.xlsx")
+
+table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_process_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
+
+```
+
+There doesn't seem to be that many significant GO terms, but do seem to be related to fatty acid regulation.
