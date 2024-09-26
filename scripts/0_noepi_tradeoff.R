@@ -17,114 +17,66 @@ data <- data %>% mutate(age_year = as.factor(case_when(Core == "Core" ~ year - b
 
 data$mass <- as.numeric(data$mass)    
 
-##### very raw testing #####
-### reproduction
-## reproduction vs survival
-summary(glmer(surv ~ attend + age + (1|year) + (1|site/id), data = data, family = "binomial")) #higher attendance, lower survival probability
-summary(glmer(surv ~ fight + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-summary(glmer(surv ~ dist + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-
-## quantifying the 'cost' of reproductive effort
-summary(lmerTest::lmer(mass_dif ~ attend + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(mass_dif ~ fight + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(mass_dif ~ dist + age + (1|year) + (1|site/id), data = data)) #more central, higher loss of body mass
-
-## resources vs reproductive investment
-summary(lmerTest::lmer(attend ~ mass + age + (1|year) + (1|site/id), data = data)) # higher starting mass, higher attendance
-summary(lmerTest::lmer(fight ~ mass + age + (1|year) + (1|site/id), data = data))
-summary(lmerTest::lmer(dist ~ mass + age + (1|year) + (1|site/id), data = data)) # higher starting mass, more central
-
-## is the 'cost' of reproduction predictive of survival?
-summary(glmer(surv ~ mass_dif + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns but lower sample size
-summary(glmer(surv ~ scale(mass)*scale(dist) + age + (1|year) + (1|site/id), data = data, family = "binomial")) 
-summary(glmer(MS ~ scale(mass)*scale(dist) + age + (1|year) + (1|site/id), data = data, family = "poisson")) 
-
-
-### maintenance
-## survival vs reproduction
-summary(glmer(MS ~ scale(ig_dif) + age + (1|year) + (1|site/id), data = data, family = "poisson")) #ns
-summary(glmer(MS ~ scale(microf_dif) + age + (1|year) + (1|site/id), data = data, family = "poisson")) #more parasites, higher mating success
-summary(glmer(MS ~ scale(trypa_dif) + age + (1|year) + (1|site/id), data = data, family = "poisson")) #more parasites, higher mating success
-summary(glmer(MS ~ scale(hct_dif) + age + (1|year) + (1|site/id), data = data, family = "poisson")) #almost sig negative
-
-## loss of maintenance because of reproduction?
-summary(lmerTest::lmer(ig_dif ~ scale(dist) + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(ig_dif ~ scale(attend) + age + (1|year) + (1|site/id), data = data)) #ns
-
-summary(lmerTest::lmer(microf_dif ~ scale(dist) + age + (1|year) + (1|site/id), data = data)) #
-summary(lmerTest::lmer(microf_dif ~ scale(attend) + age + (1|year) + (1|site/id), data = data)) #
-
-summary(lmerTest::lmer(trypa_dif ~ scale(dist) + age + (1|year) + (1|site/id), data = data)) #
-summary(lmerTest::lmer(trypa_dif ~ scale(attend) + age + (1|year) + (1|site/id), data = data)) #
-
-summary(lmerTest::lmer(hct_dif ~ scale(dist) + age + (1|year) + (1|site/id), data = data)) # almost sig positive, more central, lower increase in HCT
-summary(lmerTest::lmer(hct_dif ~ scale(attend) + age + (1|year) + (1|site/id), data = data)) #
-
-## quantifying the 'cost' of maintenance
-summary(lmerTest::lmer(mass_dif ~ scale(ig_dif) + age + (1|year) + (1|site/id), data = data)) #sig negative; higher increase in IgG, more loss in mass
-ggplot(data, aes(ig_dif, mass_dif)) + geom_point() + geom_smooth(method="lm")
-summary(lmerTest::lmer(mass_dif ~ scale(ig_dif) + age + (1|year) + (1|site/id), data = subset(data, ig_dif > -2142964 & ig_dif < 2549625)) ) #ns minus 2 outliers
-
-summary(lmerTest::lmer(mass_dif ~ microf_dif + age + (1|year) + (1|site/id), data = data)) #sig negative; higher increase in parasites, more loss in mass
-ggplot(data, aes(microf_dif, mass_dif)) + geom_point() + geom_smooth(method="lm")
-
-summary(lmerTest::lmer(mass_dif ~ trypa_dif + age + (1|year) + (1|site/id), data = data)) #sig negative;  higher increase in parasites, more loss in mass
-ggplot(data, aes(trypa_dif, mass_dif)) + geom_point() + geom_smooth(method="lm")
-
-summary(lmerTest::lmer(mass_dif ~ hct_dif + age + (1|year) + (1|site/id), data = data)) #sig positive
-ggplot(data, aes(hct_dif, mass_dif)) + geom_point() + geom_smooth(method="lm")
-
-## quantifying the 'cost' of maintenance vs reproduction
-summary(lmerTest::lmer(mass_dif ~ scale(dist) + scale(ig_dif) + age + (1|year) + (1|site/id), data = data)) #both ish but dist more
-summary(lmerTest::lmer(mass_dif ~ scale(dist) + scale(microf_dif) + age + (1|year) + (1|site/id), data = data)) #only dist
-summary(lmerTest::lmer(mass_dif ~ scale(dist) + scale(trypa_dif) + age + (1|year) + (1|site/id), data = data)) #both almost sig
-summary(lmerTest::lmer(mass_dif ~ scale(dist) + scale(hct_dif) + age + (1|year) + (1|site/id), data = data)) #only hct sig (positive)
-
-## affording cost of maintenance
-summary(lmerTest::lmer(ig_dif ~ scale(mass) + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(microf_dif ~ scale(mass) + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(trypa_dif ~ scale(mass) + age + (1|year) + (1|site/id), data = data)) #ns
-summary(lmerTest::lmer(hct_dif ~ scale(mass) + age + (1|year) + (1|site/id), data = data)) #ns
-
-## relationship igg and parasites?
-summary(lmerTest::lmer(scale(ig_dif) ~ scale(microf_dif) + age + (1|year) + (1|site/id), data = data)) #sig positive
-ggplot(data, aes(ig_dif, microf_dif)) + geom_point() + geom_smooth(method="lm")
-
-summary(lmerTest::lmer(ig_dif ~ scale(trypa_dif) + age + (1|year) + (1|site/id), data = data)) #ns
-
-ggplot(data, aes(ig_dif, trypa_dif)) + geom_point() + geom_smooth(method="lm")
-
-## physio and survival
-summary(glmer(surv ~ scale(ig_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-summary(glmer(surv ~ scale(microf_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-summary(glmer(surv ~ scale(trypa_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-summary(glmer(surv ~ scale(hct_dif) + age + (1|year) + (1|site/id), data = data, family = "binomial")) #ns
-
 #### formal models in brms ####
 
+#### model 1: full dataset - attendance
+
 ## 1) reproductive effort affected by available resources?
-m_1_a <- bf(attend ~ mass + (1|site/id))
-m_1_f <- bf(fight ~ mass + (1|site/id))
-m_1_d <- bf(dist ~ mass + (1|site/id))
+m_1_a <- bf(attend ~ scale(mass) + (1|site/id))
 
-## 2) loss in resources affected by reproductive effort?
-m_2 <- bf(mass_dif ~ attend + fight + dist +(1|site/id))
+## 2) fitness affected by loss in resources and/or reproductive effort?
+m_2_su_a <- bf(surv ~ scale(attend) + scale(mass) + (1|site/id), family = "bernoulli")
+m_2_ms_a <- bf(MS ~ scale(attend) + scale(mass) + (1|site/id), family = "poisson")
 
-## 3) fitness affected by loss in resources and/or reproductive effort?
-m_3_s <- bf(surv ~ mass_dif + attend + fight + dist + (1|site/id), family = "bernoulli")
-m_3_m <- bf(MS ~ mass_dif + attend + fight + dist +(1|site/id), family = "poisson")
-m_3_s_v2 <- bf(surv ~ attend + (1|site/id), family = "bernoulli")
+sem_attend <- m_1_a + m_2_su_a + m_2_ms_a
 
-sem <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s + m_3_m
+fit_attend <- brm(sem_attend, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 200000, thin = 500, warmup = 50000)
 
-fit <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
-           prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+save(fit_attend, file="results/modeloutput/brms_fit_attend.RData")
 
-save(fit, file="results/modeloutput/brms_fit_pheno.RData")
+### model 2: full dataset - fighting
+## 1) reproductive effort affected by available resources?
+m_1_f <- bf(fight ~ scale(mass) + scale(mass) + (1|site/id))
 
-sem2 <- m_1_a + m_1_f + m_1_d + m_2 + m_3_s_v2 + m_3_m
+## 2) fitness affected by loss in resources and/or reproductive effort?
+m_2_su_f <- bf(surv ~ scale(fight) + scale(mass) + (1|site/id), family = "bernoulli")
+m_2_ms_f <- bf(MS ~ scale(fight) + scale(mass) + (1|site/id), family = "poisson")
 
-fit_a <- brm(sem, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
-           prior = prior(normal(0,10), class = b), iter = 100000, thin = 1000, warmup = 50000)
+sem_fight <- m_1_f + m_2_su_f + m_2_ms_f
 
-save(fit_a, file="results/modeloutput/brms_fit_pheno_alternative.RData")
+fit_fight <- brm(sem_fight, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 200000, thin = 500, warmup = 50000)
+
+save(fit_fight, file="results/modeloutput/brms_fit_fight.RData")
+
+### model 3: full dataset - dist 
+## 1) reproductive effort affected by available resources?
+m_1_d <- bf(dist ~ scale(mass) + (1|site/id))
+
+## 2) fitness affected by loss in resources and/or reproductive effort?
+m_2_su_d <- bf(surv ~ scale(dist) + scale(mass) + (1|site/id), family = "bernoulli")
+m_2_ms_d <- bf(MS ~ scale(dist) + scale(mass) + (1|site/id), family = "poisson")
+
+sem_dist <- m_1_d + m_2_su_d + m_2_ms_d
+
+fit_dist <- brm(sem_dist, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 200000, thin = 500, warmup = 50000)
+
+save(fit_dist, file="results/modeloutput/brms_fit_dist.RData")
+
+#### model 2: changes
+
+## 1) loss in resources affected by reproductive effort?
+m_1 <- bf(mass_dif ~ scale(attend) + scale(fight) + scale(dist) + (1|site/id))
+
+## 2) loss in resources affects fitness?
+m_2_su_m <- bf(surv ~ scale(mass_dif) + scale(attend) + scale(fight) + scale(dist) + (1|site/id), family = "bernoulli")
+m_2_ms_m <- bf(MS ~ scale(mass_dif) + scale(attend) + scale(fight) + scale(dist) + (1|site/id), family = "poisson")
+
+sem_mass <- m_1 + m_2_su_m + m_2_ms_m 
+
+fit_mass <- brm(sem_mass, data = data, cores = 8, control = list(adapt_delta = 0.99, max_treedepth = 15),
+           prior = prior(normal(0,10), class = b), iter = 200000, thin = 500, warmup = 50000)
+
+save(fit_mass, file="results/modeloutput/brms_fit_mass.RData")

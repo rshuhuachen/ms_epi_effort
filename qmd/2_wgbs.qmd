@@ -1,0 +1,297 @@
+---
+title: "Whole genome bisulphite sequencing"
+---
+
+Prior to analysing our epiGBS data, which uses a reduced representation approach, we characterised CpG methylation across the genome. More specifically, because epiGBS targets CpG islands which tend to cluster around promoter regions, we wanted to characterise CpG methylation levels around TSS/promoter regions.
+
+# Trim, align, call methylation
+
+We used WGBS for one sample (E197) and trimmed the reads.
+
+```{bash trim, echo=T, eval=F}
+trim_galore --paired data/E197_R1.fq.gz data/E197_R2.fq.gz --quality 20 --fastqc --illumina --stringency 3 --gzip --length 20 --trim-n --cores 8 -o ./data/processed/trim/ 2>&1 | tee log/trim.log
+```
+
+Next, we prepare the black grouse reference genome for aligning bisulphite-treated reads (using a container).
+
+```{bash prep_gen, echo=T, eval=F}
+cd /vol/cluster-data/rchen/wgbs
+WGBS_SCRATCH=$(pwd)/scratch/
+
+/vol/apptainer/bin/apptainer run --cleanenv \
+  --fakeroot --overlay ${WGBS_SCRATCH} \
+  --bind ${WGBS_SCRATCH}/tmp,$(pwd),/vol/cluster-data/rchen/wgbs/data/genome \
+  --env PYTHONNOUSERSITE=1 \
+  /vol/cluster-data/rchen/epi/epigbs2/singularity/bismark_0_24.sif \
+  bismark_genome_preparation data/genome/
+
+```
+
+Now that the genome is ready, we align the reads to the prepared reference genome.
+
+```{bash align, echo=T, eval=F}
+/vol/apptainer/bin/apptainer run --cleanenv \
+  --fakeroot --overlay ${WGBS_SCRATCH} \
+  --bind ${WGBS_SCRATCH}/tmp,$(pwd),/vol/cluster-data/rchen/wgbs/data/genome \
+  --env PYTHONNOUSERSITE=1 \
+  /vol/cluster-data/rchen/epi/epigbs2/singularity/bismark_0_24.sif \
+  bismark -p 8 --parallel 4 --un --ambiguous --genome data/genome/ \
+  -1 data/processed/trim/E197_R1_val_1.fq.gz -2 data/processed/trim/E197_R2_val_2.fq.gz \
+  -o data/processed/alignment --rg_tag 
+```
+
+We de-duplicate the aligned sequences with bismark
+
+```{bash dedup, echo=T, eval=F}
+/vol/apptainer/bin/apptainer run --cleanenv \
+  --fakeroot --overlay ${WGBS_SCRATCH} \
+  --bind ${WGBS_SCRATCH}/tmp,$(pwd) \
+  --env PYTHONNOUSERSITE=1 \
+  /vol/cluster-data/rchen/epi/epigbs2/singularity/bismark_0_24.sif \
+  deduplicate_bismark E197_R1_val_1_bismark_bt2_pe.bam 
+```
+
+Lastly, we call methylation using bismark.
+
+```{bash meth, echo=T, eval=F}
+/vol/apptainer/bin/apptainer run --cleanenv \
+  --fakeroot --overlay ${WGBS_SCRATCH} \
+  --bind ${WGBS_SCRATCH}/tmp,$(pwd),/vol/cluster-data/rchen/wgbs/data/genome/ \
+  --env PYTHONNOUSERSITE=1 \
+  /vol/cluster-data/rchen/epi/epigbs2/singularity/bismark_0_24.sif \
+  bismark_methylation_extractor --multicore 4 --ignore 4 --ignore_r2 4 -p --CX --no_overlap --scaffolds --report \
+  --cutoff 10 \
+  --bedGraph --cytosine_report --comprehensive --gzip --merge_non_CpG --genome_folder data/ref/ data/processed/deduplicated/E197_R1_val_1_bismark_bt2_pe.deduplicated.bam \
+  -o data/processed/methcall
+  ```
+
+  # Downstream analysis
+
+  The last command generateds the file `methcall_report.CX_report.txt.gz` containing methylation calls. We further process this file in R to 1) annotate the CpG sites, 2) calculate average CpG methylation within gene regions across genes, using a sliding window approach. Next, we plot the result.
+
+  ## Annotate CpG sites
+
+To characterise methylation levels across different gene regions, we calculated the mean methylation level across genes for four regions: the transcription start site (TSS; 300 bp upstream to 50 bp downstream of the annotated starting position of each gene (Laine et al., 2016)), the gene body, upstream regions (10 kb upstream from the gene body) and downstream regions (10 kb downstream from the gene body). 
+
+  ```{r meth, echo=T, eval=F}
+#| code-fold: true
+
+#### packages ####
+pacman::p_load(data.table, genomation, GenomicFeatures, rtracklayer, GenomicRanges, windowscanr, dplyr, ggplot2, cowplot, assertthat)
+
+#### load data ####
+meth <- fread("data/processed/methcall/methcall_report.CX_report.txt.gz")
+
+# change symbols in scaffold names
+meth$V1 <- gsub(";", "__", meth$V1)
+meth$V1 <- gsub("=", "_", meth$V1)
+
+# name columns
+names(meth) <- c("chr", "start", "strand", "nC", "nT", "dicontext", "tricontext")
+
+# add 'end' column for ranges
+meth$end <- meth$start
+
+cpg <- subset(meth, dicontext == "CG")
+
+##### Annotation ####
+### make a function to annotate dataframe
+
+annotate_methfile <- function(long_df, annotation_dir, regions){
+  pacman::p_load(genomation, GenomicFeatures, rtracklayer, GenomicRanges, tidyverse)
+  
+  ### annotate df accordingly and add region name
+  long_df$end <- long_df$start
+  df_gr <- as(long_df, "GRanges") # convert to GRanges object
+  
+  #more complicated than just subsetting, want to include gene information too so need the overlap
+  annotated <- data.frame()
+  
+  for (i in regions){ # loop over specified regions
+    #load in gff file
+    region <- unique(gffToGRanges(paste0(annotation_dir, i, ".gff3")))
+    region <- as(region, "GRanges")
+    #find overlaps in df and gene region, because can have multiple hits include all
+    hits <- findOverlaps(df_gr, region)
+    idx_c <- queryHits(hits)
+    idx_region <- subjectHits(hits)
+    
+    #get values from overlaps for cpg and region separately
+    values_region <- data.frame(chr=region@seqnames[idx_region],
+                                start = region@ranges@start[idx_region], 
+                                end= region@ranges@start[idx_region] + region@ranges@width[idx_region], 
+                                gene_id = mcols(region)$gene_id[idx_region],
+                                region = i)
+    
+    values_cytosines <- data.frame(pos = df_gr@ranges@start[idx_c], 
+                                   nC = mcols(df_gr)$nC[idx_c], 
+                                   nT = mcols(df_gr)$nT[idx_c])
+    
+    annotated_region <- cbind(values_cytosines, values_region) #combine
+    annotated <- rbind(annotated, annotated_region) #add to full df
+  }
+  annotated$region <- as.factor(annotated$region)
+  
+  return(annotated)
+}
+
+## Annotate CpG and CH file
+cpg_annotate <- annotate_methfile(long_df = cpg,
+                                 annotation_dir = "/vol/cluster-data/rchen/git/grouse-annotation/output/",
+                                 regions = c("TSS", "genes", "upstream", "downstream"))
+
+cpg_annotate$methperc <- cpg_annotate$nC / (cpg_annotate$nC + cpg_annotate$nT) * 100
+
+save(cpg_annotate, file = "data/processed/annotated_cpg.RData")
+```
+
+## Calculate average methylation % per bin per region
+The mean methylation of TSS regions was calculated across the entire 350 bp window. We used a sliding window approach to calculate mean methylation of gene bodies following (Laine et al., 2016). First, we subdivided the gene body into 40 bins (where the bin length therefore differs depending on the gene size), and then calculated the mean methylation for each bin, with an overlap between neighbouring bins of 250 bp. A similar sliding window approach was used to calculate mean methylation of up- and downstream regions. Here, the regions were divided into 40 bins of 250 bp each, and the mean methylation was calculated for each bin with an overlap between neighbouring bins of 125 bp. 
+
+```{r meanmeth, eval=F, echo=T}
+#| code-fold: true
+#### Per gene, calculate meth% per bin
+cpg_list <- cpg_annotate %>% group_split(gene_id, region)
+
+save(cpg_list, file = "data/processed/annotated_cpg_list.RData")
+
+# make function to calcalate average methylation per bin
+meth_per_window <- function(gene_region){tryCatch({
+  #determine start and end of each region
+ 
+    #determine window length for each region
+  if (gene_region$region[1] == "TSS"){
+    start_region <- gene_region$start[1]
+    end_region <- gene_region$end[1]
+    length = end_region - start_region
+    overlap = 0
+    } else if (gene_region$region[1] == "genes"){
+    start_region <- gene_region$start[1]
+    end_region <- gene_region$end[1]
+    length = floor((end_region - start_region) / 40)
+    overlap = 0.125*length 
+    } else if (gene_region$region[1] == "downstream"){
+    start_region <- gene_region$start[1]
+    end_region <- gene_region$end[1]
+    length = 250
+    overlap = 125 
+    } else if (gene_region$region[1] == "upstream"){
+    start_region <- gene_region$start[1]
+    end_region <- gene_region$end[1] 
+    length = 250
+    overlap = 125}
+  
+  ### function window slider adapted from R package windowscanr
+  
+  source("scripts/function_sliding_window_custom.R")
+  window <- win_scan(x = gene_region,
+                     position = "pos",
+                     values = "methperc",
+                     win_size = length,
+                     win_step = length,
+                     overlap = overlap,
+                     funs = c("mean", "sd"),
+                     region = as.character(gene_region$region[1]))
+
+  window[window == "NaN"] <- NA
+  sum_window <- data.frame(window)
+  sum_window$chr<- gene_region$chr[1]
+  sum_window$gene_id<- gene_region$gene_id[1]
+  sum_window$region<- gene_region$region[1]
+  sum_window$start_bp<- start_region
+  sum_window$end_bp<- end_region
+  sum_window$length_bin<- length
+  sum_window$win_nr <- row.names(sum_window)
+  
+  return(sum_window)
+  }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(gene_region$chr[1], "_", gene_region$pos[1]))})}
+
+# run in parallel
+cpg_windows <- parallel::mclapply(cpg_list, meth_per_window, mc.cores=12)
+cpg_windows <- do.call(rbind.data.frame, cpg_windows)
+
+save(cpg_windows, file = "data/processed/cpg_meth_per_window_per_region.RData")
+```
+
+## Plot the result
+```{r plot, echo=T, eval=F}
+#| code-fold: true
+
+#### plotting
+
+total_window <- data.frame(region = c(rep("upstream", times = 41),
+                                      rep("TSS", times = 1),
+                                      rep("genes", times = 41),
+                                      rep("downstream", times = 41)),
+                           win_nr = c(c(1:41), 1, c(1:41), c(1:41)),
+                           window_total = c(1:124))
+#extract for one gene
+### first filter to have at least 2 cpg sites
+cpg_windows_min2 <- subset(cpg_windows, methperc_n > 1)
+
+cpg_windows_min2$region <- factor(cpg_windows_min2$region, levels = c("upstream", "TSS", "genes", "downstream"))
+cpg_windows_min2$win_nr <- as.numeric(cpg_windows_min2$win_nr)
+cpg_windows_min2$methperc_mean <- as.numeric(cpg_windows_min2$methperc_mean)
+cpg_windows_min2 <- left_join(cpg_windows_min2, total_window, by = c("win_nr", "region"))
+cpg_windows_min2 <- subset(cpg_windows_min2, !is.na(window_total))
+
+#problem when gene is too short and don't have 41 windows
+
+cpg_windows_min2_n <- cpg_windows_min2 %>% group_by(window_total) %>% 
+  summarise(n_meth = sum(!is.na(methperc_mean)))
+
+cpg_windows_min2_mean <- cpg_windows_min2 %>% group_by(window_total) %>% 
+  summarise(mean_meth = mean(methperc_mean, na.rm=TRUE),
+            min_meth = min(methperc_mean, na.rm=TRUE),
+            max_meth = max(methperc_mean, na.rm=TRUE))
+
+cpg_windows_min2_sd <- cpg_windows_min2 %>% group_by(window_total) %>% 
+  summarise(sd_meth = sd(methperc_mean, na.rm=T))
+
+cpg_windows_min2_sum <- left_join(cpg_windows_min2_n, cpg_windows_min2_mean, by = "window_total") #leave out region for now, so wrong - talk to kees
+cpg_windows_min2_sum <- left_join(cpg_windows_min2_sum, cpg_windows_min2_sd, by = "window_total")
+cpg_windows_min2_sum$se_meth <- cpg_windows_min2_sum$sd_meth/sqrt(cpg_windows_min2_sum$n_meth)
+cpg_windows_min2_sum[cpg_windows_min2_sum == "NaN"] <- NA
+
+# plot 
+clr_4 <- c("#0F8D7BFF", "#928918FF", "#774CB3FF", "#436C97FF")
+mean_tss_meth <- mean(cpg_windows_min2$methperc_mean[which(cpg_windows_min2$region == "TSS")], na.rm=T)      
+
+ggplot(cpg_windows_min2_sum, aes(x = window_total, y = mean_meth)) + 
+  geom_ribbon(aes(ymin = mean_meth - se_meth, ymax =mean_meth + se_meth), fill = "lightblue", alpha = 0.7)+
+  geom_line(col = "black", linewidth = 0.8) +
+  geom_point() + labs(y = "Mean CpG methylation %", title = "CpG methylation across gene regions")+
+  geom_text(label="10 kb upstream", x = 20, y = 66, col = clr_4[1], family = "Arial", size = 6)+
+  geom_text(label="Gene body", x = 62, y = 66, col = clr_4[3], family = "Arial", size = 6)+
+  geom_text(label="10 kb downstream", x = 104, y = 66, col = clr_4[4], family = "Arial", size = 6)+
+  geom_text(label="TSS", x = 51, y = mean_tss_meth, col = clr_4[2], family = "Arial", size = 6)+ 
+  geom_segment(aes(xend = 43, y = mean_tss_meth, x = 47, yend = mean_tss_meth), arrow = arrow(length = unit(0.2, "cm")))+
+  geom_vline(xintercept = 41.5, linetype = "dotted", col = clr_4[1])+ 
+  geom_vline(xintercept = 42.5, linetype = "dotted", col = clr_4[2])+ 
+  geom_vline(xintercept = 41.5, linetype = "dotted", col = clr_4[3])+ 
+  geom_vline(xintercept = 83.5, linetype = "dotted", col = clr_4[4])+ 
+  scale_color_manual(values=clr_4)+
+  ylim(55, 67)+
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        legend.position = "bottom") -> across_genes_min2
+
+tss_min2 <- subset(cpg_windows_min2, region == "TSS")
+tss_min2$methperc_n <- as.numeric(tss_min2$methperc_n)
+
+ggplot(tss_min2, aes(x = methperc_mean)) + geom_histogram() +
+  labs(x = "Mean CpG methylation %", title = "Histogram TSS CpG methylation % ", subtitle = "(min sites = 2)", y = "Count") -> tss_hist_min2
+
+ggplot(tss_min2, aes(x = methperc_n, y = methperc_mean)) + geom_point() +
+  labs(x = "Number of CpGs", title = "CpG sites vs mean methylation in TSS", subtitle = "(min sites = 2)", y = "Mean CpG methylation %") +
+  ylim(0, 100)+
+  geom_smooth(method="lm")-> tss_n_vs_meth_min2
+
+cowplot::plot_grid(tss_hist_min2, tss_n_vs_meth_min2, ncol = 2, align = "hv", axis = "bl") -> tss_a_min2
+cowplot::plot_grid(tss_a_min2, across_genes_min2, ncol = 1, align = "h", axis = "l") -> tss_sum_min2
+
+ggsave(tss_sum_min2, file = "plots/summary_wgbs_TSS_min2.png", width=16, height=16)
+
+```
+
+![CpG methylation across gene regions](../plots/summary_wgbs_TSS_min2.png)

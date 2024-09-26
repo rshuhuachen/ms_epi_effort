@@ -37,19 +37,13 @@ pheno_pre <- subset(all_pheno_epi, prepost=="pre")
 delta_meth <- left_join(delta_meth_raw, unique(pheno_pre[,c("id", "year", "MS", "surv", "site", "attend", "fight", "dist")]), by = c("id", "year"))
 delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_dif", "trypa_dif", "ig_dif", "hct_dif", "microf_dif")]), by = c("id", "year"))
        
-## only select cpg sites with enough data
-delta_meth_n <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(MS) & !is.na(surv)) %>% tally()
-delta_meth_n_min20 <- subset(delta_meth_n, n > 20)
-
-delta_meth_sub <- subset(delta_meth, chr_pos %in% delta_meth_n_min20$chr_pos) #777
-delta_meth_ls <- delta_meth_sub %>% group_split(chr_pos)
 
 ## test for zero inflation
 model_zi <- glmmTMB(MS ~ 1 + (1|site/id), family = "poisson", data = prepost_dif)
 DHARMa::testZeroInflation(model_zi) #ns
 
 # function to run the model
-function_model_fitness <- function(df){tryCatch({
+function_model_ams <- function(df){tryCatch({
   chr_pos <- as.character(df[1,1])
   df <- as.data.frame(df)
   df$site <- as.factor(df$site)
@@ -71,7 +65,7 @@ function_model_fitness <- function(df){tryCatch({
   message_ams <- model_ams$fit$message
   dispersion_ams <- overdisp_fun(model_ams)
  
-  ams <- data.frame(chr_pos=as.factor(chr_pos),
+  out <- data.frame(chr_pos=as.factor(chr_pos),
                     intercept_ams = intercept_ams,
                     ams_delta_meth_estimate = as.numeric(parameter_estimate),
                     ams_delta_meth_se = as.numeric(parameter_se),
@@ -83,6 +77,17 @@ function_model_fitness <- function(df){tryCatch({
                     ams_disp_rdf = dispersion_ams[3][[1]],
                     ams_disp_p = dispersion_ams[4][[1]]
   ) 
+  
+  return(out)
+  
+}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
+}
+
+function_model_surv <- function(df){tryCatch({
+  chr_pos <- as.character(df[1,1])
+  df <- as.data.frame(df)
+  df$site <- as.factor(df$site)
+  df$id <- as.factor(df$id)
   
   ### surv
   formula_surv <- formula(paste0("surv ~ delta_meth + (1|site/id) "))
@@ -101,8 +106,9 @@ function_model_fitness <- function(df){tryCatch({
   
   dispersion_surv <- overdisp_fun(model_surv)
   
-  surv <- data.frame(intercept_surv = intercept_surv,
-                  surv_delta_meth_estimate = as.numeric(parameter_estimate),
+  out <- data.frame(chr_pos=as.factor(chr_pos),
+                    intercept_surv = intercept_surv,
+                    surv_delta_meth_estimate = as.numeric(parameter_estimate),
                     surv_delta_meth_se = as.numeric(parameter_se),
                     surv_delta_meth_zval = as.numeric(parameter_zval),
                     surv_delta_meth_pval = as.numeric(parameter_pval),
@@ -112,26 +118,46 @@ function_model_fitness <- function(df){tryCatch({
                   surv_disp_rdf = dispersion_surv[3][[1]],
                   surv_disp_p = dispersion_surv[4][[1]]
   ) 
-  out <- cbind(ams, surv)
+  
   return(out)
   
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
 
 ### run the model 
-# run model
-delta_out_fitness <- parallel::mclapply(delta_meth_ls, function_model_fitness,mc.cores=4)
-delta_out_fitness <- do.call(rbind.data.frame, delta_out_fitness)
 
-save(delta_out_fitness, file="results/modeloutput/fitness/out_fitness_nopre_raw.RData")
+### ams
+## only select cpg sites with enough data
+delta_meth_n_ams <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(MS)) %>% tally()
+delta_meth_n_min20_ams <- subset(delta_meth_n_ams, n > 20)
+
+delta_meth_sub_ams <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_ams$chr_pos) #777
+delta_meth_ls_ams <- delta_meth_sub_ams %>% group_split(chr_pos)
+
+delta_out_ams_raw <- parallel::mclapply(delta_meth_ls_ams, function_model_ams,mc.cores=4)
+delta_out_ams <- do.call(rbind.data.frame, delta_out_ams_raw)
+
+save(delta_out_ams, file="results/modeloutput/fitness/out_ams_nopre_raw.RData")
+
+### survival
+delta_meth_n_surv <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(surv)) %>% tally()
+delta_meth_n_min20_surv <- subset(delta_meth_n_surv, n > 20)
+
+delta_meth_sub_surv <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_surv$chr_pos) #808
+delta_meth_ls_surv <- delta_meth_sub_surv %>% group_split(chr_pos)
+
+delta_out_surv_raw <- parallel::mclapply(delta_meth_ls_surv, function_model_surv,mc.cores=4)
+delta_out_surv <- do.call(rbind.data.frame, delta_out_surv_raw)
+
+save(delta_out_surv, file="results/modeloutput/fitness/out_surv_nopre_raw.RData")
 
 #### Subset models and exclude models that did not converge ####
 
-delta_out_ams <- subset(delta_out_fitness, ams_message == "relative convergence (4)")
-delta_out_surv <- subset(delta_out_fitness, surv_message == "relative convergence (4)")
+delta_out_ams <- subset(delta_out_ams, ams_message == "relative convergence (4)")
+delta_out_surv <- subset(delta_out_surv, surv_message == "relative convergence (4)")
 
 #### AMS ####
-nrow(delta_out_ams) / nrow(delta_out_fitness) * 100 # retain 96.4%, 749
+nrow(delta_out_ams)  # retain 774
 
 ##### Overdispersion raw data #####
 
@@ -158,7 +184,7 @@ dev.off()
 
 ## filter for 95 percentile
 delta_out_ams_clean <- subset(delta_out_ams, ams_disp_ratio < as.vector(quantile(delta_out_ams$ams_disp_ratio, 0.95)))
-nrow(delta_out_ams_clean) # 711
+nrow(delta_out_ams_clean) # 735
 
 # histogram dispersion ratio filtered 
 ggplot(delta_out_ams_clean, aes(x = ams_disp_ratio)) + geom_histogram() + 
@@ -184,7 +210,7 @@ dev.off()
 delta_out_ams_clean$ams_delta_meth_qval <- p.adjust(delta_out_ams_clean$ams_delta_meth_pval, method = "fdr", n = nrow(delta_out_ams_clean))
 
 #### Survival #####
-nrow(delta_out_surv) / nrow(delta_out_fitness) * 100 # retain 99.7%, 775
+nrow(delta_out_surv) # 802
 
 ##### Overdispersion raw data #####
 

@@ -10,16 +10,15 @@ book:
   cover-image: img/grouse.jpeg
   chapters:
       - index.qmd
-      - qmd/0_intro_hypothesis.qmd
-      - qmd/1_explore.qmd
-      - qmd/2_filter.qmd
-      - qmd/3_changing_meth.qmd
-      - qmd/4_effort_meth.qmd
-      - qmd/5_physio_meth.qmd
-      - qmd/6_fitness_meth.qmd
-#      - qmd/7_annotate.qmd
-      - qmd/8_mutual_sites.qmd
-#      - qmd/9_discussion.qmd
+      - qmd/1_intro_hypothesis.qmd
+      - qmd/2_wgbs.qmd
+      - qmd/3_explore.qmd
+      - qmd/4_filter.qmd
+      - qmd/5_changing_meth.qmd
+      - qmd/6_effort_meth.qmd
+      - qmd/7_physio_meth.qmd
+      - qmd/8_fitness_meth.qmd
+      - qmd/9_mutual_sites.qmd
   navbar:
     search: true
   favicon: img/grouse_silhouette.png

@@ -147,7 +147,7 @@ ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = r
 
 ggsave(fig1_region, file="plots/test.png", height=10, width=10)
 
-#### assembly fig 1 ####
+#### assembly fig ####
 
 plot_grid(fig1_volcano, fig1_region, ncol=2, labels=c("a", "b"), align="hv", axis="lb", label_fontface = "plain", label_size = 22) -> fig1_top
 plot_grid(fig1_manhattan, fig1_raw, ncol=1, labels=c("c", "d"), label_fontface = "plain", label_size = 22, rel_heights=c(1,2)) -> fig1_bottom

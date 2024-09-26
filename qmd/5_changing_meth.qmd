@@ -10,7 +10,7 @@ format:
 
 **Identifying CpG sites that change over the lekking season**
 
-Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect.
+Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. 
 
 Moreover, as there are (sometimes) multiple samples for each individual, we correct for the non-independence of individuals by including ID as a random effect, nested within lek. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
 
@@ -30,7 +30,7 @@ prepost <- subset(all_pheno_epi, !is.na(prepost)) #phenotype dataset also consis
 
 ### merge with metadata
 
-prepost_long <- left_join(prepost_long, prepost[,c("id", "prepost", "Core", "year", "born", "site", "fulldate")], 
+prepost_long <- left_join(prepost_long_clean, prepost[,c("id", "prepost", "Core", "year", "born", "site", "fulldate")], 
                           by = c("id", "year", "fulldate"))
 
 ### add age data: core males have known full life histories, non-cores were not captured as yearlings
@@ -265,6 +265,7 @@ Interestingly, there seems to more CpG sites that increase in methylation over t
 
 We can also look at the distribution of CpG sites across the genome in a Manhattan plot.
 
+
 ```{r manhattan, echo=T, eval= F}
 #| code-fold: true
 load("data/scaffold_names_dovetail.RData")
@@ -325,7 +326,6 @@ out_glmer %>% subset(scaf_nr <= 30) %>%
     axis.line.y = element_blank()) -> manhattan_change
 
 ```
-
 ![Manhattan plot](../plots/model_out/changing/manhattan_glmer.png){fig-align="left"}
 
 ### Raw data
@@ -496,6 +496,7 @@ sum_annotated %>% kbl() %>%
 
 ![Number of changing CpG sites per region](../plots/model_out/changing/perc_sig_per_region.png)
 
+
 ### GOrilla
 
 We next run the list of gene IDs of the significant sites as the target list as well as the list of gene IDs from all CpG sites that we ran the model on as a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
@@ -512,6 +513,6 @@ table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_pr
 
 ```
 
-Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly! Moreover, the component that was highly significant is the "chylomicron".
+Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly! Moreover, the component that was highly significant is the "chylomicron". 
 
 Wikipedia: "Chylomicrons transport lipids absorbed from the intestine to adipose, cardiac, and skeletal muscle tissue, where their triglyceride components are hydrolyzed by the activity of the lipoprotein lipase, allowing the released free fatty acids to be absorbed by the tissues. When a large portion of the triglyceride core has been hydrolyzed, chylomicron remnants are formed and are taken up by the liver, thereby also transferring dietary fat to the liver."
