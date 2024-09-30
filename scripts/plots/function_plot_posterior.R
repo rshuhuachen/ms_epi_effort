@@ -66,6 +66,7 @@ plot_posterior <- function(posteriors, response, predictor, name, label, minx=-1
           legend.position = "none",
           axis.line = element_blank(),
           axis.text.y = element_blank(),
+          axis.ticks = element_blank(),
           axis.title.x = element_blank(),
           axis.title.y = element_blank(),
           axis.text.x = element_blank(),
