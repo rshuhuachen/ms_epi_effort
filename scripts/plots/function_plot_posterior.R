@@ -59,7 +59,7 @@ plot_posterior <- function(posteriors, response, predictor, name, label, minx=-1
     scale_color_manual(values =c(clr)) +
     annotate("text", x = (minx + maxx)/2, y = label_y, label = paste0("Posterior median = ", format(round(interval$m, digits=2), nsmall=2), ", 
     95% CI = [", format(round(interval$ll, digits=2), nsmall=2), ", ", format(round(interval$hh, digits=2), nsmall=2), "]"),
-                                                        size = 10, label.padding = unit(1, "lines"))+
+                                                        size = , label.padding = unit(1, "lines"))+
     theme(panel.border = element_blank(),
           panel.grid = element_blank(),
           strip.background = element_blank(),
