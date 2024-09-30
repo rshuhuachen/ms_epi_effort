@@ -72,10 +72,10 @@ post_ms_mass_d <- plot_posterior(posteriors = fit_dist, response = "MS", predict
 post_surv_mass_d <- plot_posterior(posteriors = fit_dist, response = "surv", predictor = "scalemass", name = "surv_mass_d", label = "bottom")
 
 ### mass ####
-post_mass_dif_attend <- plot_posterior(posteriors = fit_mass, response = "mass_dif", predictor = "scaleattend", name = "mass_attend", label = "bottom")
-post_mass_dif_fight <- plot_posterior(posteriors = fit_mass, response = "mass_dif", predictor = "scalefight", name = "mass_fight", label = "bottom")
-post_mass_dif_dist <- plot_posterior(posteriors = fit_mass, response = "mass_dif", predictor = "scaledist", name = "mass_dist", label = "bottom")
+post_mass_dif_attend <- plot_posterior(posteriors = fit_mass, response = "massdif", predictor = "scaleattend", name = "mass_dif_attend", label = "bottom", minx = -90, maxx=30)
+post_mass_dif_fight <- plot_posterior(posteriors = fit_mass, response = "massdif", predictor = "scalefight", name = "mass_dif_fight", label = "bottom", minx=-20, maxx=30)
+#post_mass_dif_dist <- plot_posterior(posteriors = fit_mass, response = "massdif", predictor = "scaledist", name = "mass_dist", label = "bottom")
 
 post_ms_mass_dif <- plot_posterior(posteriors = fit_mass, response = "MS", predictor = "scalemass_dif", name = "MS_mass_dif", label = "bottom")
-post_surv_mass_dif <- plot_posterior(posteriors = fit_mass, response = "surv", predictor = "scalemass_dif", name = "surv_mass_dif", label = "bottom")
+post_surv_mass_dif <- plot_posterior(posteriors = fit_mass, response = "surv", predictor = "scalemass_dif", name = "surv_mass_dif", label = "bottom", minx = -1, maxx= 5)
 
