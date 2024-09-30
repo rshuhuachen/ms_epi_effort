@@ -68,7 +68,7 @@ save(fit_dist, file="results/modeloutput/brms_fit_dist.RData")
 #### model 2: changes
 
 ## 1) loss in resources affected by reproductive effort?
-m_1 <- bf(mass_dif ~ scale(attend) + scale(fight) + scale(dist) + (1|site/id))
+m_1 <- bf(mass_dif ~ scale(attend) + scale(fight) + (1|site/id))
 
 ## 2) loss in resources affects fitness?
 m_2_su_m <- bf(surv ~ scale(mass_dif) + (1|site/id), family = "bernoulli")
