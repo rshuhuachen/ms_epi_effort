@@ -71,8 +71,8 @@ save(fit_dist, file="results/modeloutput/brms_fit_dist.RData")
 m_1 <- bf(mass_dif ~ scale(attend) + scale(fight) + scale(dist) + (1|site/id))
 
 ## 2) loss in resources affects fitness?
-m_2_su_m <- bf(surv ~ scale(mass_dif) + scale(attend) + scale(fight) + scale(dist) + (1|site/id), family = "bernoulli")
-m_2_ms_m <- bf(MS ~ scale(mass_dif) + scale(attend) + scale(fight) + scale(dist) + (1|site/id), family = "poisson")
+m_2_su_m <- bf(surv ~ scale(mass_dif) + (1|site/id), family = "bernoulli")
+m_2_ms_m <- bf(MS ~ scale(mass_dif) + (1|site/id), family = "poisson")
 
 sem_mass <- m_1 + m_2_su_m + m_2_ms_m 
 

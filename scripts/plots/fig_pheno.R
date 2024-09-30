@@ -35,7 +35,7 @@ for (i in 1:length(list_models)){
   
   dev.off()
   i = i+1
-}
+  }
 
 ### plot posteriors ####
 ### load theme ####
@@ -63,12 +63,12 @@ post_ms_mass_f <- plot_posterior(posteriors = fit_fight, response = "MS", predic
 post_surv_mass_f <- plot_posterior(posteriors = fit_fight, response = "surv", predictor = "scalemass", name = "surv_mass_f", label = "bottom")
 
 ### dist ####
-post_dist_mass <- plot_posterior(posteriors = fit_dist, response = "dist", predictor = "scalemass", name = "dist_mass", label = "bottom")
+post_dist_mass <- plot_posterior(posteriors = fit_dist, response = "dist", predictor = "scalemass", name = "dist_mass", label = "bottom", min = -6, maxx = 1)
 
-post_ms_dist <- plot_posterior(posteriors = fit_dist, response = "MS", predictor = "scaledist", name = "MS_dist", label = "bottom")
-post_surv_dist <- plot_posterior(posteriors = fit_dist, response = "surv", predictor = "scaledist", name = "surv_dist", label = "bottom")
+post_ms_dist <- plot_posterior(posteriors = fit_dist, response = "MS", predictor = "scaledist", name = "MS_dist", label = "bottom", minx = -3, maxx=3)
+post_surv_dist <- plot_posterior(posteriors = fit_dist, response = "surv", predictor = "scaledist", name = "surv_dist", label = "bottom", minx = -1.5, maxx=1.5)
 
-post_ms_mass_d <- plot_posterior(posteriors = fit_dist, response = "MS", predictor = "scalemass", name = "MS_mass_d", label = "bottom")
+post_ms_mass_d <- plot_posterior(posteriors = fit_dist, response = "MS", predictor = "scalemass", name = "MS_mass_d", label = "bottom", minx = -1.5, maxx=1.5)
 post_surv_mass_d <- plot_posterior(posteriors = fit_dist, response = "surv", predictor = "scalemass", name = "surv_mass_d", label = "bottom")
 
 ### mass ####

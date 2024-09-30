@@ -43,7 +43,7 @@ plot_posterior <- function(posteriors, response, predictor, name, label, minx=-1
   }
 
    if(label == "bottom"){
-    label_y = 0.7
+    label_y = 0.8
   }
 
   # plot
@@ -76,7 +76,7 @@ plot_posterior <- function(posteriors, response, predictor, name, label, minx=-1
           legend.background = element_rect(fill='transparent'), #transparent legend bg
           legend.box.background = element_rect(fill='transparent')) #transparent legend panel
   
-  ggsave(plot, file = paste0("plots/pheno/posteriors_", name, ".png"), width=10, height=10)
+  ggsave(plot, file = paste0("plots/pheno/posteriors_", name, ".png"), width=6, height=6)
   return(plot)
 }
 
