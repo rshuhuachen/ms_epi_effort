@@ -37,7 +37,7 @@ save(fit_attend, file="results/modeloutput/brms_fit_attend.RData")
 
 ### model 2: full dataset - fighting
 ## 1) reproductive effort affected by available resources?
-m_1_f <- bf(fight ~ scale(mass) + scale(mass) + (1|site/id))
+m_1_f <- bf(fight ~ scale(mass) +  (1|site/id))
 
 ## 2) fitness affected by loss in resources and/or reproductive effort?
 m_2_su_f <- bf(surv ~ scale(fight) + scale(mass) + (1|site/id), family = "bernoulli")
