@@ -101,7 +101,7 @@ for (i in 1:nrow(labels_mass_dif)){
                 geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
-                labs(x = expression("z-transformed "*Delta*" body mass", y = expression(Delta*" methylation %"), 
+                labs(x = expression("z-transformed "*Delta*" body mass"), y = expression(Delta*" methylation %"), 
                         title = labels_mass_dif$lab[[i]]) -> plot
 
         ggsave(plot, file= paste0("plots/model_out/physio/raw_mass_dif_", i, ".png"), width=8, height=8)

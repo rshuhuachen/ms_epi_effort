@@ -65,7 +65,8 @@ save(ltet_meth_unite_0.75, file = "data/processed/methylkit_prepost_min0.75.RDat
 load(file = "data/processed/methylkit_prepost_raw.RData")
 source("scripts/function_convert_methfile.R")
 
-prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) #t of 1559800 CpG sites, kept 815460 which is 47.72% removed  
+prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0) #Out of 1559800 CpG sites, kept 1430526 which is 8.29% removed
+prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) #Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
 save(prepost_long, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3.RData")
 
 #### Filter for at least 50% of samples in both time points (N>30)
