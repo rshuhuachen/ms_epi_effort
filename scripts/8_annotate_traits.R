@@ -381,3 +381,9 @@ subset(all_models_sig_annotated_chicken, parameter == "Delta Microfilaria spp." 
 
 subset(all_models_sig_annotated_chicken, parameter == "Delta body mass" & region != "exon") %>% arrange(parameter_qval) %>%
   dplyr::select(gene_id) %>% unique() %>% write.csv("results/tables/sig_gene_ids_mass.csv", quote=F, row.names=F, col.names = F)
+
+
+### isolate confusion
+cpg_gr <- as(subset(all_models_sig, parameter == "attend" & pos == 2574288), "GRanges")
+down_sub <- subset(downstream, gene_id == "ANN31167")
+as.data.frame(mergeByOverlaps(cpg_gr, downstream))
