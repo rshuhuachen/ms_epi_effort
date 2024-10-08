@@ -65,8 +65,8 @@ rm(data)
 ## mass_dif 
 labels_mass_dif <- data.frame(chr_pos = c("ScEsiA3_17616__HRSCAF_20466_3956821",
                                         "ScEsiA3_18278__HRSCAF_21663_133779007"),
-                            lab = c("CpG H: upstream of genes BPI and ID1",
-                                    "CpG B: in gene body, unknown gene"))
+                            lab = c("CpG H: downstream from ID1",
+                                    "CpG B: in exon of ADCK2"))
 
 mass_dif <- mass_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 mass_dif <- left_join(mass_dif, labels_mass_dif)
@@ -116,7 +116,7 @@ labels_microf_dif <- data.frame(chr_pos = c("ScEsiA3_16766__HRSCAF_19082_2830017
                                         "ScEsiA3_16771__HRSCAF_19097_2512626",
                                         "ScEsiA3_21978__HRSCAF_26928_6268951"),
                             lab = c("CpG I: unannotated",
-                                    "CpG J: in gene body of gene JAM3",
+                                    "CpG J: in exon of gene JAM3",
                                     "CpG K: in promoter of gene PPP1R1B"))
 
 microf_dif <- microf_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
@@ -315,12 +315,11 @@ labels_mass_dif <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_53786697"
                                         "ScEsiA3_17616__HRSCAF_20466_3956821",
                                         "ScEsiA3_18752__HRSCAF_22883_4031831",
                                         "ScEsiA3_21976__HRSCAF_26926_4403331"),
-                            lab = c("CpG N: gene body 
-of gene Six4",
+                            lab = c("CpG N: in intron of Six4",
                                     "CpG O: unannotated", 
-                                    "CpG H: upstream of genes BPI and ID1",
-                                    "CpG P: gene body of TET3",
-                                    "CpG Q: up- and downstream of KIAA0319L"))
+                                    "CpG H: upstream of ID1",
+                                    "CpG P: in intron of TET3",
+                                    "CpG Q: downstream from KIAA0319L"))
 
 mass_dif <- left_join(mass_dif, labels_mass_dif)
 

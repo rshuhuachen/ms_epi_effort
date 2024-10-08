@@ -138,41 +138,52 @@ all_models_sig$end <- all_models_sig$pos
 all_models_sig$start <- all_models_sig$pos
 sig_gr <- as(all_models_sig, "GRanges")
 
-sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
-  add_column("region" = "promoter", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_promoter <- mergeByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
+  add_column("region" = "promoter", .after="parameter") %>%
+  mutate(distance = as.numeric(promoter.end) - as.numeric(pos) ) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
+sig_gene <- as.data.frame(mergeByOverlaps(sig_gr, genes)) %>% 
   add_column("region" = "gene", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance = as.numeric(pos) - as.numeric(genes.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
+sig_tss <- as.data.frame(mergeByOverlaps(sig_gr, TSS)) %>% 
   add_column("region" = "TSS", .after="parameter") %>%
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance = as.numeric(TSS.end) - as.numeric(pos) ) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_exon <- as.data.frame(subsetByOverlaps(sig_gr, exons_gene)) %>% as.data.frame() %>%
+sig_exon <- as.data.frame(mergeByOverlaps(sig_gr, exons_gene)) %>% 
   add_column("region" = "exon", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance = as.numeric(pos) - as.numeric(exons_gene.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_intron <- as.data.frame(subsetByOverlaps(sig_gr, introns))  %>% as.data.frame() %>%
+sig_intron <- as.data.frame(mergeByOverlaps(sig_gr, introns))  %>%
   add_column("region" = "intron", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance = as.numeric(pos) - as.numeric(introns.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_down <- as.data.frame(subsetByOverlaps(sig_gr, downstream)) %>% as.data.frame() %>%
-  add_column("region" = "downstream", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_down <- mergeByOverlaps(downstream, sig_gr)
+sig_down <- as.data.frame(sig_down@listData)
+sig_down <- sig_down %>% add_column("region" = "downstream", .after="parameter") %>% 
+  mutate(distance = as.numeric(pos) - as.numeric(downstream.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_up <- as.data.frame(subsetByOverlaps(sig_gr, upstream))  %>% as.data.frame() %>%
-  add_column("region" = "upstream", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_up <- mergeByOverlaps(upstream, sig_gr)
+sig_up <- as.data.frame(sig_up@listData)
+sig_up <- sig_up %>% add_column("region" = "upstream", .after="parameter") %>% 
+  mutate(distance =  as.numeric(upstream.end) - as.numeric(pos)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_threeUTR <- as.data.frame(subsetByOverlaps(sig_gr, threeUTR))  %>% as.data.frame() %>%
+sig_threeUTR <- as.data.frame(mergeByOverlaps(sig_gr, threeUTR))  %>%
   add_column("region" = "threeUTR", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance =  as.numeric(threeUTR.start) - as.numeric(pos)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
-sig_fiveUTR <- as.data.frame(subsetByOverlaps(sig_gr, fiveUTR))  %>% as.data.frame() %>%
+sig_fiveUTR <- as.data.frame(mergeByOverlaps(sig_gr, fiveUTR))  %>% 
   add_column("region" = "fiveUTR", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+  mutate(distance =  as.numeric(pos) - as.numeric(fiveUTR.start)) %>%
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, pre_control, ID, distance)) 
 
 all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
                                   sig_tss, sig_exon, sig_intron, sig_down,

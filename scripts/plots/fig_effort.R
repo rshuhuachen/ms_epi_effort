@@ -60,9 +60,9 @@ rm(data)
 labels_attend <- data.frame(chr_pos = c("ScEsiA3_17655__HRSCAF_20552_371333",
                                         "ScEsiA3_18278__HRSCAF_21663_133779007",
                                         "ScEsiA3_18752__HRSCAF_22883_2574288"),
-                            lab = c("CpG A: upstream of gene GPR87",
-                                    "CpG B: in gene body, unknown gene",
-                                    "CpG C: down- and upstream of gene PPP2R2A"))
+                            lab = c("CpG A: upstream from GPR87",
+                                    "CpG B: exon of ADCK2",
+                                    "CpG C: downstream from UNK"))
 
 attend <- attend %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 attend <- left_join(attend, labels_attend)
@@ -109,10 +109,9 @@ for (i in 1:nrow(labels_attend)){
 labels_fight <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_6262304",
                                         "ScEsiA3_18290__HRSCAF_21698_5473558",
                                         "ScEsiA3_21978__HRSCAF_26928_5532732"),
-                            lab = c("CpG D: in gene body of RAD9A",
-                                    "CpG E: upstream of SLC38A10",
-                                    "CpG F: in gene body of TRAK1, 
-upstream of FKBP10"))
+                            lab = c("CpG D: in exon of RHOF",
+                                    "CpG E: upstream from SLC38A10",
+                                    "CpG F: in intron of TRAK1"))
 
 fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 fight <- left_join(fight, labels_fight)
@@ -156,7 +155,7 @@ for (i in 1:nrow(labels_fight)){
    
 ## dist 
 labels_dist <- data.frame(chr_pos = c("ScEsiA3_21979__HRSCAF_26929_1282292"),
-                            lab = c("CpG G: upstream of NFIC"))
+                            lab = c("CpG G: upstream from NFIC"))
 
 dist <- dist %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 dist <- left_join(dist, labels_dist)
