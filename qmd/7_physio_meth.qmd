@@ -88,7 +88,7 @@ m_mass_with_pre_out <- function_process_model(m_mass_with_pre, dir_plots = "plot
 
 ### Delta mass
 
-808 CpG sites had enough phenotypic and epigenetic data to run the body mass model (after filtering for n > 20).
+808 CpG sites had enough phenotypic and epigenetic data to run the body mass model (after filtering for n \> 20).
 
 #### With pre-lekking
 
@@ -100,15 +100,15 @@ m_mass_with_pre_out <- function_process_model(m_mass_with_pre, dir_plots = "plot
 
 ![Raw data: delta mass with pre-methylation CpG 2](../plots/model_out/physio/mass/mass_with_pre_2.png)
 
-CpG site "ScEsiA3_17616__HRSCAF_20466_3956821" is located in a downstream region (gene IDs ANN28634 similar to BPI and ANN28635 similar to ID1).
+CpG site "ScEsiA3_17616\_\_HRSCAF_20466_3956821" is located downstream from gene IDs ANN28634 (similar to BPI) and ANN28635 (similar to ID1, closer).
 
-::: {.callout-caution collapse="true"}
+::: {.callout-note collapse="true"}
 BPI: BPI (Bactericidal Permeability Increasing Protein) is a Protein Coding gene. Diseases associated with BPI include Meningococcemia and Reactive Arthritis. Among its related pathways are Innate Immune System and Toll Like Receptor 3 (TLR3) Cascade. Gene Ontology (GO) annotations related to this gene include lipid binding and lipopolysaccharide binding. An important paralog of this gene is LBP.
 
-ID1: The protein encoded by this gene is a helix-loop-helix (HLH) protein that can form heterodimers with members of the basic HLH family of transcription factors. The encoded protein has no DNA binding activity and therefore can inhibit the DNA binding and transcriptional activation ability of basic HLH proteins with which it interacts. This protein may play a role in cell growth, senescence, and differentiation. Two transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Jul 2008]
+ID1: The protein encoded by this gene is a helix-loop-helix (HLH) protein that can form heterodimers with members of the basic HLH family of transcription factors. The encoded protein has no DNA binding activity and therefore can inhibit the DNA binding and transcriptional activation ability of basic HLH proteins with which it interacts. This protein may play a role in cell growth, senescence, and differentiation. Two transcript variants encoding different isoforms have been found for this gene. \[provided by RefSeq, Jul 2008\]
 :::
 
-CpG site "ScEsiA3_18278__HRSCAF_21663_133779007" is located in a gene body, exon, upstream region and 5'UTR (gene IDs ANN06028 and ANN06030). This CpG site is the same that is significantly associated with attendance rate where we include pre-lekking methylation % in the model (!).
+CpG site "ScEsiA3_18278\_\_HRSCAF_21663_133779007" is located in the exon of ANN06029 (similar to Adck2) and upstream from ANN06028 and ANN06030 (both unknown functions). This CpG site is the same that is significantly associated with attendance rate where we include pre-lekking methylation % in the model (!).
 
 #### Without pre-lekking
 
@@ -128,57 +128,57 @@ CpG site "ScEsiA3_18278__HRSCAF_21663_133779007" is located in a gene body, exon
 
 One of the significant 5 CpG sites overlaps with the model that does include pre-methylation %.
 
-CpG site "ScEsiA3_15486__HRSCAF_17393_53786697" is located in a gene body and intron (gene ID ANN20472 similar to Six4).
+CpG site "ScEsiA3_15486\_\_HRSCAF_17393_53786697" is located in an intron (gene ID ANN20472 similar to Six4).
 
-::: {.callout-caution collapse="true"}
-Six4: This gene encodes a member of the homeobox family, subfamily SIX. The drosophila homolog is a nuclear homeoprotein required for eye development. Studies in mouse show that this gene product functions as a transcription factor, and may have a role in the differentiation or maturation of neuronal cells. [provided by RefSeq, May 2010]
+::: {.callout-note collapse="true"}
+Six4: This gene encodes a member of the homeobox family, subfamily SIX. The drosophila homolog is a nuclear homeoprotein required for eye development. Studies in mouse show that this gene product functions as a transcription factor, and may have a role in the differentiation or maturation of neuronal cells. \[provided by RefSeq, May 2010\]
 :::
 
-CpG site "ScEsiA3_17616__HRSCAF_20466_3956821" is located in a downstream region (gene ID ANN28634, similar to BPI, and ANN28635 similar to ID1). (see above)
+CpG site "ScEsiA3_17616\_\_HRSCAF_20466_3956821" is located in a downstream region (gene ID ANN28634, similar to BPI, and ANN28635 similar to ID1). (see above)
 
-CpG site "ScEsiA3_18752__HRSCAF_22883_4031831" is located in a gene body and intron (gene ID ANN31264 similar to TET3).
+CpG site "ScEsiA3_18752\_\_HRSCAF_22883_4031831" is located in an intron (gene ID ANN31264 similar to TET3).
 
-::: {.callout-caution collapse="true"}
-TET3: Enables methyl-CpG binding activity and zinc ion binding activity. Involved in histone H3-K4 trimethylation; positive regulation of transcription by RNA polymerase II; and protein O-linked glycosylation. Predicted to be located in cytoplasm and male pronucleus. Predicted to be active in nucleus. Biomarker of esophagus squamous cell carcinoma. [provided by Alliance of Genome Resources, Apr 2022]
+::: {.callout-note collapse="true"}
+TET3: Enables methyl-CpG binding activity and zinc ion binding activity. Involved in histone H3-K4 trimethylation; positive regulation of transcription by RNA polymerase II; and protein O-linked glycosylation. Predicted to be located in cytoplasm and male pronucleus. Predicted to be active in nucleus. Biomarker of esophagus squamous cell carcinoma. \[provided by Alliance of Genome Resources, Apr 2022\]
 :::
 
-CpG site "ScEsiA3_21976__HRSCAF_26926_4403331" is located in a down- and upstream region (gene ID ANN30832, similar to Kiaa0319l).
+CpG site "ScEsiA3_21976\_\_HRSCAF_26926_4403331" is located upstream from ANN30833 (similar to IFI27) and downstream from gene ID ANN30832 (similar to Kiaa0319l, closer).
 
-::: {.callout-caution collapse="true"}
-Kiaa0319l: Predicted to act upstream of or within several processes, including flagellated sperm motility; proacrosomal vesicle fusion; and receptor-mediated endocytosis of virus by host cell. Located in Golgi apparatus; cytoplasmic vesicle; and nucleolus. [provided by Alliance of Genome Resources, Apr 2022]
+::: {.callout-note collapse="true"}
+IFI27: Enables RNA polymerase II-specific DNA-binding transcription factor binding activity; identical protein binding activity; and lamin binding activity. Involved in several processes, including cellular protein metabolic process; defense response to other organism; and extrinsic apoptotic signaling pathway. Acts upstream of or within negative regulation of transcription by RNA polymerase II and regulation of protein export from nucleus. Located in mitochondrial membrane and nuclear inner membrane. [provided by Alliance of Genome Resources, Apr 2022]
+
+Kiaa0319l: Predicted to act upstream of or within several processes, including flagellated sperm motility; proacrosomal vesicle fusion; and receptor-mediated endocytosis of virus by host cell. Located in Golgi apparatus; cytoplasmic vesicle; and nucleolus. \[provided by Alliance of Genome Resources, Apr 2022\]
 :::
 
 ### Microfilaria spp.
 
-149 CpG sites had enough phenotypic and epigenetic data to run the Microfilaria model (after filtering for n > 20).
+149 CpG sites had enough phenotypic and epigenetic data to run the Microfilaria model (after filtering for n \> 20).
 
 #### With pre-lekking
 
 ![Histogram dispersion and p-value: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_with_pre.png)
 
-![Volcano plot: delta Microfilaria spp.  with pre-methylation](../plots/model_out/physio/microf/volcawith_microf_dif_with_pre.png)
+![Volcano plot: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/volcawith_microf_dif_with_pre.png)
 
-![Raw data: delta Microfilaria spp.  with pre-methylation CpG 1](../plots/model_out/physio/microf/microf_with_pre_1.png)
+![Raw data: delta Microfilaria spp. with pre-methylation CpG 1](../plots/model_out/physio/microf/microf_with_pre_1.png)
 
-![Raw data: delta Microfilaria spp.  with pre-methylation CpG 2](../plots/model_out/physio/microf/microf_with_pre_2.png)
+![Raw data: delta Microfilaria spp. with pre-methylation CpG 2](../plots/model_out/physio/microf/microf_with_pre_2.png)
 
-![Raw data: delta Microfilaria spp.  with pre-methylation CpG 3](../plots/model_out/physio/microf/microf_with_pre_3.png)
+![Raw data: delta Microfilaria spp. with pre-methylation CpG 3](../plots/model_out/physio/microf/microf_with_pre_3.png)
 
-CpG site "ScEsiA3_16766__HRSCAF_19082_28300178" -????
-CpG site "ScEsiA3_16771__HRSCAF_19097_2512626" is located in a gene body, exon and 5'UTR (gene ID ANN30965 similar to JAM3).
+CpG site "ScEsiA3_16766\_\_HRSCAF_19082_28300178" was unannotated and CpG site "ScEsiA3_16771\_\_HRSCAF_19097_2512626" is located in an exon of gene ID ANN30965 (similar to JAM3).
 
-::: {.callout-caution collapse="true"}
-JAM3: Tight junctions represent one mode of cell-to-cell adhesion in epithelial or endothelial cell sheets, forming continuous seals around cells and serving as a physical barrier to prevent solutes and water from passing freely through the paracellular space. The protein encoded by this immunoglobulin superfamily gene member is localized in the tight junctions between high endothelial cells. Unlike other proteins in this family, the this protein is unable to adhere to leukocyte cell lines and only forms weak homotypic interactions. The encoded protein is a member of the junctional adhesion molecule protein family and acts as a receptor for another member of this family. A mutation in an intron of this gene is associated with hemorrhagic destruction of the brain, subependymal calcification, and congenital cataracts. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Apr 2011]
+::: {.callout-note collapse="true"}
+JAM3: Tight junctions represent one mode of cell-to-cell adhesion in epithelial or endothelial cell sheets, forming continuous seals around cells and serving as a physical barrier to prevent solutes and water from passing freely through the paracellular space. The protein encoded by this immunoglobulin superfamily gene member is localized in the tight junctions between high endothelial cells. Unlike other proteins in this family, the this protein is unable to adhere to leukocyte cell lines and only forms weak homotypic interactions. The encoded protein is a member of the junctional adhesion molecule protein family and acts as a receptor for another member of this family. A mutation in an intron of this gene is associated with hemorrhagic destruction of the brain, subependymal calcification, and congenital cataracts. Alternative splicing results in multiple transcript variants.\[provided by RefSeq, Apr 2011\]
 :::
 
-CpG site "ScEsiA3_21978__HRSCAF_26928_6268951" is located in a TSS, promoter (gene id ANN24632 similar to PPP1R1B) and upstream region (gene ID ANN24631 similar to STARD3).
+CpG site "ScEsiA3_21978\_\_HRSCAF_26928_6268951" is located in a TSS (gene id ANN24632 similar to PPP1R1B) and upstream region (gene ID ANN24631 similar to STARD3).
 
-::: {.callout-caution collapse="true"}
-STARD3: This gene encodes a member of a subfamily of lipid trafficking proteins that are characterized by a C-terminal steroidogenic acute regulatory domain and an N-terminal metastatic lymph node 64 domain. The encoded protein localizes to the membranes of late endosomes and may be involved in exporting cholesterol. Alternative splicing results in multiple transcript variants.[provided by RefSeq, Oct 2009]
+::: {.callout-note collapse="true"}
+PPP1R1B: This gene encodes a bifunctional signal transduction molecule. Dopaminergic and glutamatergic receptor stimulation regulates its phosphorylation and function as a kinase or phosphatase inhibitor. As a target for dopamine, this gene may serve as a therapeutic target for neurologic and psychiatric disorders. Multiple transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Oct 2011]
+
+STARD3: This gene encodes a member of a subfamily of lipid trafficking proteins that are characterized by a C-terminal steroidogenic acute regulatory domain and an N-terminal metastatic lymph node 64 domain. The encoded protein localizes to the membranes of late endosomes and may be involved in exporting cholesterol. Alternative splicing results in multiple transcript variants.\[provided by RefSeq, Oct 2009\]
 :::
-
-
-The third CpG site was unannotated.
 
 #### Without pre-lekking
 
@@ -194,13 +194,13 @@ This CpG site was unannotated.
 
 ### Trypanosoma spp.
 
-164 CpG sites had enough phenotypic and epigenetic data to run the Trypanosoma model (after filtering for n > 20).
+164 CpG sites had enough phenotypic and epigenetic data to run the Trypanosoma model (after filtering for n \> 20).
 
 #### With pre-lekking
 
 ![Histogram dispersion and p-value: delta Trypanosoma spp. with pre-methylation](../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_with_pre.png)
 
-![Volcano plot: delta trypailaria spp.  with pre-methylation](../plots/model_out/physio/trypa/volcawith_trypa_dif_with_pre.png)
+![Volcano plot: delta trypailaria spp. with pre-methylation](../plots/model_out/physio/trypa/volcawith_trypa_dif_with_pre.png)
 
 #### Without pre-lekking
 
@@ -210,19 +210,19 @@ This CpG site was unannotated.
 
 ### IgG
 
-775 CpG sites had enough phenotypic and epigenetic data to run the IgG model (after filtering for n > 20).
+775 CpG sites had enough phenotypic and epigenetic data to run the IgG model (after filtering for n \> 20).
 
 #### With pre-lekking
 
 ![Histogram dispersion and p-value: delta IgG with pre-methylation](../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_with_pre.png)
 
-![Volcano plot: delta IgG  with pre-methylation](../plots/model_out/physio/ig/volcawith_ig_dif_with_pre.png)
+![Volcano plot: delta IgG with pre-methylation](../plots/model_out/physio/ig/volcawith_ig_dif_with_pre.png)
 
-![Raw data: delta IgG  with pre-methylation CpG 1](../plots/model_out/physio/ig/ig_with_pre_1.png)
+![Raw data: delta IgG with pre-methylation CpG 1](../plots/model_out/physio/ig/ig_with_pre_1.png)
 
-![Raw data: delta IgG  with pre-methylation CpG 2](../plots/model_out/physio/ig/ig_with_pre_2.png)
+![Raw data: delta IgG with pre-methylation CpG 2](../plots/model_out/physio/ig/ig_with_pre_2.png)
 
-Both CpG site "ScEsiA3_21979__HRSCAF_26929_1282292" (gene ID ANN27654 similar to NFIC) and "ScEsiA3_21979__HRSCAF_26929_1282301" (gene ID ANN27654 similar to NFIC) are located in upstream regions. The first one is the same site that was associated with centrality! 
+Both CpG site "ScEsiA3_21979\_\_HRSCAF_26929_1282292" (gene ID ANN27654 similar to NFIC) and "ScEsiA3_21979\_\_HRSCAF_26929_1282301" (gene ID ANN27654 similar to NFIC) are located in upstream regions. The first one is the same site that was associated with centrality!
 
 #### Without pre-lekking
 
@@ -238,7 +238,7 @@ These were the exact same CpG sites that are significant compared to the model t
 
 ### HCT
 
-146 CpG sites had enough phenotypic and epigenetic data to run the HCT model (after filtering for n > 20).
+146 CpG sites had enough phenotypic and epigenetic data to run the HCT model (after filtering for n \> 20).
 
 #### With pre-lekking
 
@@ -248,16 +248,14 @@ These were the exact same CpG sites that are significant compared to the model t
 
 ![Raw data: delta HCT with pre-methylation CpG 1](../plots/model_out/physio/hct/hct_with_pre_1.png)
 
-CpG site "ScEsiA3_15486__HRSCAF_17393_15878140" is located in a promoter and upstream region (gene ID ANN19643 similar to GAL: Galanin peptides (C. japonica)).
+CpG site "ScEsiA3_15486\_\_HRSCAF_17393_15878140" is located in a promoter region (gene ID ANN19643 similar to GAL: Galanin peptides (C. japonica)).
 
-::: {.callout-caution collapse="true"}
-GAL: This gene encodes a neuroendocrine peptide that is widely expressed in the central and peripheral nervous systems and also the gastrointestinal tract, pancreas, adrenal gland and urogenital tract. The encoded protein is a precursor that is proteolytically processed to generate two mature peptides: galanin and galanin message-associated peptide (GMAP). Galanin has diverse physiological functions including nociception, feeding and energy homeostasis, osmotic regulation and water balance. GMAP has been demonstrated to possess antifungal activity and hypothesized to be part of the innate immune system. [provided by RefSeq, Jul 2015]
+::: {.callout-note collapse="true"}
+GAL: This gene encodes a neuroendocrine peptide that is widely expressed in the central and peripheral nervous systems and also the gastrointestinal tract, pancreas, adrenal gland and urogenital tract. The encoded protein is a precursor that is proteolytically processed to generate two mature peptides: galanin and galanin message-associated peptide (GMAP). Galanin has diverse physiological functions including nociception, feeding and energy homeostasis, osmotic regulation and water balance. GMAP has been demonstrated to possess antifungal activity and hypothesized to be part of the innate immune system. \[provided by RefSeq, Jul 2015\]
 :::
-
 
 #### Without pre-lekking
 
 ![Histogram dispersion and p-value: delta HCT without pre-methylation](../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_no_pre.png)
 
 ![Volcano plot: delta HCT without pre-methylation](../plots/model_out/physio/hct/volcano_hct_dif_no_pre.png)
-

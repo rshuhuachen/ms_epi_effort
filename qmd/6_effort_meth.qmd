@@ -8,7 +8,7 @@ format:
 
 **Which changes in CpG site methylation are associated with reproductive effort?**
 
-We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort. 
+We have now identified a subset of CpG sites that significantly change over the lekking season, either by increasing or decreasing in methylation level. We next test which CpG site changes are significantly associated with different measures of reproductive effort.
 
 Lekking is an energy-intensive, costly activity, as reflected by the losses in body mass in males that invest in reproduction (Lebigre et al., 2007). Therefore, we expect that the cost associated with high reproductive investment ledas to the up- or downregulation of associated genes, for example to invest more or less in certain other processess.
 
@@ -69,7 +69,7 @@ delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "
 
 Note that we z-transform the phenotypic data based on all samples, rather than on a model-by-model basis. This is because not all individuals will have epigenetic data for each CpG site, meaning that the z-transformed version of the phenotypic traits would change depending on the sample size, which we want to avoid.
 
-## Filter for *n* > 20
+## Filter for *n* \> 20
 
 Although we have filtered for CpG sites that have enough samples in both the pre- and post-lekking time periods, this does not mean that it was the same pair of samples that have data in both time periods. This means that we cannot outrule that we have a low sample size for delta methylation (where both pre- and post-lekking methylations for a given individual for a given CpG site had to be complete) differences that can be associated with phenotypic traits. Therefore, before we run the models, we filter for CpG sites that have at least 20 measures of delta methylation (and the phenotype). Since not all data is complete for all three behavioural traits, we do this on a trait-by-trait basis
 
@@ -218,30 +218,26 @@ source("scripts/function_models.R")
 
 In this function, we do the following (in this order):
 
-*Convert the list into a dataframe
-`data <- do.call(rbind.data.frame, list)` 
+\*Convert the list into a dataframe `data <- do.call(rbind.data.frame, list)`
 
-*Exclude models with convergence errors
-`data <- subset(data, !grepl("converge", convergence))`
+\*Exclude models with convergence errors `data <- subset(data, !grepl("converge", convergence))`
 
-*Create histograms of the overdispersion ratio and p-value 
-`ggplot(data, aes(x = dispersion.ratio)) + geom_histogram()` 
+\*Create histograms of the overdispersion ratio and p-value `ggplot(data, aes(x = dispersion.ratio)) + geom_histogram()`
 
 `ggplot(data, aes(x = parameter_pval))+ geom_histogram()`
 
-*Optionally exclude models with an overdispersion ratio higher than the 95 percentile (not done for any as there was no overdispersion)
+\*Optionally exclude models with an overdispersion ratio higher than the 95 percentile (not done for any as there was no overdispersion)
 
-*FDR correction
-`data$parameter_qval <- p.adjust(data$parameter_pval, method = "fdr", n = nrow(data))`
+\*FDR correction `data$parameter_qval <- p.adjust(data$parameter_pval, method = "fdr", n = nrow(data))`
 
-* Create a volcano plot where the model *beta* estimate is on the x-axis
-`ggplot(data, aes(x = parameter_estimate, y = -log10(parameter_qval))) + geom_point(aes(col = sig))`
-
+-   Create a volcano plot where the model *beta* estimate is on the x-axis `ggplot(data, aes(x = parameter_estimate, y = -log10(parameter_qval))) + geom_point(aes(col = sig))`
 
 ### Attendance
-808 CpG sites had enough phenotypic and epigenetic data to run the attendance model (after filtering for n > 20).
+
+808 CpG sites had enough phenotypic and epigenetic data to run the attendance model (after filtering for n \> 20).
 
 #### With pre-lekking
+
 ```{r, attend_withpre, echo=T, eval=F}
 #| code-fold: true
 m_attend_pre <- parallel::mclapply(delta_meth_attend_ls, function_model_delta_pheno, parameter="attend", pre="control", mc.cores=4)
@@ -251,24 +247,24 @@ m_attend_pre_out <- function_process_model(m_attend_pre, dir_plots = "plots/mode
 
 ```
 
-![Histogram dispersion and p-value: attendance with pre-methylation](../plots/model_out/effort/hist_raw_disp_pval_attend_with_pre.png)
-![Volcano plot: attendance with pre-methylation](../plots/model_out/effort/volcano_attend_with_pre.png)
-![Raw data: attendance with pre-methylation CpG 1](../plots/model_out/effort/raw/attend_with_pre_1.png)
-![Raw data: attendance with pre-methylation CpG 2](../plots/model_out/effort/raw/attend_with_pre_1.png)
-![Raw data: attendance with pre-methylation CpG 3](../plots/model_out/effort/raw/attend_with_pre_1.png)
+![Histogram dispersion and p-value: attendance with pre-methylation](../plots/model_out/effort/hist_raw_disp_pval_attend_with_pre.png) ![Volcano plot: attendance with pre-methylation](../plots/model_out/effort/volcano_attend_with_pre.png) ![Raw data: attendance with pre-methylation CpG 1](../plots/model_out/effort/raw/attend_with_pre_1.png) ![Raw data: attendance with pre-methylation CpG 2](../plots/model_out/effort/raw/attend_with_pre_2.png) ![Raw data: attendance with pre-methylation CpG 3](../plots/model_out/effort/raw/attend_with_pre_3.png)
 
-CpG site "ScEsiA3_17655__HRSCAF_20552_371333" is located in an upstream region (gene ID ANN24887, similar to GPR87).
+CpG site "ScEsiA3_17655\_\_HRSCAF_20552_371333" is located in an upstream region (gene ID ANN24887, similar to GPR87).
 
-::: {.callout-caution collapse="true"}
-GPR87: This gene encodes a G protein-coupled receptor and is located in a cluster of G protein-couple receptor genes on chromosome 3. The encoded protein has been shown to be overexpressed in lung squamous cell carcinoma (PMID:18057535) and regulated by p53 (PMID:19602589). [provided by RefSeq, Nov 2011]
+::: {.callout-note collapse="true"}
+GPR87: This gene encodes a G protein-coupled receptor and is located in a cluster of G protein-couple receptor genes on chromosome 3. The encoded protein has been shown to be overexpressed in lung squamous cell carcinoma (PMID:18057535) and regulated by p53 (PMID:19602589). \[provided by RefSeq, Nov 2011\]
 :::
 
-CpG site "ScEsiA3_18278__HRSCAF_21663_133779007" is located in a gene body, exon, upstream and 5'UTR region (gene ID ANN06030 (unknown function)). This is the same CpG site that is associated with changes in body mass (when including pre-lekking meth %)!
+CpG site "ScEsiA3_18278\_\_HRSCAF_21663_133779007" is located in the exon of ANN06029 (similar to Adck2) and upstream from ANN06028 (closer) and ANN06030 (both unknown functions). This is the same CpG site that is associated with changes in body mass (when including pre-lekking meth %)!
 
-CpG site "ScEsiA3_18752__HRSCAF_22883_2574288" is located in an up- and downstream region (gene ID ANN31167 similar to PPP2R2A)
+::: {.callout-note collapse="true"}
+Adck2: This gene AarF Domain Containing Kinase 2 is predicted to enable ATP binding activity and protein serine/threonine kinase activity. Predicted to be involved in protein phosphorylation. Predicted to be integral component of membrane. \[provided by Alliance of Genome Resources, Apr 2022\]
+:::
 
-::: {.callout-caution collapse="true"}
-PPP2R2A: The product of this gene belongs to the phosphatase 2 regulatory subunit B family. Protein phosphatase 2 is one of the four major Ser/Thr phosphatases, and it is implicated in the negative control of cell growth and division. It consists of a common heteromeric core enzyme, which is composed of a catalytic subunit and a constant regulatory subunit, that associates with a variety of regulatory subunits. The B regulatory subunit might modulate substrate selectivity and catalytic activity. This gene encodes an alpha isoform of the regulatory subunit B55 subfamily. Alternatively spliced transcript variants have been described. [provided by RefSeq, Apr 2010]
+CpG site "ScEsiA3_18752\_\_HRSCAF_22883_2574288" is located in upstream from gene ID ANN31167 (similar to PPP2R2A) and downstream from gene ID ANN31166 (unknown function, closer).
+
+::: {.callout-note collapse="true"}
+PPP2R2A: The product of this gene belongs to the phosphatase 2 regulatory subunit B family. Protein phosphatase 2 is one of the four major Ser/Thr phosphatases, and it is implicated in the negative control of cell growth and division. It consists of a common heteromeric core enzyme, which is composed of a catalytic subunit and a constant regulatory subunit, that associates with a variety of regulatory subunits. The B regulatory subunit might modulate substrate selectivity and catalytic activity. This gene encodes an alpha isoform of the regulatory subunit B55 subfamily. Alternatively spliced transcript variants have been described. \[provided by RefSeq, Apr 2010\]
 :::
 
 #### Without pre-lekking
@@ -287,7 +283,7 @@ m_attend_no_pre_out <- function_process_model(m_attend_no_pre, dir_plots = "plot
 
 ### Fighting
 
-466 CpG sites had enough phenotypic and epigenetic data to run the fighting model (after filtering for n > 20).
+466 CpG sites had enough phenotypic and epigenetic data to run the fighting model (after filtering for n \> 20).
 
 #### Without pre-lekking
 
@@ -309,24 +305,28 @@ m_fight_pre_out <- function_process_model(m_fight_pre, dir_plots = "plots/model_
 
 ![Raw data: fighting rate with pre-methylation CpG 3](../plots/model_out/effort/raw/fight_with_pre_3.png)
 
-CpG site "ScEsiA3_15486__HRSCAF_17393_6262304" is located in a gene body, exon and upstream region (gene ID ANN19414, similar to Rad9a).
+CpG site "ScEsiA3_15486\_\_HRSCAF_17393_6262304" is located in the exon of gene ID ANN19413 (similar to RHOF) and upstream from gene ID ANN19414 (similar to Rad9a).
 
-::: {.callout-caution collapse="true"}
-Rad9a: This gene product is highly similar to Schizosaccharomyces pombe rad9, a cell cycle checkpoint protein required for cell cycle arrest and DNA damage repair. This protein possesses 3' to 5' exonuclease activity, which may contribute to its role in sensing and repairing DNA damage. It forms a checkpoint protein complex with RAD1 and HUS1. This complex is recruited by checkpoint protein RAD17 to the sites of DNA damage, which is thought to be important for triggering the checkpoint-signaling cascade. Alternatively spliced transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Aug 2011]
+::: {.callout-note collapse="true"}
+RHOF: Ras Homolog Family Member F, Filopodia Associated. Predicted to enable GTP binding activity; GTPase activity; and protein kinase binding activity. Involved in actin filament organization. Located in extracellular exosome. \[provided by Alliance of Genome Resources, Apr 2022\]
+
+Rad9a: This gene product is highly similar to Schizosaccharomyces pombe rad9, a cell cycle checkpoint protein required for cell cycle arrest and DNA damage repair. This protein possesses 3' to 5' exonuclease activity, which may contribute to its role in sensing and repairing DNA damage. It forms a checkpoint protein complex with RAD1 and HUS1. This complex is recruited by checkpoint protein RAD17 to the sites of DNA damage, which is thought to be important for triggering the checkpoint-signaling cascade. Alternatively spliced transcript variants encoding different isoforms have been found for this gene. \[provided by RefSeq, Aug 2011\]
 :::
 
-CpG site "ScEsiA3_18290__HRSCAF_21698_5473558" is located in an upstream region (gene ID ANN29135, similar to SLC38A10).
+CpG site "ScEsiA3_18290\_\_HRSCAF_21698_5473558" is located in an upstream region (gene ID ANN29135, similar to SLC38A10).
 
-::: {.callout-caution collapse="true"}
-SLC38A10: Predicted to enable amino acid transmembrane transporter activity. Predicted to be involved in amino acid transmembrane transport. Predicted to act upstream of or within bone development. Located in Golgi apparatus. [provided by Alliance of Genome Resources, Apr 2022]
+::: {.callout-note collapse="true"}
+SLC38A10: Predicted to enable amino acid transmembrane transporter activity. Predicted to be involved in amino acid transmembrane transport. Predicted to act upstream of or within bone development. Located in Golgi apparatus. \[provided by Alliance of Genome Resources, Apr 2022\]
 :::
 
-CpG site "ScEsiA3_21978__HRSCAF_26928_5532732" is located in a gene body, intron and upstream region (gene IDs ANN24559 similar to TRAK1, and ANN24561 similar to Fkbp10)
+CpG site "ScEsiA3_21978\_\_HRSCAF_26928_5532732" is located in an intronic region of gene ID ANN24560 (similar to Jup) and upstream region of gene IDs ANN24559 (similar to TRAK1) and ANN24561 similar to Fkbp10.
 
-::: {.callout-caution collapse="true"}
-TRAK1: Predicted to enable GABA receptor binding activity and myosin binding activity. Involved in endosome to lysosome transport. Located in early endosome and mitochondrion. Implicated in developmental and epileptic encephalopathy 68. [provided by Alliance of Genome Resources, Apr 2022]
+::: {.callout-note collapse="true"}
+JUP: This gene encodes a major cytoplasmic protein which is the only known constituent common to submembranous plaques of both desmosomes and intermediate junctions. This protein forms distinct complexes with cadherins and desmosomal cadherins and is a member of the catenin family since it contains a distinct repeating amino acid motif called the armadillo repeat. Mutation in this gene has been associated with Naxos disease. Alternative splicing occurs in this gene; however, not all transcripts have been fully described. \[provided by RefSeq, Jul 2008\]
 
-Fkbp10: The protein encoded by this gene belongs to the FKBP-type peptidyl-prolyl cis/trans isomerase (PPIase) family. This protein localizes to the endoplasmic reticulum and acts as a molecular chaperone. Alternatively spliced variants encoding different isoforms have been reported, but their biological validity has not been determined.[provided by RefSeq, Nov 2009]
+TRAK1: Predicted to enable GABA receptor binding activity and myosin binding activity. Involved in endosome to lysosome transport. Located in early endosome and mitochondrion. Implicated in developmental and epileptic encephalopathy 68. \[provided by Alliance of Genome Resources, Apr 2022\]
+
+Fkbp10: The protein encoded by this gene belongs to the FKBP-type peptidyl-prolyl cis/trans isomerase (PPIase) family. This protein localizes to the endoplasmic reticulum and acts as a molecular chaperone. Alternatively spliced variants encoding different isoforms have been reported, but their biological validity has not been determined.\[provided by RefSeq, Nov 2009\]
 :::
 
 #### Without pre-lekking
@@ -344,7 +344,8 @@ m_fight_no_pre_out <- function_process_model(m_fight_no_pre, dir_plots = "plots/
 ![Volcano plot: fighting rate no pre-methylation](../plots/model_out/effort/volcano_fight_no_pre.png)
 
 ### Centrality
-760 CpG sites had enough phenotypic and epigenetic data to run the centrality model (after filtering for n > 20).
+
+760 CpG sites had enough phenotypic and epigenetic data to run the centrality model (after filtering for n \> 20).
 
 #### With pre-lekking
 
@@ -362,10 +363,10 @@ m_dist_pre_out <- function_process_model(m_dist_pre, dir_plots = "plots/model_ou
 
 ![Raw data: centrality with pre-methylation CpG 1](../plots/model_out/effort/raw/dist_with_pre_1.png)
 
-CpG site "ScEsiA3_21979__HRSCAF_26929_1282292" is located in an upstream region (gene ID ANN27654 similar to NFIC). Note that this is the same site that is significantly associated with delta IgG!!
+CpG site "ScEsiA3_21979\_\_HRSCAF_26929_1282292" is located in an upstream region (gene ID ANN27654 similar to NFIC). Note that this is the same site that is significantly associated with delta IgG!!
 
-::: {.callout-caution collapse="true"}
-NFIC: The protein encoded by this gene belongs to the CTF/NF-I family. These are dimeric DNA-binding proteins, and function as cellular transcription factors and as replication factors for adenovirus DNA replication. Alternatively spliced transcript variants encoding different isoforms have been described for this gene. [provided by RefSeq, Oct 2011]
+::: {.callout-note collapse="true"}
+NFIC: The protein encoded by this gene belongs to the CTF/NF-I family. These are dimeric DNA-binding proteins, and function as cellular transcription factors and as replication factors for adenovirus DNA replication. Alternatively spliced transcript variants encoding different isoforms have been described for this gene. \[provided by RefSeq, Oct 2011\]
 :::
 
 ### Without pre-lekking
@@ -390,4 +391,4 @@ This is the same CpG site that was significant in the model with pre-lekking met
 
 ## Concluding remarks
 
-So it seems like very litte CpG methylation changes are associated with reproductive effort. When we do not control for pre-lekking methylation %, we don't find anything significant for attendance and fighting rate, and we find the same single CpG significant for centrality that is significant in the model where we do control for pre-lekking methylation. We find 3, 3, and 1 significant CpG site for lek attendance, fighting rate and centrality respectively in the models where we do control for pre-lekking methylation. 
+So it seems like very litte CpG methylation changes are associated with reproductive effort. When we do not control for pre-lekking methylation %, we don't find anything significant for attendance and fighting rate, and we find the same single CpG significant for centrality that is significant in the model where we do control for pre-lekking methylation. We find 3, 3, and 1 significant CpG site for lek attendance, fighting rate and centrality respectively in the models where we do control for pre-lekking methylation.
