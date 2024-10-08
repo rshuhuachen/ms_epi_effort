@@ -445,49 +445,117 @@ all_models_sig$end <- all_models_sig$pos
 all_models_sig$start <- all_models_sig$pos
 sig_gr <- as(all_models_sig, "GRanges")
 
-sig_promoter <- subsetByOverlaps(sig_gr, promoter) %>% as.data.frame() %>%
-  add_column("region" = "promoter", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_promoter <- mergeByOverlaps(promoter, sig_gr)
+sig_promoter <- as.data.frame(sig_promoter@listData)
+sig_promoter <- sig_promoter %>% add_column("region" = "promoter", .after="parameter") %>% 
+  mutate(distance = as.numeric(promoter.end) - as.numeric(pos) ) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_gene <- as.data.frame(subsetByOverlaps(sig_gr, genes)) %>% as.data.frame() %>%
-  add_column("region" = "gene", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_gene <- mergeByOverlaps(sig_gr, genes)
+sig_gene <- as.data.frame(sig_gene@listData)
+sig_gene <- sig_gene %>% add_column("region" = "gene", .after="parameter") %>% 
+  mutate(distance = as.numeric(pos) - as.numeric(genes.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_tss <- as.data.frame(subsetByOverlaps(sig_gr, TSS)) %>% as.data.frame() %>%
-  add_column("region" = "TSS", .after="parameter") %>%
-  dplyr::select(-c(seqnames:strand)) 
+sig_tss <- mergeByOverlaps(sig_gr, TSS)
+sig_tss <- as.data.frame(sig_tss@listData)
+sig_tss <- sig_tss %>% add_column("region" = "TSS", .after="parameter") %>% 
+  mutate(distance = as.numeric(TSS.end) - as.numeric(pos) ) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_exon <- as.data.frame(subsetByOverlaps(sig_gr, exons_gene)) %>% as.data.frame() %>%
-  add_column("region" = "exon", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_exon <- mergeByOverlaps(sig_gr, exons_gene)
+sig_exon <- as.data.frame(sig_exon@listData)
+sig_exon <- sig_exon %>% add_column("region" = "exon", .after="parameter") %>% 
+  mutate(distance = as.numeric(pos) - as.numeric(exons_gene.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_intron <- as.data.frame(subsetByOverlaps(sig_gr, introns))  %>% as.data.frame() %>%
-  add_column("region" = "intron", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_intron <- mergeByOverlaps(sig_gr, introns)
+sig_intron <- as.data.frame(sig_intron@listData)
+sig_intron <- sig_intron %>% add_column("region" = "intron", .after="parameter") %>% 
+  mutate(distance = as.numeric(pos) - as.numeric(introns.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_down <- as.data.frame(subsetByOverlaps(sig_gr, downstream)) %>% as.data.frame() %>%
-  add_column("region" = "downstream", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_down <- mergeByOverlaps(downstream, sig_gr)
+sig_down <- as.data.frame(sig_down@listData)
+sig_down <- sig_down %>% add_column("region" = "downstream", .after="parameter") %>% 
+  mutate(distance = as.numeric(pos) - as.numeric(downstream.start)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval, ID, distance)) 
 
-sig_up <- as.data.frame(subsetByOverlaps(sig_gr, upstream))  %>% as.data.frame() %>%
-  add_column("region" = "upstream", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_up <- mergeByOverlaps(upstream, sig_gr)
+sig_up <- as.data.frame(sig_up@listData)
+sig_up <- sig_up %>% add_column("region" = "upstream", .after="parameter") %>% 
+  mutate(distance =  as.numeric(upstream.end) - as.numeric(pos)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_threeUTR <- as.data.frame(subsetByOverlaps(sig_gr, threeUTR))  %>% as.data.frame() %>%
-  add_column("region" = "threeUTR", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_threeUTR <- mergeByOverlaps(sig_gr, threeUTR)
+sig_threeUTR <- as.data.frame(sig_threeUTR@listData)
+sig_threeUTR <- sig_threeUTR %>% add_column("region" = "threeUTR", .after="parameter") %>% 
+  mutate(distance =  as.numeric(threeUTR.start) - as.numeric(pos)) %>% 
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_fiveUTR <- as.data.frame(subsetByOverlaps(sig_gr, fiveUTR))  %>% as.data.frame() %>%
-  add_column("region" = "fiveUTR", .after="parameter") %>% 
-  dplyr::select(-c(seqnames:strand)) 
+sig_fiveUTR <- mergeByOverlaps(sig_gr, fiveUTR)
+sig_fiveUTR <- as.data.frame(sig_fiveUTR@listData)
+sig_fiveUTR <- sig_fiveUTR %>% add_column("region" = "fiveUTR", .after="parameter") %>% 
+  mutate(distance =  as.numeric(pos) - as.numeric(fiveUTR.start)) %>%
+  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
 all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
                                   sig_tss, sig_exon, sig_intron, sig_down,
                                   sig_up, sig_threeUTR,  sig_fiveUTR)
 
+
 summary(as.factor(all_models_sig_annotated$region))
 
+save(all_models_sig_annotated, file="results/modeloutput/changing/annotated_sig_cpg_raw.RData")
+
+#### Priority workflow: TSS > promoter > exon/intron > down/up
+
+priority <- function(df){
+  df %>% group_by(chr_pos, parameter) %>% mutate(n = row_number()) -> df_group
+  multiple_2 <- subset(df_group, n > 1)
+  multiple <- subset(df_group, chr_pos %in% multiple_2$chr_pos) %>% group_by(chr_pos)  %>% group_split()
+  
+  multiple <- multiple[1:100]
+  #workflow depending on combination
+  filtered <- list()
+  types <- NULL
+
+for (i in 1:length(multiple)){
+    sub <- multiple[[i]]
+    regions <- as.character(sub$region)
+    if (length(regions) == 2){
+      out <- paste0(regions[1], "_", regions[2])
+      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
+      types <- rbind(types, types_out)
+    }
+    if (length(regions) == 3){
+      out <- paste0(regions[1], "_", regions[2], "_", regions[3])
+      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
+      types <- rbind(types, types_out)
+    }
+    if (length(regions) == 4){
+      out <- paste0(regions[1], "_", regions[2], "_", regions[3], "_", regions[4])
+      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
+      types <- rbind(types, types_out)
+    }
+    if (length(regions) > 4){
+      types_out <- data.frame(chr_pos = sub$chr_pos, regions = "more than 4")
+      types <- rbind(types, types_out) 
+    }
+      
+      # #situation: promoter and upstream of the same gene annotation
+      # if(grep("promoter", regions) != "integer(0)" & grep("upstream", regions) != "integer(0)" & length(unique(sub$ID)) == 1){
+      #   cpg <- subset(multiple[[i]], regions == "promoter")
+      #   filtered[[i]] <- cpg}
+      # if(){}
+  }
+  
+}
+
+all_models_sig_annotated %>% group_by(chr_pos)
+
 save(all_models_sig_annotated, file="results/modeloutput/changing/annotated_sig_cpg.RData")
+
 
 #### Summarise number of sites per region ####
 sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
