@@ -486,76 +486,73 @@ sig_up <- as.data.frame(sig_up@listData)
 sig_up <- sig_up %>% add_column("region" = "upstream", .after="parameter") %>% 
   mutate(distance =  as.numeric(upstream.end) - as.numeric(pos)) %>% 
   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
+# 
+# sig_threeUTR <- mergeByOverlaps(sig_gr, threeUTR)
+# sig_threeUTR <- as.data.frame(sig_threeUTR@listData)
+# sig_threeUTR <- sig_threeUTR %>% add_column("region" = "threeUTR", .after="parameter") %>% 
+#   mutate(distance =  as.numeric(threeUTR.start) - as.numeric(pos)) %>% 
+#   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
+# 
+# sig_fiveUTR <- mergeByOverlaps(sig_gr, fiveUTR)
+# sig_fiveUTR <- as.data.frame(sig_fiveUTR@listData)
+# sig_fiveUTR <- sig_fiveUTR %>% add_column("region" = "fiveUTR", .after="parameter") %>% 
+#   mutate(distance =  as.numeric(pos) - as.numeric(fiveUTR.start)) %>%
+#   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
-sig_threeUTR <- mergeByOverlaps(sig_gr, threeUTR)
-sig_threeUTR <- as.data.frame(sig_threeUTR@listData)
-sig_threeUTR <- sig_threeUTR %>% add_column("region" = "threeUTR", .after="parameter") %>% 
-  mutate(distance =  as.numeric(threeUTR.start) - as.numeric(pos)) %>% 
-  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
-
-sig_fiveUTR <- mergeByOverlaps(sig_gr, fiveUTR)
-sig_fiveUTR <- as.data.frame(sig_fiveUTR@listData)
-sig_fiveUTR <- sig_fiveUTR %>% add_column("region" = "fiveUTR", .after="parameter") %>% 
-  mutate(distance =  as.numeric(pos) - as.numeric(fiveUTR.start)) %>%
-  dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
-
-all_models_sig_annotated <- rbind(sig_promoter, sig_gene,
+all_models_sig_annotated_raw <- rbind(sig_promoter, sig_gene,
                                   sig_tss, sig_exon, sig_intron, sig_down,
-                                  sig_up, sig_threeUTR,  sig_fiveUTR)
+                                  sig_up)
 
 
-summary(as.factor(all_models_sig_annotated$region))
+summary(as.factor(all_models_sig_annotated_raw$region))
 
-save(all_models_sig_annotated, file="results/modeloutput/changing/annotated_sig_cpg_raw.RData")
+save(all_models_sig_annotated_raw, file="results/modeloutput/changing/annotated_sig_cpg_raw.RData")
 
-#### Priority workflow: TSS > promoter > exon/intron > down/up
+#### Priority workflow: TSS > promoter > exon/intron > down/up ####
 
-priority <- function(df){
-  df %>% group_by(chr_pos, parameter) %>% mutate(n = row_number()) -> df_group
-  multiple_2 <- subset(df_group, n > 1)
-  multiple <- subset(df_group, chr_pos %in% multiple_2$chr_pos) %>% group_by(chr_pos)  %>% group_split()
+prioritize_region <- function(region) {
+  # Create a lookup table for region priorities
+  priority_table <- c(TSS = 1, promoter = 2, exon = 3, intron = 3, downstream = 4, upstream = 4, gene = 5)
   
-  multiple <- multiple[1:100]
-  #workflow depending on combination
-  filtered <- list()
-  types <- NULL
-
-for (i in 1:length(multiple)){
-    sub <- multiple[[i]]
-    regions <- as.character(sub$region)
-    if (length(regions) == 2){
-      out <- paste0(regions[1], "_", regions[2])
-      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
-      types <- rbind(types, types_out)
-    }
-    if (length(regions) == 3){
-      out <- paste0(regions[1], "_", regions[2], "_", regions[3])
-      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
-      types <- rbind(types, types_out)
-    }
-    if (length(regions) == 4){
-      out <- paste0(regions[1], "_", regions[2], "_", regions[3], "_", regions[4])
-      types_out <- data.frame(chr_pos = sub$chr_pos, regions = out)
-      types <- rbind(types, types_out)
-    }
-    if (length(regions) > 4){
-      types_out <- data.frame(chr_pos = sub$chr_pos, regions = "more than 4")
-      types <- rbind(types, types_out) 
-    }
-      
-      # #situation: promoter and upstream of the same gene annotation
-      # if(grep("promoter", regions) != "integer(0)" & grep("upstream", regions) != "integer(0)" & length(unique(sub$ID)) == 1){
-      #   cpg <- subset(multiple[[i]], regions == "promoter")
-      #   filtered[[i]] <- cpg}
-      # if(){}
-  }
+  # Get the priority for the given region
+  priority <- priority_table[region]
   
+  # Handle missing regions (assign a low priority)
+  priority[is.na(priority)] <- 7
+  
+  priority
 }
 
-all_models_sig_annotated %>% group_by(chr_pos)
+
+all_models_sig_annotated <- all_models_sig_annotated_raw %>%
+  group_by(chr_pos, parameter) %>% #doesn't really matter to group it by gene id, same priority applies
+  mutate(region_priority = prioritize_region(region)) %>%
+  # Select the row with the highest priority (lowest numeric value)
+  slice_min(region_priority, with_ties=T) %>%
+  # If multiple rows have the same priority (the case for up/downstream), select the one with the lowest distance
+  slice_min(distance, with_ties=T) %>%
+  ungroup() %>%
+  dplyr::select(-region_priority)
 
 save(all_models_sig_annotated, file="results/modeloutput/changing/annotated_sig_cpg.RData")
 
+### merge with 'similar to' column to get gene IDs
+lookup <- fread("/home/nioo/rebeccash/PhD_grouse/grouse-annotation/data/lookup_ANN_gene_id.txt")
+names(lookup) <- c("original", "similar")
+
+all_models_sig_annotated_id <- left_join(all_models_sig_annotated, lookup, by = c("ID" = "original"))
+
+all_models_sig_annotated_id <- subset(all_models_sig_annotated_id,
+                                   !is.na(similar) &
+                                     !grepl("LOC", similar))
+
+all_models_sig_annotated_id$similar <- toupper(all_models_sig_annotated_id$similar)
+
+subset(all_models_sig_annotated_id, parameter == "all") %>% arrange(parameter_qval) %>%
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids_similar.csv", quote=F, row.names=F, col.names = F)
+
+subset(all_models_sig_annotated_id, parameter == "time_period") %>% arrange(parameter_qval) %>%
+  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing_similar.csv", quote=F, row.names=F, col.names = F)
 
 #### Summarise number of sites per region ####
 sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
@@ -602,202 +599,3 @@ ggplot(sum_annotated, aes(x = region, y = perc)) + geom_bar(stat="identity") + y
   facet_wrap(~model, ncol=2,) + coord_flip() -> perc_region_cpg
 
 ggsave(perc_region_cpg, file="plots/model_out/changing/perc_sig_cpg_per_region.png", width=20, height=12)
-
-#### Annotate with gene names based on chicken liftover ####
-### load annotation data
-gff <- makeTxDbFromGFF(paste0(annotation_dir, "/liftoff_gallus_ltet.gff"), 
-                       format="gff3", organism="Lyrurus tetrix") 
-
-promoters_chicken <- promoters(gff, upstream=2000, downstream=200, columns=c("tx_name", "gene_id")) # From NIOO
-genes_chicken <- genes(gff)
-TSS_chicken <- promoters(gff, upstream=300, downstream=50, columns=c("tx_name", "gene_id")) # TSS as in Laine et al., 2016. Nature Communications
-downstream_chicken <- flank(genes(gff), 10000, start=FALSE, both=FALSE, use.names=TRUE)
-upstream_chicken <- promoters(genes(gff), upstream=10000, downstream=0)
-exons_gene_chicken <- unlist(exonsBy(gff, "gene")) # group exons by genes
-introns_chicken <- unlist(intronsByTranscript(gff, use.names=TRUE))
-
-exons <- exonsBy(gff, "gene")
-gene <- data.frame()
-for (i in 1:length(exons)){
-  df <- as.data.frame(exons[[i]])
-  for (j in 1:nrow(df)){
-    if(grepl("XM_015281696.4-1", df$exon_name[j]) == TRUE){
-    gene <- rbind(gene, names(exons[i]))  }
-  }}
-
-#rename seqnames which can't be done in gff
-
-all_models_sig$chr_pos <- gsub("__", ";",all_models_sig$chr_pos)
-all_models_sig$chr_pos <- gsub( "HRSCAF_", "HRSCAF=",all_models_sig$chr_pos)
-
-all_models_sig$chr <- gsub("__", ";",all_models_sig$chr)
-all_models_sig$chr <- gsub("HRSCAF_", "HRSCAF=", all_models_sig$chr)
-
-sig_gr <- as(all_models_sig, "GRanges")
-
-## annotate with chicken
-sig_promoter_chicken <- mergeByOverlaps(sig_gr, promoters_chicken) 
-sig_promoter_chicken_df <- unique(data.frame(chr_pos = sig_promoter_chicken$chr_pos,
-                                      chr = sig_promoter_chicken$sig_gr@seqnames,
-                                      pos = sig_promoter_chicken$sig_gr$pos,
-                                      parameter = sig_promoter_chicken$parameter,
-                                      parameter_qval = sig_promoter_chicken$parameter_qval,
-                                      gene_id = sig_promoter_chicken$gene_id@unlistData,
-                                      region = "promoter"))
-
-sig_gene_chicken <- mergeByOverlaps(sig_gr, genes_chicken) 
-sig_gene_chicken_df <- unique(data.frame(chr_pos = sig_gene_chicken$chr_pos,
-                                             chr = sig_gene_chicken$sig_gr@seqnames,
-                                             pos = sig_gene_chicken$sig_gr$pos,
-                                             parameter = sig_gene_chicken$parameter,
-                                      parameter_qval = sig_gene_chicken$parameter_qval,
-                                           gene_id = sig_gene_chicken$gene_id,
-                                             region = "gene"))
-
-sig_TSS_chicken <- mergeByOverlaps(sig_gr, TSS_chicken) 
-sig_TSS_chicken_df <- unique(data.frame(chr_pos = sig_TSS_chicken$chr_pos,
-                                         chr = sig_TSS_chicken$sig_gr@seqnames,
-                                         pos = sig_TSS_chicken$sig_gr$pos,
-                                         parameter = sig_TSS_chicken$parameter,
-                                      parameter_qval = sig_TSS_chicken$parameter_qval,
-                                       gene_id = unlist(sig_TSS_chicken$gene_id),
-                                         region = "TSS"))
-
-sig_exon_chicken <- mergeByOverlaps(sig_gr, exons_gene_chicken) 
-sig_exon_chicken_df <- unique(data.frame(chr_pos = sig_exon_chicken$chr_pos,
-                                        chr = sig_exon_chicken$sig_gr@seqnames,
-                                        pos = sig_exon_chicken$sig_gr$pos,
-                                        parameter = sig_exon_chicken$parameter,
-                                      parameter_qval = sig_exon_chicken$parameter_qval,
-                                        gene_id = sig_exon_chicken$exon_name,
-                                        region = "exon"))
-
-sig_intron_chicken <- mergeByOverlaps(sig_gr, introns_chicken) 
-sig_intron_chicken_df <- unique(data.frame(chr_pos = sig_intron_chicken$chr_pos,
-                                         chr = sig_intron_chicken$sig_gr@seqnames,
-                                         pos = sig_intron_chicken$sig_gr$pos,
-                                         parameter = sig_intron_chicken$parameter,
-                                      parameter_qval = sig_intron_chicken$parameter_qval,
-                                        gene_id = NA,
-                                         region = "intron"))
-
-sig_down_chicken <- mergeByOverlaps(sig_gr, downstream_chicken) 
-sig_down_chicken_df <- unique(data.frame(chr_pos = sig_down_chicken$chr_pos,
-                                        chr = sig_down_chicken$sig_gr@seqnames,
-                                        pos = sig_down_chicken$sig_gr$pos,
-                                        parameter = sig_down_chicken$parameter,
-                                      parameter_qval = sig_down_chicken$parameter_qval,
-                                         gene_id = sig_down_chicken$gene_id,
-                                        region = "downstream"))
-
-sig_up_chicken <- mergeByOverlaps(sig_gr, upstream_chicken) 
-sig_up_chicken_df <- unique(data.frame(chr_pos = sig_up_chicken$chr_pos,
-                                         chr = sig_up_chicken$sig_gr@seqnames,
-                                         pos = sig_up_chicken$sig_gr$pos,
-                                        parameter = sig_up_chicken$parameter,
-                                      parameter_qval = sig_up_chicken$parameter_qval,
-                                       gene_id = sig_up_chicken$gene_id,
-                                         region = "upstream"))
-
-
-all_models_sig_annotated_chicken <- rbind(sig_promoter_chicken_df, sig_gene_chicken_df,
-                                          sig_TSS_chicken_df, sig_exon_chicken_df, sig_down_chicken_df,
-                                  sig_up_chicken_df) # left out intron due to error
-
-all_models_sig_annotated_chicken <- subset(all_models_sig_annotated_chicken,
-                                           !is.na(gene_id) &
-                                             !grepl("LOC", gene_id))
-
-subset(all_models_sig_annotated_chicken, parameter == "all" & region != "exon") %>% arrange(parameter_qval) %>%
-  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids.csv", quote=F, row.names=F, col.names = F)
-
-subset(all_models_sig_annotated_chicken, parameter == "time_period" & region != "exon") %>% arrange(parameter_qval) %>%
-  dplyr::select(gene_id) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing.csv", quote=F, row.names=F, col.names = F)
-
-#### Based on the 'similar to' column ####
-
-## annotate with chicken
-sig_promoter <- mergeByOverlaps(sig_gr, promoter) 
-sig_promoter_df <- unique(data.frame(chr_pos = sig_promoter$chr_pos,
-                                     # chr = sig_promoter$sig_gr@seqnames,
-                                     # pos = sig_promoter$sig_gr$pos,
-                                      parameter = sig_promoter$parameter,
-                                      parameter_qval = sig_promoter$parameter_qval,
-                                      gene_id = sig_promoter$gene_id,
-                                      region = "promoter"))
-
-sig_gene <- mergeByOverlaps(sig_gr, genes) 
-sig_gene_df <- unique(data.frame(chr_pos = sig_gene$chr_pos,
-                                          #   chr = sig_gene$sig_gr@seqnames,
-                                          #   pos = sig_gene$sig_gr$pos,
-                                             parameter = sig_gene$parameter,
-                                      parameter_qval = sig_gene$parameter_qval,
-                                           gene_id = sig_gene$gene_id,
-                                             region = "gene"))
-
-sig_TSS <- mergeByOverlaps(sig_gr, TSS) 
-sig_TSS_df <- unique(data.frame(chr_pos = sig_TSS$chr_pos,
-                                        # chr = sig_TSS$sig_gr@seqnames,
-                                        # pos = sig_TSS$sig_gr$pos,
-                                         parameter = sig_TSS$parameter,
-                                      parameter_qval = sig_TSS$parameter_qval,
-                                       gene_id = unlist(sig_TSS$gene_id),
-                                         region = "TSS"))
-
-sig_exon <- mergeByOverlaps(sig_gr, exons_gene) 
-sig_exon_df <- unique(data.frame(chr_pos = sig_exon$chr_pos,
-                                       # chr = sig_exon$sig_gr@seqnames,
-                                       # pos = sig_exon$sig_gr$pos,
-                                        parameter = sig_exon$parameter,
-                                      parameter_qval = sig_exon$parameter_qval,
-                                        gene_id = sig_exon$exon_name,
-                                        region = "exon"))
-
-sig_intron <- mergeByOverlaps(sig_gr, introns) 
-sig_intron_df <- unique(data.frame(chr_pos = sig_intron$chr_pos,
-                                      #   chr = sig_intron$sig_gr@seqnames,
-                                      #   pos = sig_intron$sig_gr$pos,
-                                         parameter = sig_intron$parameter,
-                                      parameter_qval = sig_intron$parameter_qval,
-                                        gene_id = NA,
-                                         region = "intron"))
-
-sig_down <- mergeByOverlaps(sig_gr, downstream) 
-sig_down_df <- unique(data.frame(chr_pos = sig_down$chr_pos,
-                                    #    chr = sig_down$sig_gr@seqnames,
-                                     #   pos = sig_down$sig_gr$pos,
-                                        parameter = sig_down$parameter,
-                                      parameter_qval = sig_down$parameter_qval,
-                                         gene_id = sig_down$gene_id,
-                                        region = "downstream"))
-
-sig_up <- mergeByOverlaps(sig_gr, upstream) 
-sig_up_df <- unique(data.frame(chr_pos = sig_up$chr_pos,
-                                    #     chr = sig_up$sig_gr@seqnames,
-                                      #   pos = sig_up$sig_gr$pos,
-                                        parameter = sig_up$parameter,
-                                      parameter_qval = sig_up$parameter_qval,
-                                       gene_id = sig_up$gene_id,
-                                         region = "upstream"))
-
-
-all_models_sig_annotated <- rbind(sig_promoter_df, sig_gene_df,
-                                          sig_TSS_df, sig_exon_df, sig_down_df,
-                                  sig_up_df) # left out intron due to error
-
-### merge with 'similar to' column
-lookup <- fread("/home/nioo/rebeccash/PhD_grouse/grouse-annotation/data/lookup_ANN_gene_id.txt")
-names(lookup) <- c("original", "similar")
-
-all_models_sig_annotated <- left_join(all_models_sig_annotated, lookup, by = c("gene_id" = "original"))
-
-all_models_sig_annotated <- subset(all_models_sig_annotated,
-                                           !is.na(similar) &
-                                             !grepl("LOC", similar))
-
-all_models_sig_annotated$similar <- toupper(all_models_sig_annotated$similar)
-subset(all_models_sig_annotated, parameter == "all") %>% arrange(parameter_qval) %>%
-  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/all_gene_ids_similar.csv", quote=F, row.names=F, col.names = F)
-
-subset(all_models_sig_annotated, parameter == "time_period") %>% arrange(parameter_qval) %>%
-  dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing_similar.csv", quote=F, row.names=F, col.names = F)
