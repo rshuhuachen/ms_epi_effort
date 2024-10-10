@@ -66,7 +66,7 @@ rm(data)
 labels_mass_dif <- data.frame(chr_pos = c("ScEsiA3_17616__HRSCAF_20466_3956821",
                                         "ScEsiA3_18278__HRSCAF_21663_133779007"),
                             lab = c("CpG H: downstream from ID1",
-                                    "CpG B: in exon of ADCK2"))
+                                    "CpG B: exon of ADCK2"))
 
 mass_dif <- mass_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 mass_dif <- left_join(mass_dif, labels_mass_dif)
@@ -116,8 +116,8 @@ labels_microf_dif <- data.frame(chr_pos = c("ScEsiA3_16766__HRSCAF_19082_2830017
                                         "ScEsiA3_16771__HRSCAF_19097_2512626",
                                         "ScEsiA3_21978__HRSCAF_26928_6268951"),
                             lab = c("CpG I: unannotated",
-                                    "CpG J: in exon of gene JAM3",
-                                    "CpG K: in promoter of gene PPP1R1B"))
+                                    "CpG J: exon of JAM3",
+                                    "CpG K: TSS of PPP1R1B"))
 
 microf_dif <- microf_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 microf_dif <- left_join(microf_dif, labels_microf_dif)
@@ -182,7 +182,7 @@ ggsave(volcano_trypa_dif, file="plots/test.png", width=10, height=10)
 ## hct_dif 
 hct_dif <- hct_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 labels_hct_dif <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_15878140"),
-                            lab = c("CpG L: in promoter of gene GAL"))
+                            lab = c("CpG L: promoter of GAL"))
 
 hct_dif <- left_join(hct_dif, labels_hct_dif)
 
@@ -230,8 +230,8 @@ for (i in 1:nrow(labels_hct_dif)){
 igg_dif <- igg_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 labels_igg_dif <- data.frame(chr_pos = c("ScEsiA3_21979__HRSCAF_26929_1282292",
                                          "ScEsiA3_21979__HRSCAF_26929_1282301"),
-                            lab = c("CpG G: upstream of NFIC",
-                                    "CpG M: upstream of NFIC"))
+                            lab = c("CpG G: upstream from NFIC",
+                                    "CpG M: upstream from NFIC"))
 
 igg_dif <- left_join(igg_dif, labels_igg_dif)
 
@@ -315,10 +315,10 @@ labels_mass_dif <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_53786697"
                                         "ScEsiA3_17616__HRSCAF_20466_3956821",
                                         "ScEsiA3_18752__HRSCAF_22883_4031831",
                                         "ScEsiA3_21976__HRSCAF_26926_4403331"),
-                            lab = c("CpG N: in intron of Six4",
+                            lab = c("CpG N: intron of Six4",
                                     "CpG O: unannotated", 
                                     "CpG H: upstream of ID1",
-                                    "CpG P: in intron of TET3",
+                                    "CpG P: intron of TET3",
                                     "CpG Q: downstream from KIAA0319L"))
 
 mass_dif <- left_join(mass_dif, labels_mass_dif)

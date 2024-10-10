@@ -109,9 +109,9 @@ for (i in 1:nrow(labels_attend)){
 labels_fight <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_6262304",
                                         "ScEsiA3_18290__HRSCAF_21698_5473558",
                                         "ScEsiA3_21978__HRSCAF_26928_5532732"),
-                            lab = c("CpG D: in exon of RHOF",
+                            lab = c("CpG D: exon of RHOF",
                                     "CpG E: upstream from SLC38A10",
-                                    "CpG F: in intron of TRAK1"))
+                                    "CpG F: intron of TRAK1"))
 
 fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 fight <- left_join(fight, labels_fight)

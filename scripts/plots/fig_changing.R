@@ -141,7 +141,7 @@ ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = r
   scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.8)) +
   scale_color_manual(values=c(clrs[5], clrs[17])) + 
   guides(color = "none")+
-  ylim(0, 60) +
+  ylim(0, 30) +
   geom_text(aes(label = paste0(round(perc, 1), " %"), x = region, y = perc, group=model), 
               hjust=-0.2, size = 6, position=position_dodge(width=0.9)) -> fig1_region
 
@@ -154,6 +154,6 @@ plot_grid(fig1_manhattan, fig1_raw, ncol=1, labels=c("c", "d"), label_fontface =
 
 plot_grid(fig1_top, fig1_bottom, ncol=1, align="hv", axis="lb", rel_heights=c(1,2)) -> fig1
 
-ggsave(fig1, file="plots/final/main/fig1_changing.png", width=20, height=24)
+ggsave(fig1, file="plots/final/main/fig_changing.png", width=20, height=24)
 
 
