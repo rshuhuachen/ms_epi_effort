@@ -94,7 +94,7 @@ m_mass_with_pre_out <- function_process_model(m_mass_with_pre, dir_plots = "plot
 
 ![Histogram dispersion and p-value: delta mass with pre-methylation](../plots/model_out/physio/mass/hist_raw_disp_pval_mass_dif_with_pre.png)
 
-![Volcano plot: delta mass with pre-methylation](../plots/model_out/physio/mass/volcawith_mass_dif_with_pre.png)
+![Volcano plot: delta mass with pre-methylation](../plots/model_out/physio/mass/volcano_mass_dif_with_pre.png)
 
 ![Raw data: delta mass with pre-methylation CpG 1](../plots/model_out/physio/mass/mass_with_pre_1.png)
 
@@ -158,7 +158,7 @@ Kiaa0319l: Predicted to act upstream of or within several processes, including f
 
 ![Histogram dispersion and p-value: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/hist_raw_disp_pval_microf_dif_with_pre.png)
 
-![Volcano plot: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/volcawith_microf_dif_with_pre.png)
+![Volcano plot: delta Microfilaria spp. with pre-methylation](../plots/model_out/physio/microf/volcano_microf_dif_with_pre.png)
 
 ![Raw data: delta Microfilaria spp. with pre-methylation CpG 1](../plots/model_out/physio/microf/microf_with_pre_1.png)
 
@@ -200,7 +200,7 @@ This CpG site was unannotated.
 
 ![Histogram dispersion and p-value: delta Trypanosoma spp. with pre-methylation](../plots/model_out/physio/trypa/hist_raw_disp_pval_trypa_dif_with_pre.png)
 
-![Volcano plot: delta trypailaria spp. with pre-methylation](../plots/model_out/physio/trypa/volcawith_trypa_dif_with_pre.png)
+![Volcano plot: delta trypailaria spp. with pre-methylation](../plots/model_out/physio/trypa/volcano_trypa_dif_with_pre.png)
 
 #### Without pre-lekking
 
@@ -216,7 +216,7 @@ This CpG site was unannotated.
 
 ![Histogram dispersion and p-value: delta IgG with pre-methylation](../plots/model_out/physio/ig/hist_raw_disp_pval_ig_dif_with_pre.png)
 
-![Volcano plot: delta IgG with pre-methylation](../plots/model_out/physio/ig/volcawith_ig_dif_with_pre.png)
+![Volcano plot: delta IgG with pre-methylation](../plots/model_out/physio/ig/volcano_ig_dif_with_pre.png)
 
 ![Raw data: delta IgG with pre-methylation CpG 1](../plots/model_out/physio/ig/ig_with_pre_1.png)
 
@@ -244,7 +244,7 @@ These were the exact same CpG sites that are significant compared to the model t
 
 ![Histogram dispersion and p-value: delta HCT with pre-methylation](../plots/model_out/physio/hct/hist_raw_disp_pval_hct_dif_with_pre.png)
 
-![Volcano plot: delta HCT with pre-methylation](../plots/model_out/physio/hct/volcawith_hct_dif_with_pre.png)
+![Volcano plot: delta HCT with pre-methylation](../plots/model_out/physio/hct/volcano_hct_dif_with_pre.png)
 
 ![Raw data: delta HCT with pre-methylation CpG 1](../plots/model_out/physio/hct/hct_with_pre_1.png)
 

@@ -247,7 +247,8 @@ m_attend_pre_out <- function_process_model(m_attend_pre, dir_plots = "plots/mode
 
 ```
 
-![Histogram dispersion and p-value: attendance with pre-methylation](../plots/model_out/effort/hist_raw_disp_pval_attend_with_pre.png) ![Volcano plot: attendance with pre-methylation](../plots/model_out/effort/volcano_attend_with_pre.png) ![Raw data: attendance with pre-methylation CpG 1](../plots/model_out/effort/raw/attend_with_pre_1.png) ![Raw data: attendance with pre-methylation CpG 2](../plots/model_out/effort/raw/attend_with_pre_2.png) ![Raw data: attendance with pre-methylation CpG 3](../plots/model_out/effort/raw/attend_with_pre_3.png)
+![Histogram dispersion and p-value: attendance with pre-methylation](../plots/model_out/effort/hist_raw_disp_pval_attend_with_pre.png) 
+![Volcano plot: attendance with pre-methylation](../plots/model_out/effort/volcano_attend_with_pre.png) ![Raw data: attendance with pre-methylation CpG 1](../plots/model_out/effort/raw/attend_with_pre_1.png) ![Raw data: attendance with pre-methylation CpG 2](../plots/model_out/effort/raw/attend_with_pre_2.png) ![Raw data: attendance with pre-methylation CpG 3](../plots/model_out/effort/raw/attend_with_pre_3.png)
 
 CpG site "ScEsiA3_17655\_\_HRSCAF_20552_371333" is located in an upstream region (gene ID ANN24887, similar to GPR87).
 

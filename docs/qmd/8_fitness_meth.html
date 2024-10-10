@@ -608,9 +608,9 @@ Attaching package: 'kableExtra'</code></pre>
 
     group_rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/fitness/GOFUNCTION_ams.xlsx"</span>)</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/fitness/GOPROCESS_ams.xlsx"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>table_go_function_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_function_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_process_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
 <table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
@@ -629,117 +629,59 @@ Attaching package: 'kableExtra'</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">GO:0102991</td>
-<td style="text-align: left;">myristoyl-CoA hydrolase activity</td>
-<td style="text-align: right;">0.000145</td>
-<td style="text-align: right;">0.1060</td>
-<td style="text-align: right;">72.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0016290</td>
-<td style="text-align: left;">palmitoyl-CoA hydrolase activity</td>
-<td style="text-align: right;">0.000145</td>
-<td style="text-align: right;">0.0528</td>
-<td style="text-align: right;">72.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0016289</td>
-<td style="text-align: left;">CoA hydrolase activity</td>
-<td style="text-align: right;">0.000145</td>
-<td style="text-align: right;">0.0352</td>
-<td style="text-align: right;">72.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0047617</td>
-<td style="text-align: left;">acyl-CoA hydrolase activity</td>
-<td style="text-align: right;">0.000145</td>
-<td style="text-align: right;">0.0264</td>
-<td style="text-align: right;">72.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0016788</td>
-<td style="text-align: left;">hydrolase activity, acting on ester bonds</td>
-<td style="text-align: right;">0.000654</td>
-<td style="text-align: right;">0.0952</td>
-<td style="text-align: right;">21.6</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">3</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">GO:0016790</td>
-<td style="text-align: left;">thiolester hydrolase activity</td>
-<td style="text-align: right;">0.000796</td>
-<td style="text-align: right;">0.0966</td>
-<td style="text-align: right;">48.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">GO:0052689</td>
-<td style="text-align: left;">carboxylic ester hydrolase activity</td>
-<td style="text-align: right;">0.000796</td>
-<td style="text-align: right;">0.0828</td>
-<td style="text-align: right;">48.0</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">2</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-</div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"../results/modeloutput/fitness/GOPROCESS_ams.xlsx"</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>table_go_process_changing <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Genes) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">"^GO"</span>, table_go_process_changing<span class="sc">$</span><span class="st">`</span><span class="at">GO Term</span><span class="st">`</span>)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="sc">%&gt;%</span>  <span class="fu">kable_classic_2</span>() <span class="sc">%&gt;%</span>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"99%"</span>, <span class="at">height =</span> <span class="st">"200px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:99%; ">
-<table class="lightable-classic-2 table table-sm table-striped small" data-quarto-postprocess="true">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">GO Term</th>
-<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Description</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">P-value</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">FDR q-value</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">Enrichment</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">N</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">B</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">n</th>
-<th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">b</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">GO:0001676</td>
-<td style="text-align: left;">long-chain fatty acid metabolic process</td>
-<td style="text-align: right;">0.000796</td>
+<td style="text-align: left;">GO:0030047</td>
+<td style="text-align: left;">actin modification</td>
+<td style="text-align: right;">0.000453</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">48</td>
-<td style="text-align: right;">288</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">4</td>
+<td style="text-align: right;">46.86</td>
+<td style="text-align: right;">7404</td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:1903506</td>
+<td style="text-align: left;">regulation of nucleic acid-templated transcription</td>
+<td style="text-align: right;">0.000585</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.56</td>
+<td style="text-align: right;">7404</td>
+<td style="text-align: right;">1439</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0006355</td>
+<td style="text-align: left;">regulation of transcription, DNA-templated</td>
+<td style="text-align: right;">0.000585</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.56</td>
+<td style="text-align: right;">7404</td>
+<td style="text-align: right;">1439</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GO:2001141</td>
+<td style="text-align: left;">regulation of RNA biosynthetic process</td>
+<td style="text-align: right;">0.000615</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.56</td>
+<td style="text-align: right;">7404</td>
+<td style="text-align: right;">1442</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GO:0051252</td>
+<td style="text-align: left;">regulation of RNA metabolic process</td>
+<td style="text-align: right;">0.000808</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.51</td>
+<td style="text-align: right;">7404</td>
+<td style="text-align: right;">1580</td>
+<td style="text-align: right;">158</td>
+<td style="text-align: right;">51</td>
 </tr>
 </tbody>
 </table>
