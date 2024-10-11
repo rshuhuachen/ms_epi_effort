@@ -155,11 +155,9 @@ When excluding models with convergence warnings/errors, we retain 96.4% and 99.7
 
 We can plot a histogram of the dispersion ratio and make a QQ plot to identify whether there is overdispersion and how to best filter for it.
 
-![Histogram dispersion ratio and p-values AMS](../plots/model_out/fitness/ams/hist_raw_ams.png) 
-![QQ plot model changing CpG sites AMS](../plots/model_out/fitness/ams/qqplot_raw_ams.png)
+![Histogram dispersion ratio and p-values AMS](../plots/model_out/fitness/ams/hist_raw_ams.png) ![QQ plot model changing CpG sites AMS](../plots/model_out/fitness/ams/qqplot_raw_ams.png)
 
-![Histogram dispersion ratio and p-values survival](../plots/model_out/fitness/surv/hist_raw_surv.png) 
-![QQ plot model changing CpG sites survival](../plots/model_out/fitness/surv/qqplot_raw_surv.png)
+![Histogram dispersion ratio and p-values survival](../plots/model_out/fitness/surv/hist_raw_surv.png) ![QQ plot model changing CpG sites survival](../plots/model_out/fitness/surv/qqplot_raw_surv.png)
 
 As overdispersion only seems to be a potential issue for the AMS model, we filter out the sites with an overdispersion ratio higher than the 95 percentile for AMS only.
 
@@ -348,9 +346,6 @@ We next run the list of gene IDs of the significant sites as the target list, us
 
 ```{r sig_go}
 library(readxl); library(dplyr); library(kableExtra)
-table_go_function_changing <- read_excel("../results/modeloutput/fitness/GOFUNCTION_ams.xlsx")
-
-table_go_function_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_function_changing$`GO Term`)) %>% kbl() %>%  kable_classic_2() %>%  scroll_box(width = "99%", height = "200px")
 
 table_go_process_changing <- read_excel("../results/modeloutput/fitness/GOPROCESS_ams.xlsx")
 
