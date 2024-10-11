@@ -132,7 +132,7 @@ ggplot(microf_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     theme(legend.position="none") +
     xlim(c(-0.3,0.3))+
     geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log10(parameter_qval)), 
-              nudge_x = 0.05, nudge_y = c(10, 20, 30), size = 6) -> volcano_microf_dif
+              nudge_x = 0.05, nudge_y = c(60, -30), size = 6) -> volcano_microf_dif
 
 ggsave(volcano_microf_dif, file="plots/test.png", width=10, height=10)
 
@@ -245,7 +245,7 @@ ggplot(igg_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     theme(legend.position="none") +
     xlim(c(-0.3,0.3))+
     geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log10(parameter_qval)), 
-              nudge_x = .05, nudge_y = 0.5, size = 6) -> volcano_igg_dif
+              nudge_x = .1, nudge_y = c(1, -1), size = 6) -> volcano_igg_dif
 
 ggsave(volcano_igg_dif, file="plots/test.png", width=10, height=10)
 
@@ -280,7 +280,7 @@ plot_grid(volcano_mass_dif, list_plot_mass_dif[[1]],
           volcano_igg_dif, list_plot_igg_dif[[1]],
           ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig3
 
-ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=28)
+ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=14, height=20)
 
 ##### WithOUT pre-lekking ######
 
