@@ -175,7 +175,7 @@ ggplot(trypa_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     theme(legend.position="none") +
     xlim(c(-0.3,0.3))-> volcano_trypa_dif
 
-ggsave(volcano_trypa_dif, file="plots/test.png", width=10, height=10)
+ggsave(volcano_trypa_dif, file="plots/final/supp/volcano_trypa_with_pre.png", width=10, height=10)
 
 ### HCT ####
 
