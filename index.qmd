@@ -2,7 +2,7 @@
 title: "Overview"
 ---
 
-**The role of epigenetics in regulating life history trade-offs**
+**Short-term changes in DNA methylation associated with reproductive investment and physiological changes**
 
 This repository holds all scripts and output generated for the manuscript that investigates epigenetic chagnes associated with reproductive investment in black grouse (*Lyrurus tetrix*)
 

@@ -31,3 +31,8 @@ clr_froh <- "#8DAA91"
 clr_grey <- "#8e8e99"
 clr_highlight <- "#FFBC42" 
 clr_2 <- c("#bccccc", "#8e8e99")
+
+clr_sig <- clr_gerp
+clr_prepost <- c("#284651", "#8DAA91")
+
+

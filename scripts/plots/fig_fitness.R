@@ -36,8 +36,8 @@ delta_out_ams <- delta_out_ams %>% mutate(sig = case_when(ams_delta_meth_qval < 
 
 ggplot(delta_out_ams, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     xlim(-21, 21)+
     labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)", title = "Annual mating success") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -80,8 +80,8 @@ delta_out_surv <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval
 
 ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_meth_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)") +
     xlim(-42, 42)+
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +

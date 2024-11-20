@@ -69,8 +69,8 @@ attend <- left_join(attend, labels_attend)
 
 ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek attendance") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -119,8 +119,8 @@ fight <- left_join(fight, labels_fight)
 ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Fighting rate") +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -163,8 +163,8 @@ dist <- left_join(dist, labels_dist)
 ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek centrality") +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -245,8 +245,8 @@ attend <- attend %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE 
 
 ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek attendance") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -265,8 +265,8 @@ fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ 
 ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Fighting rate") +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -286,8 +286,8 @@ dist <- left_join(dist, labels_dist)
 ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek centrality") +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +

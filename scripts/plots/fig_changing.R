@@ -24,12 +24,14 @@ out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth)
 ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
     labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.5)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.5)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> fig1_volcano
+
+fig1_volcano
 
 #### manhattan #####
 
@@ -61,20 +63,22 @@ out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" & prepost_qv
                                                       TRUE ~ "nonsig"))                                        
 
                                 
-out_glmer %>% subset(scaf_nr <= 15) %>% 
+out_glmer %>% subset(scaf_nr <= 10) %>% 
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=5, alpha=0.5, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
     labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
-    scale_color_manual(values=c(clrs[5], clrs[17], clrs[1])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17], clrs[1]), 0.5)) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    scale_color_manual(values=c(clrs[5], "#E28979", clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], "#E28979", clr_sig), 0.5)) +
+    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1.5) +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
    axis.line.x = element_blank(),
     legend.position="none",
     axis.ticks.x = element_blank(),
     axis.line.y = element_blank()) -> fig1_manhattan
+
+fig1_manhattan
 
 ggsave(fig1_manhattan, file="plots/test.png", height=10, width=10)
 
@@ -87,7 +91,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
-  scale_color_manual(values = c(clrs[1], clrs[17]))+
+  scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation percentage") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_1
@@ -98,7 +102,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8,  col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
-  scale_color_manual(values = c(clrs[1], clrs[17]))+
+  scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation percentage") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_2
@@ -109,7 +113,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[3]) %>%
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8,col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
-  scale_color_manual(values = c(clrs[1], clrs[17]))+
+  scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation percentage") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_3
@@ -120,7 +124,7 @@ subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
-  scale_color_manual(values = c(clrs[1], clrs[17]))+
+  scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation percentage") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_4
@@ -138,8 +142,8 @@ sum_annotated <- read.csv(file="results/modeloutput/changing/summary_regions_sig
 ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = region, y = perc)) + 
     geom_bar(stat="identity", position="dodge", aes(fill = model, col = model)) + 
   labs(y="Percentage of CpG sites", x="Region", fill = "Subset")+ coord_flip() + 
-  scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.8)) +
-  scale_color_manual(values=c(clrs[5], clrs[17])) + 
+  scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.8)) +
+  scale_color_manual(values=c(clrs[5], clr_sig)) + 
   guides(color = "none")+
   ylim(0, 28) +
   geom_text(aes(label = paste0(round(perc, 1), " %"), x = region, y = perc, group=model), 

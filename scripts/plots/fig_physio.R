@@ -73,8 +73,8 @@ mass_dif <- left_join(mass_dif, labels_mass_dif)
 
 ggplot(mass_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" body mass")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -124,8 +124,8 @@ microf_dif <- left_join(microf_dif, labels_microf_dif)
 
 ggplot(microf_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Microfilaria spp.")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -167,8 +167,8 @@ trypa_dif <- trypa_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig",
 
 ggplot(trypa_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Trypanosoma spp.")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -188,8 +188,8 @@ hct_dif <- left_join(hct_dif, labels_hct_dif)
 
 ggplot(hct_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" HCT")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -237,8 +237,8 @@ igg_dif <- left_join(igg_dif, labels_igg_dif)
 
 ggplot(igg_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" IgG")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -325,8 +325,8 @@ mass_dif <- left_join(mass_dif, labels_mass_dif)
 
 ggplot(mass_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" body mass")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -372,8 +372,8 @@ microf_dif <- left_join(microf_dif, labels_microf_dif)
 
 ggplot(microf_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Microfilaria spp.")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -415,8 +415,8 @@ trypa_dif <- trypa_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig",
 
 ggplot(trypa_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Trypanosoma spp.")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -432,8 +432,8 @@ hct_dif <- hct_dif %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRU
 
 ggplot(hct_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" HCT")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -455,8 +455,8 @@ igg_dif <- left_join(igg_dif, labels_igg_dif)
 
 ggplot(igg_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clrs[17])) +
-    scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+    scale_color_manual(values=c(clrs[5], clr_sig)) +
+    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" IgG")) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
