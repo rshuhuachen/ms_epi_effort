@@ -166,4 +166,4 @@ plot_grid(volcano_ams,
           volcano_surv, align="vh", axis="lb",
           ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
 
-ggsave(fig, file="plots/final/main/fig_fitness.png", width=16, height=18)
+ggsave(fig, file="plots/final/main/fig_fitness.png", width=14, height=8)
