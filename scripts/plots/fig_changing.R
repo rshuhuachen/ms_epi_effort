@@ -148,7 +148,7 @@ sum_annotated <- read.csv(file="results/modeloutput/changing/summary_regions_sig
 ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = region, y = perc)) + 
     geom_bar(stat="identity", position="dodge", aes(fill = model, col = model)) + 
   labs(y="Percentage of CpG sites", x="Region", fill = "Subset")+ coord_flip() + 
-  scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.8)) +
+  scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.8), label = c("All", "Significantly changing")) +
   scale_color_manual(values=c(clrs[5], clr_sig)) + 
   guides(color = "none")+
   ylim(0, 28) +
