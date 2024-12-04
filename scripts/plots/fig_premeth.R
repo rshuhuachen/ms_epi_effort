@@ -87,4 +87,6 @@ plot_grid(plots[[1]] + labs(title = "Attendance"),
           plots[[7]] + labs(title = expression(Delta~HCT)),
           ncol=2, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
+
 ggsave(all_plots, file="plots/model_out/pre_lekking/combined_volcanoes.png", width=16, height=20)            
+ggsave(all_plots, file="plots/final/supp/pre_lek_volcanoes.png", width=16, height=20)            

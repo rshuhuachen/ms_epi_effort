@@ -218,8 +218,8 @@ list_plot_dist[[1]]
 
 all_raw <- plot_grid(list_plot_attend[[1]], list_plot_attend[[2]], list_plot_attend[[3]], 
                         list_plot_fight[[1]], list_plot_fight[[2]], list_plot_fight[[3]],
-                        list_plot_dist[[1]], ncol=3, align="hv", axis="lb") 
-ggsave(all_raw, file="plots/final/supp/raw_effort_with_pre.png", width=26, height=24)
+                        list_plot_dist[[1]], ncol=2, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22) 
+ggsave(all_raw, file="plots/final/supp/raw_effort_with_pre.png", width=16, height=22)
 
 plot_grid(volcano_attend, list_plot_attend[[1]], 
           volcano_fight, list_plot_fight[[2]],

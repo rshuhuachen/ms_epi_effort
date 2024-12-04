@@ -286,8 +286,8 @@ for (i in 1:nrow(labels_igg_dif)){
 all_raw <- plot_grid(list_plot_mass_dif[[1]], list_plot_mass_dif[[2]], 
                      list_plot_microf_dif[[1]], list_plot_microf_dif[[2]], list_plot_microf_dif[[3]],
                      list_plot_igg_dif[[1]], list_plot_igg_dif[[2]], 
-                     list_plot_hct_dif[[1]], ncol=3, align="hv", axis="lb") 
-ggsave(all_raw, file="plots/final/supp/raw_physio_with_pre.png", width=26, height=24)
+                     list_plot_hct_dif[[1]], ncol=2, align="hv", axis="lb", labels = "auto", label_fontface = "plain", label_size = 22) 
+ggsave(all_raw, file="plots/final/supp/raw_physio_with_pre.png", width=16, height=22)
 
 plot_grid(volcano_mass_dif, list_plot_mass_dif[[1]], 
           volcano_microf_dif, list_plot_microf_dif[[3]],
