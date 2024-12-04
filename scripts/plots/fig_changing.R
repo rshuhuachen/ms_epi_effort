@@ -21,7 +21,7 @@ sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth
 
 out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
 
-ggplot(out_glmer, aes(x = mean_delta_meth, y = -log10(as.numeric(prepost_qval)))) + 
+ggplot(out_glmer, aes(x = mean_delta_meth*100, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
     labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
