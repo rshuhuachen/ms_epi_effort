@@ -60,7 +60,7 @@ rm(data)
 labels_attend <- data.frame(chr_pos = c("ScEsiA3_17655__HRSCAF_20552_371333",
                                         "ScEsiA3_18278__HRSCAF_21663_133779007",
                                         "ScEsiA3_18752__HRSCAF_22883_2574288"),
-                            lab = c("CpG A: upstream from GPR87",
+                            lab = c("CpG A*: upstream from GPR87",
                                     "CpG B: exon of ADCK2",
                                     "CpG C: downstream from UNK"))
 
@@ -96,6 +96,7 @@ for (i in 1:nrow(labels_attend)){
         ggplot(sub, aes(x = attend_scl, y = delta_meth)) + 
                 geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+                geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 labs(x = "z-transformed attendance", y = expression(Delta*" methylation %"), 
                         title = labels_attend$lab[[i]]) -> plot
@@ -111,7 +112,7 @@ labels_fight <- data.frame(chr_pos = c("ScEsiA3_15486__HRSCAF_17393_6262304",
                                         "ScEsiA3_21978__HRSCAF_26928_5532732"),
                             lab = c("CpG D: exon of RHOF",
                                     "CpG E: upstream from SLC38A10",
-                                    "CpG F: intron of TRAK1"))
+                                    "CpG F: intron of JUP"))
 
 fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 fight <- left_join(fight, labels_fight)
@@ -126,7 +127,9 @@ ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     theme(legend.position="none") +
     xlim(c(-0.3,0.3))+
     geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log10(parameter_qval)), 
-              nudge_x = .05, nudge_y = c(40,14,40), size = 6) -> volcano_fight
+              nudge_x = .05, nudge_y = c(40,40,50), size = 6) -> volcano_fight
+
+volcano_fight
 
 ggsave(volcano_fight, file="plots/test.png", width=10, height=10)
 
@@ -144,6 +147,7 @@ for (i in 1:nrow(labels_fight)){
                 geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
+                geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 labs(x = "z-transformed fighting rate", y = expression(Delta*" methylation %"), 
                         title = labels_fight$lab[[i]]) -> plot
 
@@ -155,7 +159,7 @@ for (i in 1:nrow(labels_fight)){
    
 ## dist 
 labels_dist <- data.frame(chr_pos = c("ScEsiA3_21979__HRSCAF_26929_1282292"),
-                            lab = c("CpG G: upstream from NFIC"))
+                            lab = c("CpG G*: upstream from NFIC"))
 
 dist <- dist %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 dist <- left_join(dist, labels_dist)
@@ -188,6 +192,8 @@ for (i in 1:nrow(labels_dist)){
                 geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
+                geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+                scale_x_reverse()+
                 labs(x = "z-transformed centrality", y = expression(Delta*" methylation %"), 
                         title = labels_dist$lab[[i]]) -> plot
 
@@ -221,89 +227,89 @@ plot_grid(volcano_attend, list_plot_attend[[1]],
           ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig2
 
 ggsave(fig2, file="plots/final/main/fig_effort_with_pre.png", width=16, height=20)
-
-##### WithOUT pre-lekking ######
-
-## attendance
-load(file="results/modeloutput/effort/out_attend_no_pre.RData")
-attend <- data
-
-## fight 
-load(file="results/modeloutput/effort/out_fight_no_pre.RData")
-fight <- data
-
-## dist 
-load(file="results/modeloutput/effort/out_dist_no_pre.RData")
-dist <- data
-
-rm(data)
-
-### Make 3 volcano plots ####
-
-## attend 
-attend <- attend %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
-
-ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
-    geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-    scale_color_manual(values=c(clrs[5], clr_sig)) +
-    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek attendance") +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-    theme(legend.position="none") +
-    xlim(c(-0.3,0.3)) -> volcano_attend
-
-ggsave(volcano_attend, file="plots/test.png", width=10, height=10)
-
-## no sig so no raw data
-
-## fight 
-
-fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
-
-
-ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
-    geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Fighting rate") +
-    scale_color_manual(values=c(clrs[5], clr_sig)) +
-    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-    theme(legend.position="none") +
-    xlim(c(-0.3,0.3)) -> volcano_fight
-
-ggsave(volcano_fight, file="plots/test.png", width=10, height=10)
-
-## no sig so no raw data
-   
-## dist 
-labels_dist <- data.frame(chr_pos = c("ScEsiA3_21979__HRSCAF_26929_1282292"),
-                            lab = c("CpG G: upstream of NFIC"))
-
-dist <- dist %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
-dist <- left_join(dist, labels_dist)
-
-ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
-    geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek centrality") +
-    scale_color_manual(values=c(clrs[5], clr_sig)) +
-    scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-    theme(legend.position="none") +
-    xlim(c(-0.3,0.3))+
-    geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log10(parameter_qval)), 
-              nudge_x = .07, nudge_y = -1, size = 6) -> volcano_dist
-
-ggsave(volcano_dist, file="plots/test.png", width=10, height=10)
-
-## same sig as the one with pre-lekking so don't plot here
-
-#### assembly fig ####
-
-plot_grid(volcano_attend, 
-          volcano_fight, 
-          volcano_dist, 
-          ncol=1, labels="auto", label_fontface = "plain", label_size = 22) -> fig2_no_pre
-
-ggsave(fig2_no_pre, file="plots/final/main/fig_effort_no_pre.png", width=12, height=20)
+ 
+# ##### WithOUT pre-lekking ######
+# 
+# ## attendance
+# load(file="results/modeloutput/effort/out_attend_no_pre.RData")
+# attend <- data
+# 
+# ## fight 
+# load(file="results/modeloutput/effort/out_fight_no_pre.RData")
+# fight <- data
+# 
+# ## dist 
+# load(file="results/modeloutput/effort/out_dist_no_pre.RData")
+# dist <- data
+# 
+# rm(data)
+# 
+# ### Make 3 volcano plots ####
+# 
+# ## attend 
+# attend <- attend %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+# 
+# ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
+#     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
+#     scale_color_manual(values=c(clrs[5], clr_sig)) +
+#     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
+#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek attendance") +
+#     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+#     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+#     theme(legend.position="none") +
+#     xlim(c(-0.3,0.3)) -> volcano_attend
+# 
+# ggsave(volcano_attend, file="plots/test.png", width=10, height=10)
+# 
+# ## no sig so no raw data
+# 
+# ## fight 
+# 
+# fight <- fight %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+# 
+# 
+# ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
+#     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
+#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Fighting rate") +
+#     scale_color_manual(values=c(clrs[5], clr_sig)) +
+#     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
+#     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+#     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+#     theme(legend.position="none") +
+#     xlim(c(-0.3,0.3)) -> volcano_fight
+# 
+# ggsave(volcano_fight, file="plots/test.png", width=10, height=10)
+# 
+# ## no sig so no raw data
+#    
+# ## dist 
+# labels_dist <- data.frame(chr_pos = c("ScEsiA3_21979__HRSCAF_26929_1282292"),
+#                             lab = c("CpG G: upstream of NFIC"))
+# 
+# dist <- dist %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+# dist <- left_join(dist, labels_dist)
+# 
+# ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
+#     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
+#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek centrality") +
+#     scale_color_manual(values=c(clrs[5], clr_sig)) +
+#     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
+#     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+#     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+#     theme(legend.position="none") +
+#     xlim(c(-0.3,0.3))+
+#     geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log10(parameter_qval)), 
+#               nudge_x = .07, nudge_y = -1, size = 6) -> volcano_dist
+# 
+# ggsave(volcano_dist, file="plots/test.png", width=10, height=10)
+# 
+# ## same sig as the one with pre-lekking so don't plot here
+# 
+# #### assembly fig ####
+# 
+# plot_grid(volcano_attend, 
+#           volcano_fight, 
+#           volcano_dist, 
+#           ncol=1, labels="auto", label_fontface = "plain", label_size = 22) -> fig2_no_pre
+# 
+# ggsave(fig2_no_pre, file="plots/final/main/fig_effort_no_pre.png", width=12, height=20)

@@ -82,7 +82,8 @@ ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_m
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)") +
+    labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)", 
+         title = "Survival") +
     xlim(-42, 42)+
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -109,10 +110,60 @@ for (i in 1:2){
 
 ggsave(plot, file = "plots/test.png", width=10, height=10)    
 
+### for AMS: manhattan ###
+
+# load scaffold numbers
+load("data/scaffold_names_dovetail.RData")
+
+# Split the chr_pos column into two columns based on the first "_"
+delta_out_ams$chr_pos <- as.character(delta_out_ams$chr_pos)
+split_chr_pos <- strsplit(delta_out_ams$chr_pos, "_", fixed = TRUE)
+
+# Extract the numbers following HRSCAF=XXX_number
+delta_out_ams$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                        sapply(split_chr_pos, "[", 2), ";", 
+                        sapply(split_chr_pos, "[", 4), "=",
+                        sapply(split_chr_pos, "[", 5))
+
+delta_out_ams$pos <- as.numeric(sapply(split_chr_pos, "[", 6))
+
+# join
+delta_out_ams <- left_join(delta_out_ams, genome[,c("contig", "scaf_nr")], by = c("chr" = "contig"))
+
+# plot 
+delta_out_ams <- delta_out_ams %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
+                                                  TRUE ~ "odd"))
+
+delta_out_ams <- delta_out_ams %>% mutate(col_sig = case_when(col == "even" & ams_delta_meth_qval <0.05 ~ "sig_even",
+                                                      col == "odd" & ams_delta_meth_qval <0.05 ~ "sig_odd",  
+                                                      TRUE ~ "nonsig"))                                        
+
+
+delta_out_ams %>% subset(scaf_nr <= 10) %>% 
+  ggplot(aes(x = pos, y = -log10(as.numeric(ams_delta_meth_qval)))) + 
+  geom_point(size=5, alpha=0.5, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
+  facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
+  labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+  scale_color_manual(values=c(clrs[5], "#E28979", clr_sig)) +
+  scale_fill_manual(values=alpha(c(clrs[5], "#E28979", clr_sig), 0.5)) +
+  geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1.5) +
+  theme(axis.text.x = element_blank(),
+        panel.spacing = unit(0, "lines"),
+        axis.line.x = element_blank(),
+        legend.position="none",
+        axis.ticks.x = element_blank(),
+        axis.line.y = element_blank()) -> fig_ams_manhattan
+
+fig_ams_manhattan
+
 ### assemble #####
 
 plot_grid(volcano_ams, list_plot_ams[[1]], 
           volcano_surv, list_plot_surv[[1]], align="vh", axis="lb",
+          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
+
+plot_grid(volcano_ams, 
+          volcano_surv, align="vh", axis="lb",
           ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
 
 ggsave(fig, file="plots/final/main/fig_fitness.png", width=16, height=18)

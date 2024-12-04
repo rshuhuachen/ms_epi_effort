@@ -66,8 +66,8 @@ for (i in 1:length(models)){
     
     ggplot(df, aes(x = pre_estimate, y = -log10(pre_qval))) + 
         geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
-        scale_color_manual(values=c(clrs[5], clrs[17])) +
-        scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.6)) +
+        scale_color_manual(values=c(clr_grey, clr_sig)) +
+        scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
         labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = "-log10(q-value)", title = as.character(df$parameter[1])) +
         geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
         geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -77,8 +77,14 @@ for (i in 1:length(models)){
     ggsave(volcano, file= paste0("plots/model_out/pre_lekking/volcano_", as.character(df$parameter[1]), ".png"), width=10, height=10)}
 
 ### combine in plot
-plot_grid(plots[[1]], plots[[2]] , plots[[3]] , plots[[4]] ,
-            plots[[5]] , plots[[6]] , plots[[7]], plots[[8]],
-            ncol=2, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
-
+plot_grid(plots[[1]] + labs(title = "Attendance"), 
+          plots[[2]] + labs(title = "Fighting"), 
+          plots[[3]] + labs(title = "Lek centrality"), 
+          plots[[4]] + labs(title = expression(Delta~body~mass)),
+          plots[[5]] + labs(title = expression(Delta~italic(Microfilaria~spp.))),
+          plots[[6]] + labs(title = expression(Delta~italic(Trypanosoma~spp.))),
+          plots[[8]] + labs(title = expression(Delta~IgG)),
+          plots[[7]] + labs(title = expression(Delta~HCT)),
+          ncol=2, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
+all_plots
 ggsave(all_plots, file="plots/model_out/pre_lekking/combined_volcanoes.png", width=16, height=20)            

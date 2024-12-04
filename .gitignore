@@ -9,3 +9,4 @@ data/processed
 results/modeloutput
 results/annotated
 results/qc
+results/pca

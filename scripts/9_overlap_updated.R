@@ -53,7 +53,7 @@ delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_di
 ## load ams model results
 load(file="results/modeloutput/fitness/out_ams_deltameth_filtered.RData")
 cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #362
-cpg_sig_ams <- cpg_sig_ams %>% select(c(chr_pos, intercept_ams, ams_delta_meth_estimate, ams_delta_meth_qval))
+cpg_sig_ams <- cpg_sig_ams %>% dplyr::select(c(chr_pos, intercept_ams, ams_delta_meth_estimate, ams_delta_meth_qval))
 names(cpg_sig_ams) <- c("chr_pos", "intercept", "parameter_estimate", "parameter_qval")
 cpg_sig_ams <- cpg_sig_ams %>% mutate(parameter = "ams", .before=parameter_qval)
 cpg_sig_ams$pre_control <- NA
@@ -134,14 +134,14 @@ cpg_ig_no_pre$pre_control <- "no_pre"
 
 ### combine
 
-all_models_sig <- rbind(cpg_attend_no_pre, cpg_attend_pre,
-                        cpg_fight_no_pre, cpg_fight_pre,
+all_models_sig <- rbind( cpg_attend_pre,
+                        cpg_fight_pre,
                         cpg_dist_no_pre, cpg_dist_pre,
                         cpg_mass_no_pre, cpg_mass_pre,
-                        cpg_microf_no_pre, cpg_microf_pre,
-                        cpg_trypa_no_pre, cpg_trypa_pre,
+                        cpg_microf_pre,
+                       # cpg_trypa_no_pre, cpg_trypa_pre,
                         cpg_ig_no_pre, cpg_ig_pre,
-                        cpg_hct_no_pre, cpg_hct_pre)
+                        cpg_hct_pre)
 
 
 
@@ -149,9 +149,9 @@ all_models <- rbind(cpg_sig_ams, all_models_sig)
 
 ### identify duplicate CpG sites / overlap ####
 all_models <- all_models %>% group_by(chr_pos) %>% mutate(n = row_number()) %>% ungroup()
-dups <- all_models %>% subset(n > 1) %>% select(chr_pos) %>% unique()
+dups <- all_models %>% subset(n > 1) %>% dplyr::select(chr_pos) %>% unique()
 
-dup_models <- subset(all_models, chr_pos %in% dups$chr_pos) %>% select(-c(n))%>% arrange(chr_pos)
+dup_models <- subset(all_models, chr_pos %in% dups$chr_pos) %>% dplyr::select(-c(n))%>% arrange(chr_pos)
 
 ## 9 overlapping!
 

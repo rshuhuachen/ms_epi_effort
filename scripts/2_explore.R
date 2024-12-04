@@ -86,6 +86,8 @@ data_pca <- lapply(data_pca, as.numeric)
 # conduct pca and save plots
 PCA <- prcomp(t(as.data.frame(data_pca)), center=F, scale=F) # t() transposes the matrix meth_PCA to get one coordinate for each id
 
+save(PCA, file = "results/pca/pca.RData")
+
 png(file = "plots/explore/pca_biplot.png", width=1000, height = 1000)
 biplot(PCA,scale = T,center=F,cex=0.25)
 dev.off()

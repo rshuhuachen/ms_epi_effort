@@ -85,47 +85,53 @@ ggsave(fig1_manhattan, file="plots/test.png", height=10, width=10)
 #### Raw data #### 
 out_glmer <- out_glmer %>% arrange(prepost_qval)
 
-subset(changing_cpg, chr_pos == out_glmer$chr_pos[1]) %>%
+cpg_sig_increase <- subset(out_glmer, mean_delta_meth > 0 & sig == "sig") %>% head(n=1)
+cpg_sig_increase2 <- subset(out_glmer, mean_delta_meth > 0 & sig == "sig") %>% tail(n=1)
+cpg_sig_decrease <- subset(out_glmer, mean_delta_meth < 0 & sig == "sig") %>% head(n=1)
+#cpg_sig_decrease2 <- subset(out_glmer, mean_delta_meth < 0 & sig == "sig") %>% slice_sample(n=1) #ScEsiA3_19552__HRSCAF_24415_11239844
+cpg_sig_decrease2 <- subset(out_glmer, chr_pos == "ScEsiA3_19552__HRSCAF_24415_11239844")
+
+subset(changing_cpg, chr_pos == cpg_sig_increase$chr_pos) %>%
   arrange(id, year) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
   scale_color_manual(values = clr_prepost)+
-  labs(x = "Time period", y = "Methylation percentage") +
+  labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_1
 
-subset(changing_cpg, chr_pos == out_glmer$chr_pos[2]) %>%
+subset(changing_cpg, chr_pos == cpg_sig_increase2$chr_pos) %>%
   arrange(id, year) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8,  col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
   scale_color_manual(values = clr_prepost)+
-  labs(x = "Time period", y = "Methylation percentage") +
+  labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_2
 
-subset(changing_cpg, chr_pos == out_glmer$chr_pos[3]) %>%
+subset(changing_cpg, chr_pos == cpg_sig_decrease$chr_pos) %>%
   arrange(id, year) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8, col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8,col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
   scale_color_manual(values = clr_prepost)+
-  labs(x = "Time period", y = "Methylation percentage") +
+  labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_3
 
-subset(changing_cpg, chr_pos == out_glmer$chr_pos[4]) %>%
+subset(changing_cpg, chr_pos == cpg_sig_decrease2$chr_pos) %>%
   arrange(id, year) %>%
   ggplot(., aes(x = prepost, y = methperc))+
   geom_boxplot(linewidth=1, outlier.shape=NA) + 
   geom_path(aes(group = id_year), alpha = 0.8, linewidth=0.8,col = "grey60", position = position_jitter(width = 0.1, seed = 3922)) +
   geom_point(aes(alpha = 0.8, col = prepost), size=4, position = position_jitter(width = 0.1, seed = 3922)) + 
   scale_color_manual(values = clr_prepost)+
-  labs(x = "Time period", y = "Methylation percentage") +
+  labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
   ylim(0,1)-> plot_top_cpg_4
 
@@ -147,9 +153,43 @@ ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = r
   guides(color = "none")+
   ylim(0, 28) +
   geom_text(aes(label = paste0(round(perc, 1), " %"), x = region, y = perc, group=model), 
-              hjust=-0.2, size = 6, position=position_dodge(width=0.9)) -> fig1_region
+              hjust=-0.2, size = 6, position=position_dodge(width=0.9)) +
+  theme(legend.position = "top") +
+  geom_text(label = "*", x = 6, y = 14.2, hjust=-9, vjust = 0.8, size = 6) +
+  geom_text(label = "*", x = 5, y = 6.9, hjust=-9, size = 6, vjust = 0.8) +
+  geom_text(label = "*", x = 4, y = 18.6, hjust=-9, size = 6, vjust = 0.8) +
+  geom_text(label = "*", x = 3, y = 15, hjust=-9, size = 6, vjust = 0.8) -> fig1_region
+  
 
 ggsave(fig1_region, file="plots/test.png", height=10, width=10)
+
+# sig dif from zero with binomial test?
+annotated_wide <- spread(dplyr::select(sum_annotated,-c("n_total", "n")), model, perc)
+annotated_wide <- left_join(annotated_wide, subset(sum_annotated, model == "Time period"), by = c("region", "Time period" = "perc"))
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "Downstream")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "Downstream")], 
+            p = annotated_wide$All[which(annotated_wide$region == "Downstream")]/100) 
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "Exon")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "Exon")], 
+            p = annotated_wide$All[which(annotated_wide$region == "Exon")]/100)
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "Intron")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "Intron")], 
+            p = annotated_wide$All[which(annotated_wide$region == "Intron")]/100) # sig
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "Promoter")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "Promoter")], 
+            p = annotated_wide$All[which(annotated_wide$region == "Promoter")]/100) # sig
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "TSS")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "TSS")], 
+            p = annotated_wide$All[which(annotated_wide$region == "TSS")]/100) # sig
+
+binom.test(x = annotated_wide$n[which(annotated_wide$region == "Upstream")], 
+            n = annotated_wide$n_total[which(annotated_wide$region == "Upstream")], 
+            p = annotated_wide$All[which(annotated_wide$region == "Upstream")]/100) # sig
 
 #### assembly fig ####
 
@@ -158,6 +198,7 @@ plot_grid(fig1_manhattan, fig1_raw, ncol=1, labels=c("c", "d"), label_fontface =
 
 plot_grid(fig1_top, fig1_bottom, ncol=1, align="hv", axis="lb", rel_heights=c(1,2)) -> fig1
 
-ggsave(fig1, file="plots/final/main/fig_changing.png", width=16, height=18)
+ggsave(fig1, file="plots/final/main/fig_changing.png", width=16, height=24)
+ggsave(fig1, file="plots/test.png", height=16, width=18)
 
 
