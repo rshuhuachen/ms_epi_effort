@@ -32,7 +32,6 @@ qq_plot <- function(p, title = "QQ plot", col_abline = "darkred", CB = TRUE,
   qq_data <- data.frame(expected = expected, observed = observed)
   
   # Plot
-  source("scripts/plotting_theme.R")
   p <- ggplot(qq_data, aes(x = expected, y = observed)) +
     geom_point(size = 2) +
     geom_abline(slope = 2, intercept = 0, color = col_abline) +

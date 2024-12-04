@@ -38,6 +38,6 @@ ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = lib)) +
   scale_color_manual(values=c(clrs_hunting, clrs_related[1:5])) -> pca_lib
 
 cowplot::plot_grid(hist_mean_cov, hist_n, pca_lib, pca_site, pca_prepost, pca_year,
-                   labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> hist_plots
+                   labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> hist_plots
 
 ggsave(hist_plots, file="plots/final/supp/summary_stats_cov_meth.png", width=18, height=24)

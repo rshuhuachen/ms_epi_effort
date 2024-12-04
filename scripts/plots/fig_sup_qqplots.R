@@ -1,5 +1,5 @@
 #### Packages #####
-extrafont::loadfonts(device="all")
+#extrafont::loadfonts(device="all")
 
 pacman::p_load(tidyverse, cowplot, data.table)
 
@@ -81,7 +81,7 @@ qq_plot(out_surv$surv_delta_meth_pval, title = "Survival", CB=F, thinning = F) -
 plot_grid(hist_pvals_changing, qqplot_changing, 
           hist_pvals_ams, qqplot_ams,
           hist_pvals_surv, qqplot_surv,
-          labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_1
+          labels=c("auto"), align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_1
 
 ggsave(qqs_1, file = "plots/final/supp/hist_qqplots_changing_fitness.png", width = 14, height = 18)
 
@@ -116,7 +116,7 @@ qq_plot(out_dist$parameter_pval, title = "Centrality", CB=F, thinning = F) -> qq
 plot_grid(hist_pvals_attend, qqplot_attend, 
           hist_pvals_fight, qqplot_fight,
           hist_pvals_dist, qqplot_dist,
-          labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_2
+          labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_2
 
 ggsave(qqs_2, file = "plots/final/supp/hist_qqplots_effort.png", width = 14, height = 18)
 
@@ -167,6 +167,6 @@ plot_grid(hist_pvals_mass, qqplot_mass,
           hist_pvals_trypa, qqplot_trypa,
           hist_pvals_igg, qqplot_igg,
           hist_pvals_hct, qqplot_hct,
-          labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_3
+          labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_3
 
 ggsave(qqs_3, file = "plots/final/supp/hist_qqplots_physio.png", width = 14, height = 26)
