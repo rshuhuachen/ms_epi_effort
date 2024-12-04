@@ -71,7 +71,7 @@ ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek attendance") +
+    labs(x = expression(paste(beta, " estimate lek attendance")), y = "-log10(q-value)") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -119,7 +119,7 @@ fight <- left_join(fight, labels_fight)
 
 ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Fighting rate") +
+    labs(x = expression(paste(beta, " estimate fighting rate")), y = "-log10(q-value)") +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -166,7 +166,7 @@ dist <- left_join(dist, labels_dist)
 
 ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = "Lek centrality") +
+    labs(x = expression(paste(beta, " estimate lek centrality")), y = "-log10(q-value)") +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -224,10 +224,11 @@ ggsave(all_raw, file="plots/final/supp/raw_effort_with_pre.png", width=16, heigh
 plot_grid(volcano_attend, list_plot_attend[[1]], 
           volcano_fight, list_plot_fight[[2]],
           volcano_dist, list_plot_dist[[1]],
-          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig2
+          ncol=2, labels= c("a)", " ", "b)", " ", "c)", " "), label_fontface = "plain", label_size = 22) -> fig2
 
 ggsave(fig2, file="plots/final/main/fig_effort_with_pre.png", width=16, height=20)
  
+
 # ##### WithOUT pre-lekking ######
 # 
 # ## attendance

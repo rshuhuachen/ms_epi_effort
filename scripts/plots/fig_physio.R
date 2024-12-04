@@ -75,7 +75,7 @@ ggplot(mass_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" body mass")) +
+    labs(x = expression(beta*" estimate "*Delta*" body mass"), y = "-log10(q-value)") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -128,7 +128,7 @@ ggplot(microf_dif, aes(x = parameter_estimate, y = -log(parameter_qval, base=exp
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log20(q-value)", title = expression(Delta~" Microfilaria spp.")) +
+    labs(x = expression(beta*" estimate "*Delta*italic(" Microfilaria spp.")), y = "-log20(q-value)") +
     geom_hline(yintercept = -log(0.05,base=exp(20)), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -136,7 +136,7 @@ ggplot(microf_dif, aes(x = parameter_estimate, y = -log(parameter_qval, base=exp
     geom_label_repel(aes(label = lab, x = parameter_estimate, y = -log(parameter_qval, base=exp(20))), 
               nudge_x = c(-0.05, 0, 0.05), nudge_y = c(10,10,10), size = 6) -> volcano_microf_dif
 #I, J
-volcano_microf_dif
+#volcano_microf_dif
 
 ggsave(volcano_microf_dif, file="plots/test.png", width=10, height=10)
 
@@ -157,7 +157,7 @@ for (i in 1:nrow(labels_microf_dif)){
                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-                labs(x = expression("z-transformed "*Delta*" Microfilaria spp."), y = expression(Delta*" methylation %"), 
+                labs(x = expression("z-transformed "*Delta*italic(" Microfilaria spp.")), y = expression(Delta*" methylation %"), 
                         title = labels_microf_dif$lab[[i]]) -> plot
 
         ggsave(plot, file= paste0("plots/model_out/physio/raw_microf_dif_", i, ".png"), width=8, height=8)
@@ -174,7 +174,7 @@ ggplot(trypa_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Trypanosoma spp.")) +
+    labs(x = expression(beta*" estimate "*Delta*italic("Trypanosoma spp.")), y = "-log10(q-value)") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -195,7 +195,7 @@ ggplot(hct_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" HCT")) +
+    labs(x = expression(beta*" estimate "*Delta*" HCT"), y = "-log10(q-value)") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -245,7 +245,7 @@ ggplot(igg_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" IgG")) +
+    labs(x = expression(beta*" estimate "*Delta*" IgG"), y = "-log10(q-value)") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -293,7 +293,7 @@ plot_grid(volcano_mass_dif, list_plot_mass_dif[[1]],
           volcano_microf_dif, list_plot_microf_dif[[3]],
           volcano_igg_dif, list_plot_igg_dif[[2]],
           volcano_hct_dif,list_plot_hct_dif[[1]], 
-          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig3
+          ncol=2, labels= c("a)", " ", "b)", " ", "c)", " ", "d)", " "), label_fontface = "plain", label_size = 22) -> fig3
 
 ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=14, height=20)
 

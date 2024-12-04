@@ -1,6 +1,6 @@
 
 theme_set(theme_classic() + theme(title = element_text(size=20),
-                                  plot.title = element_text(hjust = 0.5),
+                                  plot.title = element_text(hjust = 0.5, margin=margin(0,0,15,0)),
                                   plot.subtitle = element_text(size=16, family = "Arial"),
                                   axis.title = element_text(size = 20, family = "Arial"),
                                   axis.text = element_text(size = 18, family = "Arial"),

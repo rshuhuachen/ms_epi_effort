@@ -39,12 +39,12 @@ ggplot(delta_out_ams, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     xlim(-21, 21)+
-    labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)", title = "Annual mating success") +
+    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = "-log10(q-value)", title = "Annual mating success") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> volcano_ams
 
-ggsave(plot, file = "plots/test.png", width=10, height=10)    
+ggsave(volcano_ams, file = "plots/test.png", width=10, height=10)    
 
 # raw data top 5
 
@@ -82,7 +82,7 @@ ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_m
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)", 
+    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = "-log10(q-value)", 
          title = "Survival") +
     xlim(-42, 42)+
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -158,9 +158,9 @@ fig_ams_manhattan
 
 ### assemble #####
 
-plot_grid(volcano_ams, list_plot_ams[[1]], 
-          volcano_surv, list_plot_surv[[1]], align="vh", axis="lb",
-          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
+#plot_grid(volcano_ams, list_plot_ams[[1]], 
+#          volcano_surv, list_plot_surv[[1]], align="vh", axis="lb",
+#          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
 
 plot_grid(volcano_ams, 
           volcano_surv, align="vh", axis="lb",
