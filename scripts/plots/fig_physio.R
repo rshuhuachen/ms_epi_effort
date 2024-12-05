@@ -295,7 +295,7 @@ plot_grid(volcano_mass_dif, list_plot_mass_dif[[1]],
           volcano_hct_dif,list_plot_hct_dif[[1]], 
           ncol=2, labels= c("a)", " ", "b)", " ", "c)", " ", "d)", " "), label_fontface = "plain", label_size = 22) -> fig3
 
-ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=14, height=20)
+ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=24)
 
 # ##### WithOUT pre-lekking ######
 # 
