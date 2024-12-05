@@ -97,9 +97,9 @@ for (i in 1:nrow(labels_mass_dif)){
         gr <- ref_grid(model, cov.keep= c('mass_dif_scl'))
         predict <- as.data.frame(emmeans(gr, spec="mass_dif_scl", level=0.95))
         
-        ggplot(sub, aes(x = mass_dif_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = mass_dif_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 scale_x_reverse()+
@@ -152,9 +152,9 @@ for (i in 1:nrow(labels_microf_dif)){
         gr <- ref_grid(model, cov.keep= c('microf_dif_scl'))
         predict <- as.data.frame(emmeans(gr, spec="microf_dif_scl", level=0.95))
         
-        ggplot(sub, aes(x = microf_dif_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = microf_dif_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 labs(x = expression("z-transformed "*Delta*italic(" Microfilaria spp.")), y = expression(Delta*" methylation %"), 
@@ -217,9 +217,9 @@ for (i in 1:nrow(labels_hct_dif)){
         gr <- ref_grid(model, cov.keep= c('hct_dif_scl'))
         predict <- as.data.frame(emmeans(gr, spec="hct_dif_scl", level=0.95))
         
-        ggplot(sub, aes(x = hct_dif_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = hct_dif_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 labs(x = expression("z-transformed "*Delta*" HCT"), y = expression(Delta*" methylation %"), 
@@ -267,9 +267,9 @@ for (i in 1:nrow(labels_igg_dif)){
         gr <- ref_grid(model, cov.keep= c('ig_dif_scl'))
         predict <- as.data.frame(emmeans(gr, spec="ig_dif_scl", level=0.95))
         
-        ggplot(sub, aes(x = ig_dif_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = ig_dif_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 labs(x = expression("z-transformed "*Delta*" IgG"), y = expression(Delta*" methylation %"), 

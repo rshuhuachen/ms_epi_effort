@@ -93,9 +93,9 @@ for (i in 1:nrow(labels_attend)){
         gr <- ref_grid(model, cov.keep= c('attend_scl'))
         predict <- as.data.frame(emmeans(gr, spec="attend_scl", level=0.95))
         
-        ggplot(sub, aes(x = attend_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = attend_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 labs(x = "z-transformed attendance", y = expression(Delta*" methylation %"), 
@@ -143,9 +143,9 @@ for (i in 1:nrow(labels_fight)){
         gr <- ref_grid(model, cov.keep= c('fight_scl'))
         predict <- as.data.frame(emmeans(gr, spec="fight_scl", level=0.95))
         
-        ggplot(sub, aes(x = fight_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = fight_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 labs(x = "z-transformed fighting rate", y = expression(Delta*" methylation %"), 
@@ -188,9 +188,9 @@ for (i in 1:nrow(labels_dist)){
         gr <- ref_grid(model, cov.keep= c('dist_scl'))
         predict <- as.data.frame(emmeans(gr, spec="dist_scl", level=0.95))
         
-        ggplot(sub, aes(x = dist_scl, y = delta_meth)) + 
-                geom_ribbon(data= predict, aes(ymin = lower.CL, ymax = upper.CL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+        ggplot(sub, aes(x = dist_scl, y = delta_meth*100)) + 
+                geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
+                geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
                 geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
                 scale_x_reverse()+
