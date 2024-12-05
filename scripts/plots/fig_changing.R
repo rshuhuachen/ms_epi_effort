@@ -84,7 +84,7 @@ ggsave(fig1_manhattan, file="plots/test.png", height=10, width=10)
 
 #### Raw data #### 
 out_glmer <- out_glmer %>% arrange(prepost_qval)
-
+changing_cpg$methperc <- changing_cpg$methperc*100
 cpg_sig_increase <- subset(out_glmer, mean_delta_meth > 0 & sig == "sig") %>% head(n=1)
 cpg_sig_increase2 <- subset(out_glmer, mean_delta_meth > 0 & sig == "sig") %>% tail(n=1)
 cpg_sig_decrease <- subset(out_glmer, mean_delta_meth < 0 & sig == "sig") %>% head(n=1)
@@ -100,7 +100,7 @@ subset(changing_cpg, chr_pos == cpg_sig_increase$chr_pos) %>%
   scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
-  ylim(0,1)-> plot_top_cpg_1
+  ylim(0,100)-> plot_top_cpg_1
 
 subset(changing_cpg, chr_pos == cpg_sig_increase2$chr_pos) %>%
   arrange(id, year) %>%
@@ -111,7 +111,7 @@ subset(changing_cpg, chr_pos == cpg_sig_increase2$chr_pos) %>%
   scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
-  ylim(0,1)-> plot_top_cpg_2
+  ylim(0,100)-> plot_top_cpg_2
 
 subset(changing_cpg, chr_pos == cpg_sig_decrease$chr_pos) %>%
   arrange(id, year) %>%
@@ -122,7 +122,7 @@ subset(changing_cpg, chr_pos == cpg_sig_decrease$chr_pos) %>%
   scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
-  ylim(0,1)-> plot_top_cpg_3
+  ylim(0,100)-> plot_top_cpg_3
 
 subset(changing_cpg, chr_pos == cpg_sig_decrease2$chr_pos) %>%
   arrange(id, year) %>%
@@ -133,7 +133,7 @@ subset(changing_cpg, chr_pos == cpg_sig_decrease2$chr_pos) %>%
   scale_color_manual(values = clr_prepost)+
   labs(x = "Time period", y = "Methylation %") +
   theme(legend.position="none") +
-  ylim(0,1)-> plot_top_cpg_4
+  ylim(0,100)-> plot_top_cpg_4
 
 
 cowplot::plot_grid(plot_top_cpg_1, plot_top_cpg_2, plot_top_cpg_3, plot_top_cpg_4, 
