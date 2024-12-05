@@ -71,7 +71,7 @@ ggplot(attend, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate lek attendance")), y = "-log10(q-value)") +
+    labs(x = expression(paste(beta, " estimate lek attendance")), y = expression(-log[10]*"("*italic(q*")"))) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -119,7 +119,7 @@ fight <- left_join(fight, labels_fight)
 
 ggplot(fight, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate fighting rate")), y = "-log10(q-value)") +
+    labs(x = expression(paste(beta, " estimate fighting rate")), y = expression(-log[10]*"("*italic(q*")"))) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -166,7 +166,7 @@ dist <- left_join(dist, labels_dist)
 
 ggplot(dist, aes(x = parameter_estimate, y = -log10(parameter_qval))) + 
     geom_point(size=6, alpha=0.5, aes(col = sig, fill = sig)) +
-    labs(x = expression(paste(beta, " estimate lek centrality")), y = "-log10(q-value)") +
+    labs(x = expression(paste(beta, " estimate lek centrality")), y = expression(-log[10]*"("*italic(q*")"))) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +

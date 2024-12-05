@@ -39,7 +39,7 @@ ggplot(delta_out_ams, aes(x = ams_delta_meth_estimate, y = -log10(ams_delta_meth
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     xlim(-21, 21)+
-    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = "-log10(q-value)", title = "Annual mating success") +
+    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(q*")")), title = "Mating success") +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> volcano_ams
@@ -82,7 +82,7 @@ ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_m
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = "-log10(q-value)", 
+    labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(q*")")), 
          title = "Survival") +
     xlim(-42, 42)+
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -143,7 +143,7 @@ delta_out_ams %>% subset(scaf_nr <= 10) %>%
   ggplot(aes(x = pos, y = -log10(as.numeric(ams_delta_meth_qval)))) + 
   geom_point(size=5, alpha=0.5, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
   facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
-  labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+  labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")"))) +
   scale_color_manual(values=c(clrs[5], "#E28979", clr_sig)) +
   scale_fill_manual(values=alpha(c(clrs[5], "#E28979", clr_sig), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1.5) +

@@ -23,7 +23,7 @@ out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth)
 
 ggplot(out_glmer, aes(x = mean_delta_meth*100, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-    labs(x = expression("Mean "*Delta*" methylation %"), y = "-log10(q-value)") +
+    labs(x = expression("Mean "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(q*")"))) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.5)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
@@ -67,7 +67,7 @@ out_glmer %>% subset(scaf_nr <= 10) %>%
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_qval)))) + 
     geom_point(size=5, alpha=0.5, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
-    labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+    labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
     scale_color_manual(values=c(clrs[5], "#E28979", clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], "#E28979", clr_sig), 0.5)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1.5) +

@@ -75,7 +75,7 @@ ggplot(mass_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(beta*" estimate "*Delta*" body mass"), y = "-log10(q-value)") +
+    labs(x = expression(beta*" estimate "*Delta*" body mass"), y = expression(-log[10]*"("*italic(q*")"))) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -174,7 +174,7 @@ ggplot(trypa_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(beta*" estimate "*Delta*italic("Trypanosoma spp.")), y = "-log10(q-value)") +
+    labs(x = expression(beta*" estimate "*Delta*italic("Trypanosoma spp.")), y = expression(-log[10]*"("*italic(q*")"))) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -195,7 +195,7 @@ ggplot(hct_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(beta*" estimate "*Delta*" HCT"), y = "-log10(q-value)") +
+    labs(x = expression(beta*" estimate "*Delta*" HCT"), y = expression(-log[10]*"("*italic(q*")"))) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -245,7 +245,7 @@ ggplot(igg_dif, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-    labs(x = expression(beta*" estimate "*Delta*" IgG"), y = "-log10(q-value)") +
+    labs(x = expression(beta*" estimate "*Delta*" IgG"), y = expression(-log[10]*"("*italic(q*")"))) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") +
@@ -342,7 +342,7 @@ ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=2
 #     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
 #     scale_color_manual(values=c(clrs[5], clr_sig)) +
 #     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" body mass")) +
+#     labs(x = expression(paste(beta, " estimate")), y = expression(-log[10]*"("*italic(q*")")), title = expression(Delta~" body mass")) +
 #     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
 #     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
 #     theme(legend.position="none") +
@@ -389,7 +389,7 @@ ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=2
 #     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
 #     scale_color_manual(values=c(clrs[5], clr_sig)) +
 #     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Microfilaria spp.")) +
+#     labs(x = expression(paste(beta, " estimate")), y = expression(-log[10]*"("*italic(q*")")), title = expression(Delta~" Microfilaria spp.")) +
 #     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
 #     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
 #     theme(legend.position="none") +
@@ -432,7 +432,7 @@ ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=2
 #     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
 #     scale_color_manual(values=c(clrs[5], clr_sig)) +
 #     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" Trypanosoma spp.")) +
+#     labs(x = expression(paste(beta, " estimate")), y = expression(-log[10]*"("*italic(q*")")), title = expression(Delta~" Trypanosoma spp.")) +
 #     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
 #     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
 #     theme(legend.position="none") +
@@ -449,7 +449,7 @@ ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=2
 #     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
 #     scale_color_manual(values=c(clrs[5], clr_sig)) +
 #     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" HCT")) +
+#     labs(x = expression(paste(beta, " estimate")), y = expression(-log[10]*"("*italic(q*")")), title = expression(Delta~" HCT")) +
 #     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
 #     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
 #     theme(legend.position="none") +
@@ -472,7 +472,7 @@ ggsave(fig3, file="plots/final/main/fig_physio_with_pre.png", width=16, height=2
 #     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
 #     scale_color_manual(values=c(clrs[5], clr_sig)) +
 #     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
-#     labs(x = expression(paste(beta, " estimate")), y = "-log10(q-value)", title = expression(Delta~" IgG")) +
+#     labs(x = expression(paste(beta, " estimate")), y = expression(-log[10]*"("*italic(q*")")), title = expression(Delta~" IgG")) +
 #     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
 #     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
 #     theme(legend.position="none") +
