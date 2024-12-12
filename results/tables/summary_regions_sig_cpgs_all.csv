@@ -1,31 +1,24 @@
 region,model,pre_control,n
-Upstream,Centrality,No With pre-lekking methylation %-lekking methylation %,1
-Downstream,Delta body mass,No With pre-lekking methylation %-lekking methylation %,2
-Gene body,Delta body mass,No With pre-lekking methylation %-lekking methylation %,2
-Intron,Delta body mass,No With pre-lekking methylation %-lekking methylation %,2
-Upstream,Delta body mass,No With pre-lekking methylation %-lekking methylation %,1
-Upstream,Delta IgG,No With pre-lekking methylation %-lekking methylation %,2
 Downstream,Attendance,With pre-lekking methylation %,1
 Exon,Attendance,With pre-lekking methylation %,1
-5' UTR,Attendance,With pre-lekking methylation %,1
-Gene body,Attendance,With pre-lekking methylation %,1
-Upstream,Attendance,With pre-lekking methylation %,3
+Upstream,Attendance,With pre-lekking methylation %,1
 Exon,Fighting rate,With pre-lekking methylation %,1
-Gene body,Fighting rate,With pre-lekking methylation %,2
 Intron,Fighting rate,With pre-lekking methylation %,1
-Upstream,Fighting rate,With pre-lekking methylation %,3
+Upstream,Fighting rate,With pre-lekking methylation %,1
 Upstream,Centrality,With pre-lekking methylation %,1
 Downstream,Delta body mass,With pre-lekking methylation %,1
 Exon,Delta body mass,With pre-lekking methylation %,1
-5' UTR,Delta body mass,With pre-lekking methylation %,1
-Gene body,Delta body mass,With pre-lekking methylation %,1
-Upstream,Delta body mass,With pre-lekking methylation %,1
 Exon,Delta Microfilaria spp. ,With pre-lekking methylation %,1
-5' UTR,Delta Microfilaria spp. ,With pre-lekking methylation %,1
-Gene body,Delta Microfilaria spp. ,With pre-lekking methylation %,1
-Promoter,Delta Microfilaria spp. ,With pre-lekking methylation %,1
 TSS,Delta Microfilaria spp. ,With pre-lekking methylation %,1
-Upstream,Delta Microfilaria spp. ,With pre-lekking methylation %,1
 Upstream,Delta IgG,With pre-lekking methylation %,2
 Promoter,Delta HCT,With pre-lekking methylation %,1
-Upstream,Delta HCT,With pre-lekking methylation %,1
+Downstream,Injury - pecking,With pre-lekking methylation %,2
+Exon,Injury - pecking,With pre-lekking methylation %,1
+Intron,Injury - pecking,With pre-lekking methylation %,1
+Promoter,Injury - pecking,With pre-lekking methylation %,2
+TSS,Injury - pecking,With pre-lekking methylation %,1
+Upstream,Injury - pecking,With pre-lekking methylation %,3
+Downstream,Injury - kicking,With pre-lekking methylation %,1
+Intron,Injury - kicking,With pre-lekking methylation %,1
+Promoter,Injury - kicking,With pre-lekking methylation %,1
+Upstream,Injury - kicking,With pre-lekking methylation %,2
