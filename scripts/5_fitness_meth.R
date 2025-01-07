@@ -49,8 +49,8 @@ function_model_ams <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   ### AMS
-  formula_ams <- formula(paste0("MS ~ delta_meth + (1|site/id) "))
-  model_ams <- glmmTMB(formula_ams, data=df, family = "poisson")
+  formula_ams <- formula(paste0("MS ~ delta_meth + (1|site) "))
+  model_ams <- glmmTMB(formula_ams, data=df, family = "poisson", REML=FALSE)
   summary_ams <- summary(model_ams)
   
   intercept_ams <- summary_ams$coefficients$cond["(Intercept)", "Estimate"]
@@ -89,8 +89,8 @@ function_model_surv <- function(df){tryCatch({
   df$id <- as.factor(df$id)
   
   ### surv
-  formula_surv <- formula(paste0("surv ~ delta_meth + (1|site/id) "))
-  model_surv <- glmmTMB(formula_surv, data=df, family = "binomial")
+  formula_surv <- formula(paste0("surv ~ delta_meth + (1|site) "))
+  model_surv <- glmmTMB(formula_surv, data=df, family = "binomial", REML=FALSE)
   summary_surv <- summary(model_surv)
   
   intercept_surv <- summary_surv$coefficients$cond["(Intercept)", "Estimate"]
@@ -126,21 +126,23 @@ function_model_surv <- function(df){tryCatch({
 ### run the model 
 
 ### ams
+# exclude repeated samples
+set.seed(1908)
+delta_meth_ams <- delta_meth %>%
+    filter(!is.na(delta_meth) & !is.na(MS)) %>% 
+    group_by(chr_pos, id) %>%
+    sample_n(1) %>%
+    ungroup()
+
 ## only select cpg sites with enough data
-delta_meth_n_ams <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(MS)) %>% tally()
+delta_meth_n_ams <- delta_meth_ams %>% group_by(chr_pos) %>% tally()
 delta_meth_n_min20_ams <- subset(delta_meth_n_ams, n > 20)
 
-delta_meth_sub_ams <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_ams$chr_pos) #777
+delta_meth_sub_ams <- subset(delta_meth_ams, chr_pos %in% delta_meth_n_min20_ams$chr_pos) #564
 delta_meth_ls_ams <- delta_meth_sub_ams %>% group_split(chr_pos)
 
-# # exclude repeated samples
-# for (i in 1:length(delta_meth_ls_ams)){
-#   delta_meth_ls_ams[[i]] <- delta_meth_ls_ams[[i]] %>%
-#     group_by(id) %>%
-#     sample_n(1) %>%
-#     ungroup()
-# }
-
+# save this data set for later due to randomisation
+save(delta_meth_ls_ams, file = "data/processed/delta_meth_ls_ams.RData")
 
 delta_out_ams_raw <- parallel::mclapply(delta_meth_ls_ams, function_model_ams,mc.cores=4)
 delta_out_ams <- do.call(rbind.data.frame, delta_out_ams_raw)
@@ -148,19 +150,22 @@ delta_out_ams <- do.call(rbind.data.frame, delta_out_ams_raw)
 save(delta_out_ams, file="results/modeloutput/fitness/out_ams_nopre_raw.RData")
 
 ### survival
-delta_meth_n_surv <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth) & !is.na(surv)) %>% tally()
+# exclude repeated samples
+delta_meth_surv <- delta_meth %>%
+  filter(!is.na(delta_meth) & !is.na(surv)) %>% 
+  group_by(chr_pos, id) %>%
+  sample_n(1) %>%
+  ungroup()
+
+## only select cpg sites with enough data
+delta_meth_n_surv <- delta_meth_surv %>% group_by(chr_pos) %>% tally()
 delta_meth_n_min20_surv <- subset(delta_meth_n_surv, n > 20)
 
-delta_meth_sub_surv <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_surv$chr_pos) #808
+delta_meth_sub_surv <- subset(delta_meth_surv, chr_pos %in% delta_meth_n_min20_surv$chr_pos) #607
 delta_meth_ls_surv <- delta_meth_sub_surv %>% group_split(chr_pos)
 
-# # exclude repeated samples
-# for (i in 1:length(delta_meth_ls_surv)){
-#   delta_meth_ls_surv[[i]] <- delta_meth_ls_surv[[i]] %>%
-#     group_by(id) %>%
-#     sample_n(1) %>%
-#     ungroup()
-# }
+# save this data set for later due to randomisation
+save(delta_meth_ls_surv, file = "data/processed/delta_meth_ls_surv.RData")
 
 delta_out_surv_raw <- parallel::mclapply(delta_meth_ls_surv, function_model_surv,mc.cores=4)
 delta_out_surv <- do.call(rbind.data.frame, delta_out_surv_raw)
@@ -173,7 +178,7 @@ delta_out_ams <- subset(delta_out_ams, ams_message == "relative convergence (4)"
 delta_out_surv <- subset(delta_out_surv, surv_message == "relative convergence (4)")
 
 #### AMS ####
-nrow(delta_out_ams)  # retain 774
+nrow(delta_out_ams)  # retain 511
 
 ##### Overdispersion raw data #####
 
@@ -200,7 +205,7 @@ dev.off()
 
 ## filter for 95 percentile
 delta_out_ams_clean <- subset(delta_out_ams, ams_disp_ratio < as.vector(quantile(delta_out_ams$ams_disp_ratio, 0.95)))
-nrow(delta_out_ams_clean) # 735
+nrow(delta_out_ams_clean) # 485
 
 # histogram dispersion ratio filtered 
 ggplot(delta_out_ams_clean, aes(x = ams_disp_ratio)) + geom_histogram() + 
@@ -226,7 +231,7 @@ dev.off()
 delta_out_ams_clean$ams_delta_meth_qval <- p.adjust(delta_out_ams_clean$ams_delta_meth_pval, method = "fdr", n = nrow(delta_out_ams_clean))
 
 #### Survival #####
-nrow(delta_out_surv) # 802
+nrow(delta_out_surv) # 584
 
 ##### Overdispersion raw data #####
 
@@ -258,7 +263,7 @@ dev.off()
 delta_out_surv$surv_delta_meth_qval <- p.adjust(delta_out_surv$surv_delta_meth_pval, method = "fdr", n = nrow(delta_out_surv))
 
 #### How many significant? ####
-nrow(subset(delta_out_ams_clean, ams_delta_meth_qval < 0.05)) #362
+nrow(subset(delta_out_ams_clean, ams_delta_meth_qval < 0.05)) #203
 nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05)) #0
 
 #### Save data ####
@@ -272,7 +277,7 @@ save(delta_out_surv, file="results/modeloutput/fitness/out_surv_deltameth_filter
 source("scripts/plotting_theme.R")
 
 #ams
-load(file="results/modeloutput/AMS_deltameth_modeloutput_filtered.RData")
+load(file="results/modeloutput/fitness/out_ams_deltameth_filtered.RData")
 
 delta_out_ams <- delta_out_ams %>% mutate(sig = case_when(ams_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 
@@ -304,7 +309,7 @@ ggsave(volcano_surv, file = "plots/model_out/fitness/surv/volcano_surv.png", wid
 
 ### significant ones
 
-cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #362
+cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #203
 
 ### plotting
 
@@ -324,146 +329,114 @@ for (i in c(1:21)){
     ggsave(plot, file = paste0("plots/model_out/fitness/ams/rawdata_cpg_", i, ".png"), width=10, height=10)     
    }
 
-### with traits ####
+#### Summarise if it's more optimal to change or remain stable, and whether to increase or decrease ####
+delta_meth_ls_ams_unlist <- do.call(rbind.data.frame, delta_meth_ls_ams)
 
-# function to run the model
-function_model_surv_attend <- function(df){tryCatch({
-  chr_pos <- as.character(df[1,1])
-  df <- as.data.frame(df)
-  df$site <- as.factor(df$site)
-  df$id <- as.factor(df$id)
+categories <- data.frame()
+plots_raw <- list()
+plots_raw_abs <- list()
+
+for (i in 1:nrow(cpg_sig_ams)){
+  subset <- subset(delta_meth_ls_ams_unlist, chr_pos == cpg_sig_ams$chr_pos[i])
+  subset$delta_meth_abs <- abs(subset$delta_meth)
   
-  ### surv
-  formula_surv <- formula(paste0("surv ~ delta_meth*(attend+mass_dif) + (1|site/id) "))
-  model_surv <- glmmTMB(formula_surv, data=df, family = "binomial")
-  summary_surv <- summary(model_surv)
+  model <- glmmTMB(MS ~ delta_meth + (1|site), family = "poisson", REML=FALSE, data=subset)
   
-  intercept_surv <- summary_surv$coefficients$cond["(Intercept)", "Estimate"]
+  subset$predict <- predict(model)
   
-  #delta effect
-  delta_estimate <- summary_surv$coefficients$cond["delta_meth", "Estimate"]
-  delta_se <- summary_surv$coefficients$cond["delta_meth","Std. Error"]
-  delta_zval <- summary_surv$coefficients$cond["delta_meth","z value"]
-  delta_pval <- summary_surv$coefficients$cond["delta_meth", "Pr(>|z|)"]
+  plot <- ggplot(subset, aes(x = delta_meth, y = MS)) + geom_point() + 
+    geom_abline(intercept=cpg_sig_ams$intercept_ams[i], slope = cpg_sig_ams$ams_delta_meth_estimate[i]) + 
+    geom_hline(yintercept=0, col = "red", linetype="dotted")
   
-  #attend effect
-  attend_estimate <- summary_surv$coefficients$cond["attend", "Estimate"]
-  attend_se <- summary_surv$coefficients$cond["attend","Std. Error"]
-  attend_zval <- summary_surv$coefficients$cond["attend","z value"]
-  attend_pval <- summary_surv$coefficients$cond["attend", "Pr(>|z|)"]
+  plot_abs <- ggplot(subset, aes(x = delta_meth_abs, y = MS)) + geom_point() + 
+    geom_smooth(method='lm') + geom_hline(yintercept=0, col = "red", linetype="dotted")
   
-  #mass effect 
-  mass_estimate <- summary_surv$coefficients$cond["mass_dif", "Estimate"]
-  mass_se <- summary_surv$coefficients$cond["mass_dif","Std. Error"]
-  mass_zval <- summary_surv$coefficients$cond["mass_dif","z value"]
-  mass_pval <- summary_surv$coefficients$cond["mass_dif", "Pr(>|z|)"]
+  predicted_nochange <- subset %>% arrange(delta_meth_abs) %>% head(1) %>% select(predict)
+  predicted_change <- subset %>% arrange(delta_meth_abs) %>% tail(1) %>% select(predict)
   
-  #delta:attend
-  inter_delta_attend_estimate <- summary_surv$coefficients$cond["delta_meth:attend", "Estimate"]
-  inter_delta_attend_se <- summary_surv$coefficients$cond["delta_meth:attend","Std. Error"]
-  inter_delta_attend_zval <- summary_surv$coefficients$cond["delta_meth:attend","z value"]
-  inter_delta_attend_pval <- summary_surv$coefficients$cond["delta_meth:attend", "Pr(>|z|)"]
+  change <- case_when(predicted_change > predicted_nochange ~ "change",
+                      predicted_nochange > predicted_change ~ "don't change")
   
-  #delta:mass
-  inter_delta_mass_estimate <- summary_surv$coefficients$cond["delta_meth:mass_dif", "Estimate"]
-  inter_delta_mass_se <- summary_surv$coefficients$cond["delta_meth:mass_dif","Std. Error"]
-  inter_delta_mass_zval <- summary_surv$coefficients$cond["delta_meth:mass_dif","z value"]
-  inter_delta_mass_pval <- summary_surv$coefficients$cond["delta_meth:mass_dif", "Pr(>|z|)"]
+  if(change == "change"){
+    predicted_decrease <- subset %>% arrange(delta_meth) %>% head(1) %>% select(predict)
+    predicted_increase <- subset %>% arrange(delta_meth) %>% tail(1) %>% select(predict)
+    
+    direction <- case_when(predicted_increase > predicted_decrease ~ "increase",
+                           predicted_decrease > predicted_increase ~ "decrease")
+  }
+  if(change == "don't change"){
+    direction <- NA
+  }
   
-  message <- model_surv$fit$message
+  ### collect all outputs for a list
   
-  dispersion_surv <- overdisp_fun(model_surv)
+  # category
+  category <- data.frame(chr_pos = cpg_sig_ams$chr_pos[i],
+                         category = change,
+                         direction = direction)
+  categories <- rbind(categories, category)
   
-  surv <- data.frame(chr_pos = chr_pos,
-                     intercept_surv = intercept_surv,
-                     delta_estimate = as.numeric(delta_estimate),
-                     delta_se = as.numeric(delta_se),
-                     delta_zval = as.numeric(delta_zval),
-                     delta_pval = as.numeric(delta_pval),
-                     attend_estimate = attend_estimate,
-                     attend_se = attend_se,
-                     attend_zval = attend_zval,
-                     attend_pval = attend_pval,
-                     mass_estimate = mass_estimate,
-                     mass_se = mass_se,
-                     mass_zval = mass_zval,
-                     mass_pval = mass_pval,
-                     inter_delta_attend_estimate = inter_delta_attend_estimate,
-                     inter_delta_attend_se = inter_delta_attend_se,
-                     inter_delta_attend_zval = inter_delta_attend_zval,
-                     inter_delta_attend_pval = inter_delta_attend_pval,
-                     inter_delta_mass_estimate = inter_delta_mass_estimate,
-                     inter_delta_mass_se = inter_delta_mass_se,
-                     inter_delta_mass_zval = inter_delta_mass_zval,
-                     inter_delta_mass_pval = inter_delta_mass_pval,
-                     surv_message = message,
-                     surv_disp_chi = dispersion_surv[1][[1]],
-                     surv_disp_ratio = dispersion_surv[2][[1]],
-                     surv_disp_rdf = dispersion_surv[3][[1]],
-                     surv_disp_p = dispersion_surv[4][[1]]
-  ) 
+  # plot
+  plots_raw[[i]] <- plot
+  plots_raw_abs[[i]] <- plot_abs
   
-  return(surv)
+  category_optimal_list <- list(categories = categories, 
+                                plots_raw = plots_raw, 
+                                plots_raw_abs = plots_raw_abs)
   
-}, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(chr_pos)})
 }
 
+# count different categories of CpG sites
+n_changing <- length(unique(delta_meth$chr_pos)) # 1026, changing sites
+n_data <- length(delta_meth_ls_ams) # 564, sites with enough data
+nodata = n_changing - n_data # changing sites - sites that have enough data = no data
+nomodel <- n_data - nrow(delta_out_ams_clean) # with data - converged = not converged
+nopredict <- nrow(delta_out_ams_clean) - nrow(cpg_sig_ams) # converged - sig = not sig
+dontchange <- nrow(subset(category_optimal_list$categories, category == "don't change"))
+inc <- nrow(subset(category_optimal_list$categories, direction == "increase"))
+dec <- nrow(subset(category_optimal_list$categories, direction == "decrease"))
 
-surv_attend_delta <- parallel::mclapply(delta_meth_ls, function_model_surv_attend,mc.cores=4)
-surv_attend_delta_raw <- do.call(rbind.data.frame, surv_attend_delta) #777
+summary_cpgs <- data.frame(what = c("Not enough data", "Convergence problems", 
+                                    "Not predictive of MS", "No change predicts higher MS",
+                                    "Increase predicts higher MS", "Decrease predicts higher MS"),
+                           n = c(nodata, nomodel, nopredict, dontchange, inc, dec))
 
-## only those that converged
-surv_attend_delta_conv <- subset(surv_attend_delta_raw, surv_message == "relative convergence (4)")
+summary_cpgs$what <- factor(summary_cpgs$what, 
+                            levels = c("Not enough data", "Convergence problems", 
+                                       "Not predictive of MS", "No change predicts higher MS",
+                                       "Increase predicts higher MS", "Decrease predicts higher MS"))
 
-#hist p-vals
-ggplot(surv_attend_delta_conv, aes((delta_pval))) + geom_histogram() -> hist_p_delta
-ggplot(surv_attend_delta_conv, aes((attend_pval))) + geom_histogram() -> hist_p_attend
-ggplot(surv_attend_delta_conv, aes((mass_pval))) + geom_histogram() -> hist_p_mass
-ggplot(surv_attend_delta_conv, aes((inter_delta_attend_pval))) + geom_histogram() -> hist_p_i_delta_attend
-ggplot(surv_attend_delta_conv, aes((inter_delta_mass_pval))) + geom_histogram() -> hist_p_i_delta_mass
+# prepare data for a pie chart
 
-#disp
-ggplot(surv_attend_delta_conv, aes(as.numeric(surv_disp_ratio))) + geom_histogram()-> hist_disp
+summary_cpgs <- summary_cpgs %>% 
+  arrange(desc(what)) %>%
+  mutate(prop = n / sum(summary_cpgs$n) *100) %>%
+  mutate(ypos = cumsum(prop)- 0.5*prop )
 
-cowplot::plot_grid(hist_p_delta, hist_p_attend,hist_p_mass, hist_p_i_delta_attend,  hist_p_i_delta_mass , hist_disp,
-  labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> summary_model_hist
+library(ggrepel)
 
-ggsave(summary_model_hist, file = "plots/model_out/fitness/surv/hist_raw_surv_with_pheno.png", width=10, height=18)
+save(summary_cpgs, file = "results/modeloutput/fitness/cpg_categories_for_ams.RData")
 
-#qqplot
-png(file = "plots/model_out/fitness/surv/qqplot_filtered_surv_with_pheno_delta.png", width = 800, height = 800)
-qqplot.pvalues(surv_attend_delta_conv$delta_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-png(file = "plots/model_out/fitness/surv/qqplot_filtered_surv_with_pheno_attend.png", width = 800, height = 800)
-qqplot.pvalues(surv_attend_delta_conv$attend_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-png(file = "plots/model_out/fitness/surv/qqplot_filtered_surv_with_pheno_mass.png", width = 800, height = 800)
-qqplot.pvalues(surv_attend_delta_conv$mass_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-png(file = "plots/model_out/fitness/surv/qqplot_filtered_surv_with_pheno_i_delta_attend.png", width = 800, height = 800)
-qqplot.pvalues(surv_attend_delta_conv$inter_delta_attend_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-png(file = "plots/model_out/fitness/surv/qqplot_filtered_surv_with_pheno_i_delta_mass.png", width = 800, height = 800)
-qqplot.pvalues(surv_attend_delta_conv$inter_delta_mass_pval, col.abline = "red", col.CB = "gray80", CB=TRUE, CB.level = 0.95)
-dev.off()
-
-
-# FDR correction
-surv_attend_delta_conv$delta_qval <- p.adjust(surv_attend_delta_conv$delta_pval, method = "fdr", n = nrow(surv_attend_delta_conv))
-surv_attend_delta_conv$attend_qval <- p.adjust(surv_attend_delta_conv$attend_pval, method = "fdr", n = nrow(surv_attend_delta_conv))
-surv_attend_delta_conv$mass_qval <- p.adjust(surv_attend_delta_conv$mass_pval, method = "fdr", n = nrow(surv_attend_delta_conv))
-surv_attend_delta_conv$inter_delta_attend_qval <- p.adjust(surv_attend_delta_conv$inter_delta_attend_pval, method = "fdr", n = nrow(surv_attend_delta_conv))
-surv_attend_delta_conv$inter_delta_mass_qval <- p.adjust(surv_attend_delta_conv$inter_delta_mass_pval, method = "fdr", n = nrow(surv_attend_delta_conv))
-
-nrow(subset(surv_attend_delta_conv, delta_qval < 0.05)) # n = 0
-nrow(subset(surv_attend_delta_conv, attend_qval < 0.05)) # n = 0
-nrow(subset(surv_attend_delta_conv, mass_qval < 0.05)) # n = 0
-nrow(subset(surv_attend_delta_conv, inter_delta_attend_qval < 0.05)) # n = 0
-nrow(subset(surv_attend_delta_conv, inter_delta_mass_qval < 0.05)) # n = 0
+# plot
+ggplot(summary_cpgs, aes(x="", y=prop, fill=what)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values=c("grey90", "grey70", "#536B74", clrs[3], clrs[6], clrs[2])) +
+  geom_label_repel(aes(y = ypos, label = paste0("N = ", n), size = 10), nudge_x = 0.7, show.legend=F)+
+  theme_void() + 
+  labs(fill = "CpG site category")+
+  theme(title = element_text(size=20),
+        plot.title = element_text(hjust = 0.5, margin=margin(0,0,15,0)),
+        plot.subtitle = element_text(size=16, family = "Arial"),
+        text=element_text(size=18, family = "Arial"),
+        legend.text =  element_text(size = 18, family = "Arial"),
+        legend.title = element_text(size = 18, family = "Arial"),
+        strip.text = element_text(size = 18, family = "Arial"),
+        plot.margin = margin(1,1,1,1, "cm"),
+        panel.background = element_rect(fill = "white", colour = NA),
+        plot.background = element_rect(fill = "white", colour = NA)) -> pie_cpg_cat
+  
+ggsave(pie_cpg_cat, file = "plots/model_out/fitness/ams/pie_cpg_cat.png", width=10, height=10)    
 
 #### Annotate AMS CpG sites ####
 
