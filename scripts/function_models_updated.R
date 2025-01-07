@@ -1,16 +1,71 @@
 #### function to run the models that predict delta_meth based on phenotype ####
-function_model_delta_pheno <- function(df, parameter, pre){tryCatch({
+function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
   chr_pos <- as.character(df[1,1])
   df <- as.data.frame(df)
   df$methperc_pre_scl <- scale(df$methperc_pre)
   
   if (pre == "control"){
-    formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site/id) "))}
+    formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site) "))}
   
   if (pre == "no_control"){
-    formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site/id) "))}
+    formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site) "))}
   
-  model <- lmerTest::lmer(formula, data=df)
+  model <- tryCatch(lmerTest::lmer(formula, data=df),
+                    warning = function(w) {
+                      warning_message <<- conditionMessage(w)  # capture the warning message
+                    },
+                    error = function(w) {
+                      error_message <<- errorCondition(w)  # capture the error message
+                    })
+  
+  if (exists("warning_message") == FALSE) {
+    warning_message = NA
+  }
+  
+  if (exists("error_message") == TRUE) {
+    
+    if(grepl("problems: id:site",error_message)){
+      if (pre == "control"){
+        formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site) "))}
+      
+      if (pre == "no_control"){
+        formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site) "))
+        
+        
+      }
+      error_message <-  error_message$message 
+      model <- tryCatch(lmerTest::lmer(formula, data=df),
+                        warning = function(w) {
+                          warning_message <<- conditionMessage(w)  # capture the warning message
+                        },
+                        error = function(w) {
+                          error_message <<- errorCondition(w)  # capture the error message
+                        })
+    }}
+  
+  if (grepl("Model failed|unable to evaluate scaled gradient", warning_message) == TRUE) {
+    
+    if (pre == "control"){
+      formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + methperc_pre + (1|site) "))}
+    
+    if (pre == "no_control"){
+      formula <- formula(paste0("delta_meth ~ ", parameter, "_scl + (1|site) "))
+      
+    }
+    
+    model <- tryCatch(lmerTest::lmer(formula, data=df),
+                      warning = function(w) {
+                        warning_message <<- conditionMessage(w)  # capture the warning message
+                      },
+                      error = function(w) {
+                        error_message <<- errorCondition(w)  # capture the error message
+                      })
+  }
+  
+  if (exists("error_message") == FALSE) {
+    error_message = NA
+  }
+  
   summary <- summary(model)
   
   overdisp.lmer_fun <- function(model) {
@@ -62,11 +117,11 @@ function_model_delta_pheno <- function(df, parameter, pre){tryCatch({
   
   isSingular <- isSingular(model)
   
-  if(is.null(summary(model)$optinfo$conv$lme4$messages == TRUE)){
+  if(is.null(summary(model)$optinfo$conv$lme4$messages) == TRUE){
     convergence <- NA
   }
   
-  if(!is.null(summary(model)$optinfo$conv$lme4$messages == TRUE)){
+  if(!is.null(summary(model)$optinfo$conv$lme4$messages) == TRUE){
     convergence <- summary(model)$optinfo$conv$lme4$messages
     if (length(convergence) == 1){
       convergence <- convergence
@@ -104,7 +159,9 @@ function_model_delta_pheno <- function(df, parameter, pre){tryCatch({
                     dispersion.rdf = as.numeric(dispersion.rdf),
                     dispersion.pval = as.numeric(dispersion.pval),
                     isSingular = as.logical(isSingular),
-                    convergence = convergence
+                    convergence = convergence,
+                    warning = warning_message,
+                    error = as.character(error_message)
                     
   ))
 }, error = function(e){cat("ERROR :", conditionMessage(e), "\n");print(paste0(chr_pos, " ", conditionMessage(e)))})
@@ -119,7 +176,7 @@ function_process_model <- function(list, dir_plots, dir_data, name_file, pretty_
   errors <- NULL
   for (i in 1:length(list)){
     length <- length(list[[i]])
-    if(length != 23){
+    if(length != 25){
       errors <- c(errors, i)
     }
   }

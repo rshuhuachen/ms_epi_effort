@@ -52,10 +52,8 @@ ggplot(pc1, aes(x = parameter_estimate, y = -log10(parameter_qval))) +
   labs(x = expression(paste(beta, " estimate pecking injuries")), y = expression(-log[10]*"("*italic(q*")"))) +
   geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-  theme(legend.position="none") +
-  xlim(c(-0.1,0.1))
+  theme(legend.position="none") -> volcano_pecking
 
-ggsave(volcano_attend, file="plots/test.png", width=10, height=10)
 
 #### fitting model raw data ####
 sig_pc1 <- subset(pc1, parameter_qval < 0.05)
@@ -64,13 +62,13 @@ list_plot_pc1 <- list()
 for (i in 1:nrow(sig_pc1)){
   sub <- subset(delta_meth, chr_pos == sig_pc1$chr_pos[[i]] & !is.na(delta_meth) & !is.na(PC1_scl))
   
-  model <- lmerTest::lmer(delta_meth ~ PC1_scl + methperc_pre + (1|site/id), 
+  model <- lmerTest::lmer(delta_meth ~ PC1 + methperc_pre + (1|site), 
                           data = sub)
   
-  gr <- ref_grid(model, cov.keep= c('PC1_scl'))
-  predict <- as.data.frame(emmeans(gr, spec="PC1_scl", level=0.95))
+  gr <- ref_grid(model, cov.keep= c('PC1'))
+  predict <- as.data.frame(emmeans(gr, spec="PC1", level=0.95))
   
-  ggplot(sub, aes(x = PC1_scl, y = delta_meth*100)) + 
+  ggplot(sub, aes(x = PC1, y = delta_meth*100)) + 
     geom_ribbon(data= predict, aes(ymin = lower.CL*100, ymax = upper.CL*100, y= NULL), fill= clrs[5], alpha = 0.6) +
     geom_line(data= predict, aes(y = emmean*100), col = "black", linewidth=1.5) + 
     geom_hline(yintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +

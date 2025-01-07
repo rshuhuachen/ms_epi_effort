@@ -7,12 +7,11 @@ load(file = "data/phenotypes/fulldata_complete_epi_withdates.RData")
 source("scripts/plotting_theme.R")
 
 ### pca for injury data
-
+injury <- injury[complete.cases(injury),]
 pca <- prcomp(injury[,c(4:8)], center = T, scale = T)
-attributes(pca)
 
 pca$scale
-pca$rotation # lower PC
+pca$rotation 
 summary(pca)
 
 pc <- as.data.frame(pca$x)
@@ -21,6 +20,7 @@ injury <- cbind(injury, pc)
 
 ### PC1 = eyec, beak, neck (pecking injuries)
 ### PC2 = belly (kicking injuries)
+ggplot(injury, aes(x = PC1, y = PC2, col = injury_right_ey)) + geom_point(size=3) 
 
 ggplot(injury, aes(x = injury_right_ey, y = PC1)) + geom_point(size=3) # lower pc1 value, higher injuries
 ggplot(injury, aes(x = injury_left_ec, y = PC1)) + geom_point(size=3) # lower pc1 value, higher injuries
@@ -58,7 +58,13 @@ ggplot(merge, aes(x = fight, y = PC1)) + geom_point(size=3) + geom_smooth(method
 ggplot(merge, aes(x = fight, y = PC2)) + geom_point(size=3) + geom_smooth(method='lm') 
 
 summary(lmerTest::lmer(PC1 ~ fight + (1|year) + (1|site), data = merge))
-summary(lmerTest::lmer(PC2 ~ fight + (1|year) + (1|site), data = merge)) # sig, more fighting, more belly injuries
+summary(lmerTest::lmer(PC2 ~ fight + (1|year) + (1|site), data = merge)) 
+
+summary(lmerTest::lmer(injury_right_ey ~ fight + (1|year) + (1|site), data = merge)) 
+summary(lmerTest::lmer(injury_left_ec ~ fight + (1|year) + (1|site), data = merge)) 
+summary(lmerTest::lmer(injury_beak ~ fight + (1|year) + (1|site), data = merge)) 
+summary(lmerTest::lmer(injury_neck ~ fight + (1|year) + (1|site), data = merge)) 
+summary(lmerTest::lmer(injury_belly ~ fight + (1|year) + (1|site), data = merge)) 
 
 ggplot(merge, aes(x = dist, y = PC1)) + geom_point(size=3) + geom_smooth(method='lm')
 ggplot(merge, aes(x = dist, y = PC2)) + geom_point(size=3) + geom_smooth(method='lm')
@@ -81,15 +87,15 @@ summary(lmerTest::lmer(PC2 ~ mass_pre + (1|year) + (1|site), data = merge)) # ns
 ggplot(merge, aes(x = mass_post, y = PC1)) + geom_point(size=3) + geom_smooth(method='lm')
 ggplot(merge, aes(x = mass_post, y = PC2)) + geom_point(size=3) + geom_smooth(method='lm')
 
-summary(lmerTest::lmer(PC1 ~ mass_post + (1|year) + (1|site), data = merge)) # ns
+summary(lmerTest::lmer(PC1 ~ mass_post + (1|year) + (1|site), data = merge)) # negative trend
 summary(lmerTest::lmer(PC2 ~ mass_post + (1|year) + (1|site), data = merge)) # ns
 
 ## igg
 ggplot(merge, aes(x = ig, y = PC1)) + geom_point(size=3) + geom_smooth(method='lm')
 ggplot(merge, aes(x = ig, y = PC2)) + geom_point(size=3) + geom_smooth(method='lm')
 
-summary(lmerTest::lmer(PC1 ~ ig + (1|year) + (1|site), data = merge)) # sig neg 0.05, higher igg post, more face injuries
-summary(lmerTest::lmer(PC2 ~ ig + (1|year) + (1|site), data = merge)) # ns
+summary(lmerTest::lmer(PC1 ~ -log10(ig) + (1|year) + (1|site), data = merge)) # sig neg 0.05, higher igg post, more face injuries
+summary(lmerTest::lmer(PC2 ~ -log10(ig) + (1|year) + (1|site), data = merge)) # ns
 
 # surv
 summary(glmer(surv ~ PC1 + (1|year) + (1|site), family = "binomial", data = merge)) # ns

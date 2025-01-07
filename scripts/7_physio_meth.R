@@ -38,6 +38,7 @@ delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_di
 
 #### run the model per trait####
 source("scripts/function_models.R")
+source("scripts/function_models_updated.R")
 
 ### mass ####
 
@@ -91,6 +92,21 @@ for (i in 1:nrow(m_mass_with_pre_out$sig)){
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
     ggsave(plot, file = paste0("plots/model_out/physio/mass/mass_with_pre_", i, ".png"), width=8, height=8)
 }
+
+## with pre but remove repeated samples
+delta_meth_mass_ls_norepeat <- delta_meth_sub_mass_ls
+for (i in 1:length(delta_meth_mass_ls_norepeat)){
+  delta_meth_mass_ls_norepeat[[i]] <- delta_meth_mass_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_mass_pre_norepeat <- parallel::mclapply(delta_meth_mass_ls_norepeat, function_model_delta_pheno_norepeat, parameter="mass_dif", pre="control", mc.cores=4)
+m_mass_pre_out_norepeat <- function_process_model(m_mass_pre_norepeat, dir_plots = "plots/model_out/physio", dir_data = "results/modeloutput/physio",
+                                                  name_file = "mass_with_pre_norepeat", pretty_name = "Delta mass", filter_disp=FALSE) # n = 3
+
+nrow(m_mass_pre_out_norepeat$sig) #n=0
 
 ### microf
 
@@ -146,6 +162,21 @@ for (i in 1:nrow(m_microf_with_pre_out$sig)){
     ggsave(plot, file = paste0("plots/model_out/physio/microf/microf_with_pre_", i, ".png"), width=8, height=8)
 }
 
+## with pre but remove repeated samples
+delta_meth_microf_ls_norepeat <- delta_meth_sub_microf_ls
+for (i in 1:length(delta_meth_microf_ls_norepeat)){
+  delta_meth_microf_ls_norepeat[[i]] <- delta_meth_microf_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_microf_pre_norepeat <- parallel::mclapply(delta_meth_microf_ls_norepeat, function_model_delta_pheno_norepeat, parameter="microf_dif", pre="control", mc.cores=4)
+m_microf_pre_out_norepeat <- function_process_model(m_microf_pre_norepeat, dir_plots = "plots/model_out/physio", dir_data = "results/modeloutput/physio",
+                                                  name_file = "microf_with_pre_norepeat", pretty_name = "Delta Microfilaria", filter_disp=FALSE) # n = 3
+
+nrow(m_microf_pre_out_norepeat$sig) #n=0
+
 ### trypa ####
 
 ### only select cpg sites with enough data
@@ -172,6 +203,22 @@ m_trypa_with_pre_out <- function_process_model(m_trypa_with_pre, dir_plots = "pl
 
 
 nrow(m_trypa_with_pre_out$sig) # 0
+
+
+## with pre but remove repeated samples
+delta_meth_trypa_ls_norepeat <- delta_meth_sub_trypa_ls
+for (i in 1:length(delta_meth_trypa_ls_norepeat)){
+  delta_meth_trypa_ls_norepeat[[i]] <- delta_meth_trypa_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_trypa_pre_norepeat <- parallel::mclapply(delta_meth_trypa_ls_norepeat, function_model_delta_pheno_norepeat, parameter="trypa_dif", pre="control", mc.cores=4)
+m_trypa_pre_out_norepeat <- function_process_model(m_trypa_pre_norepeat, dir_plots = "plots/model_out/physio", dir_data = "results/modeloutput/physio",
+                                                    name_file = "trypa_with_pre_norepeat", pretty_name = "Delta Trypanosoma", filter_disp=FALSE) 
+
+nrow(m_trypa_pre_out_norepeat$sig) #n=0
 
 ### ig ####
 ### only select cpg sites with enough data
@@ -228,6 +275,21 @@ for (i in 1:nrow(m_ig_with_pre_out$sig)){
     ggsave(plot, file = paste0("plots/model_out/physio/ig/ig_with_pre_", i, ".png"), width=8, height=8)
 }
 
+## with pre but remove repeated samples
+delta_meth_igg_ls_norepeat <- delta_meth_sub_ig_ls
+for (i in 1:length(delta_meth_igg_ls_norepeat)){
+  delta_meth_igg_ls_norepeat[[i]] <- delta_meth_igg_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_igg_pre_norepeat <- parallel::mclapply(delta_meth_igg_ls_norepeat, function_model_delta_pheno_norepeat, parameter="ig_dif", pre="control", mc.cores=4)
+m_igg_pre_out_norepeat <- function_process_model(m_igg_pre_norepeat, dir_plots = "plots/model_out/physio", dir_data = "results/modeloutput/physio",
+                                                   name_file = "igg_with_pre_norepeat", pretty_name = "Delta IgG", filter_disp=FALSE) 
+
+nrow(m_igg_pre_out_norepeat$sig) #n=0
+
 ### hct
 delta_meth_n_hct <- delta_meth %>% group_by(chr_pos) %>% filter(!is.na(delta_meth)& !is.na(hct_dif)) %>% tally()
 delta_meth_n_hct <- subset(delta_meth_n_hct, n > 20)
@@ -263,3 +325,18 @@ for (i in 1:nrow(m_hct_with_pre_out$sig)){
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
     ggsave(plot, file = paste0("plots/model_out/physio/hct/hct_with_pre_", i, ".png"), width=8, height=8)
 }
+
+## with pre but remove repeated samples
+delta_meth_hct_ls_norepeat <- delta_meth_sub_hct_ls
+for (i in 1:length(delta_meth_hct_ls_norepeat)){
+  delta_meth_hct_ls_norepeat[[i]] <- delta_meth_hct_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_hct_pre_norepeat <- parallel::mclapply(delta_meth_hct_ls_norepeat, function_model_delta_pheno_norepeat, parameter="hct_dif", pre="control", mc.cores=4)
+m_hct_pre_out_norepeat <- function_process_model(m_hct_pre_norepeat, dir_plots = "plots/model_out/physio", dir_data = "results/modeloutput/physio",
+                                                 name_file = "hct_with_pre_norepeat", pretty_name = "Delta HCT", filter_disp=FALSE) 
+
+nrow(m_hct_pre_out_norepeat$sig) #n=0

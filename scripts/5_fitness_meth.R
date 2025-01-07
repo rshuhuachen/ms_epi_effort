@@ -134,6 +134,15 @@ delta_meth_n_min20_ams <- subset(delta_meth_n_ams, n > 20)
 delta_meth_sub_ams <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_ams$chr_pos) #777
 delta_meth_ls_ams <- delta_meth_sub_ams %>% group_split(chr_pos)
 
+# # exclude repeated samples
+# for (i in 1:length(delta_meth_ls_ams)){
+#   delta_meth_ls_ams[[i]] <- delta_meth_ls_ams[[i]] %>%
+#     group_by(id) %>%
+#     sample_n(1) %>%
+#     ungroup()
+# }
+
+
 delta_out_ams_raw <- parallel::mclapply(delta_meth_ls_ams, function_model_ams,mc.cores=4)
 delta_out_ams <- do.call(rbind.data.frame, delta_out_ams_raw)
 
@@ -145,6 +154,14 @@ delta_meth_n_min20_surv <- subset(delta_meth_n_surv, n > 20)
 
 delta_meth_sub_surv <- subset(delta_meth, chr_pos %in% delta_meth_n_min20_surv$chr_pos) #808
 delta_meth_ls_surv <- delta_meth_sub_surv %>% group_split(chr_pos)
+
+# # exclude repeated samples
+# for (i in 1:length(delta_meth_ls_surv)){
+#   delta_meth_ls_surv[[i]] <- delta_meth_ls_surv[[i]] %>%
+#     group_by(id) %>%
+#     sample_n(1) %>%
+#     ungroup()
+# }
 
 delta_out_surv_raw <- parallel::mclapply(delta_meth_ls_surv, function_model_surv,mc.cores=4)
 delta_out_surv <- do.call(rbind.data.frame, delta_out_surv_raw)

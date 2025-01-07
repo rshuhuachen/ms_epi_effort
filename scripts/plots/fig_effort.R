@@ -87,8 +87,15 @@ list_plot_attend <- list()
 for (i in 1:nrow(labels_attend)){
         sub <- subset(delta_meth, chr_pos == labels_attend$chr_pos[[i]] & !is.na(delta_meth) & !is.na(attend_scl))
         
+        # Randomly select one row per individual
+        # sub <- sub %>%
+        #   group_by(id) %>%
+        #   sample_n(1) %>%
+        #   ungroup()
+        
         model <- lmerTest::lmer(delta_meth ~ attend_scl + methperc_pre + (1|site), 
                             data = sub)
+
                             
         gr <- ref_grid(model, cov.keep= c('attend_scl'))
         predict <- as.data.frame(emmeans(gr, spec="attend_scl", level=0.95))

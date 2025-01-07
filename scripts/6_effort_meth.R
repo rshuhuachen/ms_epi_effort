@@ -60,7 +60,7 @@ delta_meth <- left_join(delta_meth, effort[,c("id", "year", "attend", "fight", "
                                            
 #### run the model per trait: without pre-lekking ####
 source("scripts/function_models.R")
-
+source("scripts/function_models_updated.R")
 
 # attendance 
 
@@ -87,6 +87,22 @@ m_attend_pre_out <- function_process_model(m_attend_pre, dir_plots = "plots/mode
 
 nrow(m_attend_pre_out$sig) #n=3
 #nrow(subset(m_attend_pre_out$sig, chr_pos %in% m_attend_no_pre_out$sig$chr_pos))
+
+## with pre but remove repeated samples
+delta_meth_attend_ls_norepeat <- delta_meth_attend_ls
+for (i in 1:length(delta_meth_attend_ls_norepeat)){
+  delta_meth_attend_ls_norepeat[[i]] <- delta_meth_attend_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+
+m_attend_pre_norepeat <- parallel::mclapply(delta_meth_attend_ls_norepeat, function_model_delta_pheno_norepeat, parameter="attend", pre="control", mc.cores=4)
+m_attend_pre_out_norepeat <- function_process_model(m_attend_pre_norepeat, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
+                                           name_file = "attend_with_pre_norepeat", pretty_name = "Attendance", filter_disp=FALSE) # n = 3
+
+nrow(m_attend_pre_out_norepeat$sig) #n=0
 
 #plot raw
 system(paste0("rm -i ", getwd(), "/plots/model_out/effort/raw/attend_with_pre_*"))
@@ -137,7 +153,7 @@ system(paste0("rm ", getwd(), "/plots/model_out/effort/raw/fight_no_pre_*"))
 ## with pre
 m_fight_pre <- parallel::mclapply(delta_meth_fight_ls, function_model_delta_pheno, parameter="fight", pre="control", mc.cores=4)
 m_fight_pre_out <- function_process_model(m_fight_pre, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
-                                            name_file = "fight_with_pre", pretty_name = "Centrality", filter_disp=FALSE) 
+                                            name_file = "fight_with_pre_v2", pretty_name = "Centrality", filter_disp=FALSE) 
 
 nrow(m_fight_pre_out$sig) #n=3
 #nrow(subset(m_fight_pre_out$sig, chr_pos %in% m_fight_no_pre_out$sig$chr_pos))
@@ -156,6 +172,22 @@ for (i in 1:nrow(m_fight_pre_out$sig)){
     ggsave(plot, file = paste0("plots/model_out/effort/raw/fight_with_pre_", i, ".png"), width=8, height=8)
 }
 
+
+## with pre but remove repeated samples
+delta_meth_fight_ls_norepeat <- delta_meth_fight_ls
+for (i in 1:length(delta_meth_fight_ls_norepeat)){
+  delta_meth_fight_ls_norepeat[[i]] <- delta_meth_fight_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_fight_pre_norepeat <- parallel::mclapply(delta_meth_fight_ls_norepeat, function_model_delta_pheno_norepeat, parameter="fight", pre="control", mc.cores=4)
+m_fight_pre_out_norepeat <- function_process_model(m_fight_pre_norepeat, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
+                                                    name_file = "fight_with_pre_norepeat", pretty_name = "Fighting rate", filter_disp=FALSE) # n = 3
+
+nrow(m_fight_pre_out_norepeat$sig) #n=0
+
 # centrality 
 
 ### only select cpg sites with enough data
@@ -170,7 +202,7 @@ delta_meth_dist_ls <- delta_meth_sub_dist %>% group_split(chr_pos)
 ## no pre
 m_dist_no_pre <- parallel::mclapply(delta_meth_dist_ls, function_model_delta_pheno, parameter="dist", pre="no_control", mc.cores=4)
 m_dist_no_pre_out <- function_process_model(m_dist_no_pre, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
-                                            name_file = "dist_no_pre", pretty_name = "Centrality", filter_disp=FALSE)
+                                            name_file = "dist_no_pre_v2", pretty_name = "Centrality", filter_disp=FALSE)
 
 nrow(m_dist_no_pre_out$sig) #n=1 sig
 nrow(subset(m_dist_no_pre_out$sig, chr_pos %in% m_dist_pre_out$sig$chr_pos)) #same one 1
@@ -211,3 +243,18 @@ for (i in 1:nrow(m_dist_pre_out$sig)){
                                         geom_hline(yintercept=0, color=clrs_hunting[3], linetype="dotted", linewidth =1)-> plot
     ggsave(plot, file = paste0("plots/model_out/effort/raw/dist_with_pre_", i, ".png"), width=8, height=8)
 }
+
+## with pre but remove repeated samples
+delta_meth_dist_ls_norepeat <- delta_meth_dist_ls
+for (i in 1:length(delta_meth_dist_ls_norepeat)){
+  delta_meth_dist_ls_norepeat[[i]] <- delta_meth_dist_ls_norepeat[[i]] %>%
+    group_by(id) %>%
+    sample_n(1) %>%
+    ungroup()
+}
+
+m_dist_pre_norepeat <- parallel::mclapply(delta_meth_dist_ls_norepeat, function_model_delta_pheno_norepeat, parameter="dist", pre="control", mc.cores=4)
+m_dist_pre_out_norepeat <- function_process_model(m_dist_pre_norepeat, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
+                                                   name_file = "dist_with_pre_norepeat", pretty_name = "Centrality", filter_disp=FALSE) # n = 3
+
+nrow(m_dist_pre_out_norepeat$sig) #n=0
