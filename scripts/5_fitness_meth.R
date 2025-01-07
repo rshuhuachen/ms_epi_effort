@@ -37,7 +37,6 @@ pheno_pre <- subset(all_pheno_epi, prepost=="pre")
 delta_meth <- left_join(delta_meth_raw, unique(pheno_pre[,c("id", "year", "MS", "surv", "site", "attend", "fight", "dist")]), by = c("id", "year"))
 delta_meth <- left_join(delta_meth, unique(prepost_dif[,c("id", "year", "mass_dif", "trypa_dif", "ig_dif", "hct_dif", "microf_dif")]), by = c("id", "year"))
        
-
 ## test for zero inflation
 model_zi <- glmmTMB(MS ~ 1 + (1|site/id), family = "poisson", data = prepost_dif)
 DHARMa::testZeroInflation(model_zi) #ns
