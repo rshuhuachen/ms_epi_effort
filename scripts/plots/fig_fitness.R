@@ -48,33 +48,33 @@ ggsave(volcano_ams, file = "plots/test.png", width=10, height=10)
 
 # raw data top 5
 
-cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #362
+cpg_sig_ams <- subset(delta_out_ams, ams_delta_meth_qval < 0.05) #203
 
-### plotting
-cpg_sig_ams$intercept_ams <- as.numeric(cpg_sig_ams$intercept_ams)
-cpg_sig_ams <- cpg_sig_ams %>% arrange(ams_delta_meth_qval)
-
-list_plot_ams <- list()
-for (i in 1:2){
-        sub <- subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[[i]] & !is.na(delta_meth) & !is.na(MS))
-        
-        model <- glmmTMB::glmmTMB(MS ~ delta_meth + (1|site/id), family = "poisson",
-                            data = sub)
-                            
-        gr <- ref_grid(model, cov.keep= c('delta_meth'))
-        predict <- as.data.frame(emmeans(gr, spec="delta_meth", level=0.95))
-        
-        ggplot(sub, aes(x = delta_meth, y = MS)) + 
-                geom_ribbon(data= predict, aes(ymin = asymp.LCL, ymax = asymp.UCL, y= NULL), fill= clrs[5], alpha = 0.6) +
-                geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
-                geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
-                labs(x = "Annual mating success", x = expression(Delta*" methylation %")) -> plot
-
-        ggsave(plot, file= paste0("plots/model_out/fitness/raw_AMS_", i, ".png"), width=8, height=8)
-
-        list_plot_ams[[i]] <- plot
-}
-   
+# ### plotting
+# cpg_sig_ams$intercept_ams <- as.numeric(cpg_sig_ams$intercept_ams)
+# cpg_sig_ams <- cpg_sig_ams %>% arrange(ams_delta_meth_qval)
+# 
+# list_plot_ams <- list()
+# for (i in 1:2){
+#         sub <- subset(delta_meth, chr_pos == cpg_sig_ams$chr_pos[[i]] & !is.na(delta_meth) & !is.na(MS))
+#         
+#         model <- glmmTMB::glmmTMB(MS ~ delta_meth + (1|site), family = "poisson",
+#                             data = sub)
+#                             
+#         gr <- ref_grid(model, cov.keep= c('delta_meth'))
+#         predict <- as.data.frame(emmeans(gr, spec="delta_meth", level=0.95))
+#         
+#         ggplot(sub, aes(x = delta_meth, y = MS)) + 
+#                 geom_ribbon(data= predict, aes(ymin = asymp.LCL, ymax = asymp.UCL, y= NULL), fill= clrs[5], alpha = 0.6) +
+#                 geom_line(data= predict, aes(y = emmean), col = "black", linewidth=1.5) + 
+#                 geom_point(size = 7, fill = clr_high, alpha = 0.6, col = clr_high) + 
+#                 labs(x = "Annual mating success", x = expression(Delta*" methylation %")) -> plot
+# 
+#         ggsave(plot, file= paste0("plots/model_out/fitness/raw_AMS_", i, ".png"), width=8, height=8)
+# 
+#         list_plot_ams[[i]] <- plot
+# }
+#    
 # surv
 delta_out_surv <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
 
@@ -156,6 +156,30 @@ delta_out_ams %>% subset(scaf_nr <= 10) %>%
 
 fig_ams_manhattan
 
+#### pie chart AMS ####
+
+load(file = "results/modeloutput/fitness/cpg_categories_for_ams.RData")
+
+# plot
+ggplot(summary_cpgs, aes(x="", y=prop, fill=what)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  scale_fill_manual(values=c("grey90", "grey70", "#536B74", clrs[3], clrs[6], "#AF1D72")) +
+  geom_label_repel(aes(y = ypos, label = paste0("N = ", n), size = 10), nudge_x = 0.7, show.legend=F)+
+  theme_void() + 
+  labs(fill = "CpG site category")+
+  theme(title = element_text(size=20),
+        plot.title = element_text(hjust = 0.5, margin=margin(0,0,15,0)),
+        plot.subtitle = element_text(size=16, family = "Arial"),
+        text=element_text(size=18, family = "Arial"),
+        legend.text =  element_text(size = 18, family = "Arial"),
+        legend.title = element_text(size = 18, family = "Arial"),
+        strip.text = element_text(size = 18, family = "Arial"),
+        plot.margin = margin(1,1,1,1, "cm"),
+        panel.background = element_rect(fill = "white", colour = NA),
+        plot.background = element_rect(fill = "white", colour = NA)) -> pie_cpg_cat
+
+
 ### assemble #####
 
 #plot_grid(volcano_ams, list_plot_ams[[1]], 
@@ -164,6 +188,8 @@ fig_ams_manhattan
 
 plot_grid(volcano_ams, 
           volcano_surv, align="vh", axis="lb",
-          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
+          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig_top
 
-ggsave(fig, file="plots/final/main/fig_fitness.png", width=14, height=8)
+plot_grid(fig_top, pie_cpg_cat, ncol = 1, labels = c("", "c"), label_fontface = "plain", label_size = 22) -> fig
+
+ggsave(fig, file="plots/final/main/fig_fitness.png", width=14, height=12)
