@@ -84,7 +84,7 @@ ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_m
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.6)) +
     labs(x = expression(beta*" estimate "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(q*")")), 
          title = "Survival") +
-    xlim(-42, 42)+
+    xlim(-21, 21)+
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> volcano_surv
