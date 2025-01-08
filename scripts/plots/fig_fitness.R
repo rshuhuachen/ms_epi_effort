@@ -166,19 +166,14 @@ ggplot(summary_cpgs, aes(x="", y=prop, fill=what)) +
   coord_polar("y", start=0) +
   scale_fill_manual(values=c("grey90", "grey70", "#536B74", clrs[3], clrs[6], "#AF1D72")) +
   geom_label_repel(aes(y = ypos, label = paste0("N = ", n), size = 10), nudge_x = 0.7, show.legend=F)+
-  theme_void() + 
-  labs(fill = "CpG site category")+
-  theme(title = element_text(size=20),
-        plot.title = element_text(hjust = 0.5, margin=margin(0,0,15,0)),
-        plot.subtitle = element_text(size=16, family = "Arial"),
-        text=element_text(size=18, family = "Arial"),
-        legend.text =  element_text(size = 18, family = "Arial"),
-        legend.title = element_text(size = 18, family = "Arial"),
-        strip.text = element_text(size = 18, family = "Arial"),
-        plot.margin = margin(1,1,1,1, "cm"),
-        panel.background = element_rect(fill = "white", colour = NA),
-        plot.background = element_rect(fill = "white", colour = NA)) -> pie_cpg_cat
+  labs(fill = "CpG site category") +
+  theme(axis.line = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank()) -> pie_cpg_cat
 
+pie_cpg_cat
 
 ### assemble #####
 
@@ -187,9 +182,10 @@ ggplot(summary_cpgs, aes(x="", y=prop, fill=what)) +
 #          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
 
 plot_grid(volcano_ams, 
-          volcano_surv, align="vh", axis="lb",
-          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig_top
+          volcano_surv, align="hv", axis="lb",
+          ncol=2, labels=c("a", "b"), label_fontface = "plain", label_size = 22) -> fig_top
 
-plot_grid(fig_top, pie_cpg_cat, ncol = 1, labels = c("", "c"), label_fontface = "plain", label_size = 22) -> fig
+plot_grid(fig_top, pie_cpg_cat, labels = c("", "c"), ncol = 1, #align="hv", axis="lb", 
+          label_fontface = "plain", label_size = 22) -> fig
 
 ggsave(fig, file="plots/final/main/fig_fitness.png", width=14, height=12)
