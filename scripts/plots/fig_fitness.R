@@ -165,9 +165,11 @@ ggplot(summary_cpgs, aes(x="", y=prop, fill=what)) +
   geom_bar(stat="identity", width=1) +
   coord_polar("y", start=0) +
   scale_fill_manual(values=c("grey90", "grey70", "#536B74", clrs[3], clrs[6], "#AF1D72")) +
-  geom_label_repel(aes(y = ypos, label = paste0("N = ", n)), fill = "white", size = 6, label.size = 0.6, nudge_x = 0.7, show.legend=F)+
+  geom_label_repel(aes(y = ypos, label = paste0("N = ", n)), fill = "white", size = 8, label.size = 0.6, nudge_x = 0.7, show.legend=F)+
   labs(fill = "CpG site category") +
-  theme(axis.line = element_blank(),
+  theme(legend.text = element_text(size = 22),
+        legend.title = element_text(size = 22),
+        axis.line = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.ticks = element_blank(),
@@ -188,4 +190,4 @@ plot_grid(volcano_ams,
 plot_grid(fig_top, pie_cpg_cat, labels = c("", "c"), ncol = 1, #align="hv", axis="lb", 
           label_fontface = "plain", label_size = 22) -> fig
 
-ggsave(fig, file="plots/final/main/fig_fitness.png", width=12, height=10)
+ggsave(fig, file="plots/final/main/fig_fitness.png", width=14, height=12)
