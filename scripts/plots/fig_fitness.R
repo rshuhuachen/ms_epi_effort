@@ -183,8 +183,7 @@ pie_cpg_cat
 #          volcano_surv, list_plot_surv[[1]], align="vh", axis="lb",
 #          ncol=2, labels="auto", label_fontface = "plain", label_size = 22) -> fig
 
-plot_grid(volcano_ams, 
-          volcano_surv, align="hv", axis="lb",
+plot_grid(volcano_surv, volcano_ams, align="hv", axis="lb",
           ncol=2, labels=c("a", "b"), label_fontface = "plain", label_size = 22) -> fig_top
 
 plot_grid(fig_top, pie_cpg_cat, labels = c("", "c"), ncol = 1, #align="hv", axis="lb", 
