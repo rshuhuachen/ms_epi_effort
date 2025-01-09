@@ -299,6 +299,8 @@ cpg_attend_pre_annotated_id <- left_join(cpg_attend_pre_annotated_id, unique(uni
 cpg_attend_pre_annotated_id <- cpg_attend_pre_annotated_id %>% relocate(cpg_name, .before = chr_pos)
 cpg_attend_pre_annotated_id <- cpg_attend_pre_annotated_id %>% arrange(cpg_name)
 
+save(cpg_attend_pre_annotated_id, file="results/annotated/annotated_modeloutput_sig_annotated_priority_attend.RData")
+
 #### Based on chicken liftover ####
 ### load annotation data
 gff <- makeTxDbFromGFF(paste0(annotation_dir, "/liftoff_gallus_ltet.gff"),
@@ -401,4 +403,4 @@ cpg_attend_pre_annotated_chicken <- rbind(sig_promoter_chicken_df, sig_gene_chic
                                   sig_up_chicken_df) # left out intron due to error
 
 
-
+save(cpg_attend_pre_annotated_chicken, file="results/annotated/annotated_modeloutput_sig_annotated_priority_attend_chicken.RData")

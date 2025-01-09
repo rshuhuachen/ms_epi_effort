@@ -76,8 +76,8 @@ qq_plot(out_surv$surv_delta_meth_pval, title = "", CB=F, thinning = F) -> qqplot
 #### Arrange fig 1 ####
 
 plot_grid(hist_pvals_changing, qqplot_changing, 
-          hist_pvals_ams, qqplot_ams,
           hist_pvals_surv, qqplot_surv,
+          hist_pvals_ams, qqplot_ams,
           labels=c("a)", " ", "b)", " ", "c)", " "), align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22)-> qqs_1
 
 ggsave(qqs_1, file = "plots/final/supp/hist_qqplots_changing_fitness.png", width = 14, height = 18)
