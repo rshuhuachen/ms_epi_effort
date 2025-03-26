@@ -10,9 +10,9 @@ format:
 
 **Identifying CpG sites that change over the lekking season**
 
-Next, we want to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect. 
+After the initial quality checks, we now want to dig into our research question. First, we aim to identify CpG sites that significantly change in methylation level over the lekking season. To do so, we build a generalized linear mixed effect model per CpG site, using the time period (pre- or post-lekking) as a fixed effect.
 
-Moreover, as there are (sometimes) multiple samples for each individual, we correct for the non-independence of individuals by including ID as a random effect, nested within lek. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
+Additionally, as there are (sometimes) multiple samples for each individual, we correct for the non-independence of individuals by including ID as a random effect, nested within lek. The response variables in these models are both the number of methylated and number of unmethylated C's, using the `cbind` function.
 
 ## Prepare the data {#sec-change}
 
@@ -156,7 +156,7 @@ nrow(out_glmer_raw_conv) / nrow(out_glmer_raw) * 100 # retain 97.5%, 345937 out 
 
 ```
 
-When excluding models with convergence warnings/errors, we retain 97% of models, 345,983 out of 354,765 CpG site models.
+When excluding models with convergence warnings/errors, we retain 97% of models, 345,983 out of 354,765 CpG site models. Singularity warnings are being kept as this is a consequence of having a random effect of ID, which is required to correctly control for the non-independence of our data.
 
 ## Explore and filter for overdispersion
 
@@ -164,7 +164,7 @@ We can plot a histogram of the dispersion ratio and make a QQ plot to identify w
 
 ![Histogram dispersion ratio and p-values raw models](../plots/model_out/changing/hist_raw_glmer.png) ![QQ plot model changing CpG sites raw models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
-Next, we filter out the sites with an overdispersion ratio higher than the 95 percentile.
+Next, we filter out the sites with an overdispersion ratio higher than the 95 percentile as there seems a bit of overdispersion.
 
 ```{r filter_dispersion, echo=T, eval=F}
 ## filter for 95 percentile
@@ -174,7 +174,8 @@ out_glmer<- subset(out_glmer_raw, dispersion.ratio < as.vector(quantile(out_glme
 
 We are then left with a total of 328,640 CpG site models.
 
-![Histogram dispersion ratio and p-values filtered models](../plots/model_out/changing/hist_filtered_glmer.png) ![QQ plot model changing CpG sites filtered models](../plots/model_out/changing/qqplot_raw_glmer.png)
+![Histogram dispersion ratio and p-values filtered models](../plots/model_out/changing/hist_filtered_glmer.png) 
+![QQ plot model changing CpG sites filtered models](../plots/model_out/changing/qqplot_raw_glmer.png)
 
 ## FDR-correction
 
@@ -190,7 +191,7 @@ out_glmer$prepost_qval <- p.adjust(out_glmer$prepost_pval, method = "fdr", n = n
 
 A "changing CpG site" is then defined as a CpG site with a significant effect of time period (FDR-corrected q-value \< 0.05) and at a mean difference in methylation % (across individuals) of at least -10% or 10%.
 
-We first have to calculate delta methylation (post-lekking methylation % minus pre-lekking methylation %) in order to get this average.
+But, we first have to calculate delta methylation (post-lekking methylation % minus pre-lekking methylation %) in order to get this average.
 
 ```{r delta, echo=T, eval=F}
 #| code-fold: true
@@ -265,7 +266,6 @@ Interestingly, there seems to more CpG sites that increase in methylation over t
 
 We can also look at the distribution of CpG sites across the genome in a Manhattan plot.
 
-
 ```{r manhattan, echo=T, eval= F}
 #| code-fold: true
 load("data/scaffold_names_dovetail.RData")
@@ -326,6 +326,7 @@ out_glmer %>% subset(scaf_nr <= 30) %>%
     axis.line.y = element_blank()) -> manhattan_change
 
 ```
+
 ![Manhattan plot](../plots/model_out/changing/manhattan_glmer.png){fig-align="left"}
 
 ### Raw data
@@ -496,7 +497,6 @@ sum_annotated %>% kbl() %>%
 
 ![Number of changing CpG sites per region](../plots/model_out/changing/perc_sig_per_region.png)
 
-
 ### GOrilla
 
 We next run the list of gene IDs of the significant sites as the target list as well as the list of gene IDs from all CpG sites that we ran the model on as a background list. I used default settings and the analysis was done based on a human model (*Homo sapiens*). The result can be seen below.
@@ -513,6 +513,4 @@ table_go_process_changing %>% select(-Genes) %>% filter(grepl("^GO", table_go_pr
 
 ```
 
-Interestingly, there's a lot of GO terms that are related to gene regulation - fitting the story perfectly! Moreover, the component that was highly significant is the "chylomicron". 
-
-Wikipedia: "Chylomicrons transport lipids absorbed from the intestine to adipose, cardiac, and skeletal muscle tissue, where their triglyceride components are hydrolyzed by the activity of the lipoprotein lipase, allowing the released free fatty acids to be absorbed by the tissues. When a large portion of the triglyceride core has been hydrolyzed, chylomicron remnants are formed and are taken up by the liver, thereby also transferring dietary fat to the liver."
+Interestingly, there's a lot of GO terms that are related to gene regulation, although only one term remains significant after correcting for multiple testing.

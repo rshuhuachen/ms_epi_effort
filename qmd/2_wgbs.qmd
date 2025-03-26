@@ -2,7 +2,7 @@
 title: "Whole genome bisulphite sequencing"
 ---
 
-Prior to analysing our epiGBS data, which uses a reduced representation approach, we characterised CpG methylation across the genome. More specifically, because epiGBS targets CpG islands which tend to cluster around promoter regions, we wanted to characterise CpG methylation levels around TSS/promoter regions.
+Prior to analysing our epiGBS data, which uses a reduced representation approach, we characterised CpG methylation across the genome. More specifically, because epiGBS targets CpG islands which tend to cluster around promoter regions, we wanted to characterise CpG methylation levels around TSS/promoter regions and ensure similar patterns are observed compared to other avian species (e.g. the great tit).
 
 # Trim, align, call methylation
 
@@ -63,17 +63,17 @@ Lastly, we call methylation using bismark.
   --cutoff 10 \
   --bedGraph --cytosine_report --comprehensive --gzip --merge_non_CpG --genome_folder data/ref/ data/processed/deduplicated/E197_R1_val_1_bismark_bt2_pe.deduplicated.bam \
   -o data/processed/methcall
-  ```
+```
 
-  # Downstream analysis
+\# Downstream analysis
 
-  The last command generateds the file `methcall_report.CX_report.txt.gz` containing methylation calls. We further process this file in R to 1) annotate the CpG sites, 2) calculate average CpG methylation within gene regions across genes, using a sliding window approach. Next, we plot the result.
+The last command generateds the file `methcall_report.CX_report.txt.gz` containing methylation calls. We further process this file in R to 1) annotate the CpG sites, 2) calculate average CpG methylation within gene regions across genes, using a sliding window approach. Next, we plot the result.
 
-  ## Annotate CpG sites
+\## Annotate CpG sites
 
-To characterise methylation levels across different gene regions, we calculated the mean methylation level across genes for four regions: the transcription start site (TSS; 300 bp upstream to 50 bp downstream of the annotated starting position of each gene (Laine et al., 2016)), the gene body, upstream regions (10 kb upstream from the gene body) and downstream regions (10 kb downstream from the gene body). 
+To characterise methylation levels across different gene regions, we calculated the mean methylation level across genes for four regions: the transcription start site (TSS; 300 bp upstream to 50 bp downstream of the annotated starting position of each gene (Laine et al., 2016)), the gene body, upstream regions (10 kb upstream from the gene body) and downstream regions (10 kb downstream from the gene body).
 
-  ```{r meth, echo=T, eval=F}
+```{r meth, echo=T, eval=F}
 #| code-fold: true
 
 #### packages ####
@@ -92,53 +92,53 @@ names(meth) <- c("chr", "start", "strand", "nC", "nT", "dicontext", "tricontext"
 # add 'end' column for ranges
 meth$end <- meth$start
 
-cpg <- subset(meth, dicontext == "CG")
+cpg <- subset(meth, dicontext == "CG") # select only cpg sites
 
 ##### Annotation ####
 ### make a function to annotate dataframe
 
 annotate_methfile <- function(long_df, annotation_dir, regions){
-  pacman::p_load(genomation, GenomicFeatures, rtracklayer, GenomicRanges, tidyverse)
+pacman::p_load(genomation, GenomicFeatures, rtracklayer, GenomicRanges, tidyverse)
+
+### annotate df accordingly and add region name
+long_df$end <- long_df$start
+df_gr <- as(long_df, "GRanges") # convert to GRanges object
+
+#more complicated than just subsetting, want to include gene information too so need the overlap
+annotated <- data.frame()
+
+for (i in regions){ # loop over specified regions
+  #load in gff file
+  region <- unique(gffToGRanges(paste0(annotation_dir, i, ".gff3")))
+  region <- as(region, "GRanges")
+  #find overlaps in df and gene region, because can have multiple hits include all
+  hits <- findOverlaps(df_gr, region)
+  idx_c <- queryHits(hits)
+  idx_region <- subjectHits(hits)
   
-  ### annotate df accordingly and add region name
-  long_df$end <- long_df$start
-  df_gr <- as(long_df, "GRanges") # convert to GRanges object
+  #get values from overlaps for cpg and region separately
+  values_region <- data.frame(chr=region@seqnames[idx_region],
+                              start = region@ranges@start[idx_region], 
+                              end= region@ranges@start[idx_region] + region@ranges@width[idx_region], 
+                              gene_id = mcols(region)$gene_id[idx_region],
+                              region = i)
   
-  #more complicated than just subsetting, want to include gene information too so need the overlap
-  annotated <- data.frame()
+  values_cytosines <- data.frame(pos = df_gr@ranges@start[idx_c], 
+                                 nC = mcols(df_gr)$nC[idx_c], 
+                                 nT = mcols(df_gr)$nT[idx_c])
   
-  for (i in regions){ # loop over specified regions
-    #load in gff file
-    region <- unique(gffToGRanges(paste0(annotation_dir, i, ".gff3")))
-    region <- as(region, "GRanges")
-    #find overlaps in df and gene region, because can have multiple hits include all
-    hits <- findOverlaps(df_gr, region)
-    idx_c <- queryHits(hits)
-    idx_region <- subjectHits(hits)
-    
-    #get values from overlaps for cpg and region separately
-    values_region <- data.frame(chr=region@seqnames[idx_region],
-                                start = region@ranges@start[idx_region], 
-                                end= region@ranges@start[idx_region] + region@ranges@width[idx_region], 
-                                gene_id = mcols(region)$gene_id[idx_region],
-                                region = i)
-    
-    values_cytosines <- data.frame(pos = df_gr@ranges@start[idx_c], 
-                                   nC = mcols(df_gr)$nC[idx_c], 
-                                   nT = mcols(df_gr)$nT[idx_c])
-    
-    annotated_region <- cbind(values_cytosines, values_region) #combine
-    annotated <- rbind(annotated, annotated_region) #add to full df
-  }
-  annotated$region <- as.factor(annotated$region)
-  
-  return(annotated)
+  annotated_region <- cbind(values_cytosines, values_region) #combine
+  annotated <- rbind(annotated, annotated_region) #add to full df
+}
+annotated$region <- as.factor(annotated$region)
+
+return(annotated)
 }
 
 ## Annotate CpG and CH file
 cpg_annotate <- annotate_methfile(long_df = cpg,
-                                 annotation_dir = "/vol/cluster-data/rchen/git/grouse-annotation/output/",
-                                 regions = c("TSS", "genes", "upstream", "downstream"))
+                               annotation_dir = "/vol/cluster-data/rchen/git/grouse-annotation/output/",
+                               regions = c("TSS", "genes", "upstream", "downstream"))
 
 cpg_annotate$methperc <- cpg_annotate$nC / (cpg_annotate$nC + cpg_annotate$nT) * 100
 
@@ -146,7 +146,8 @@ save(cpg_annotate, file = "data/processed/annotated_cpg.RData")
 ```
 
 ## Calculate average methylation % per bin per region
-The mean methylation of TSS regions was calculated across the entire 350 bp window. We used a sliding window approach to calculate mean methylation of gene bodies following (Laine et al., 2016). First, we subdivided the gene body into 40 bins (where the bin length therefore differs depending on the gene size), and then calculated the mean methylation for each bin, with an overlap between neighbouring bins of 250 bp. A similar sliding window approach was used to calculate mean methylation of up- and downstream regions. Here, the regions were divided into 40 bins of 250 bp each, and the mean methylation was calculated for each bin with an overlap between neighbouring bins of 125 bp. 
+
+The mean methylation of TSS regions was calculated across the entire 350 bp window. We used a sliding window approach to calculate mean methylation of gene bodies following @laineEvolutionarySignalsSelection2016. First, we subdivided the gene body into 40 bins (where the bin length therefore differs depending on the gene size), and then calculated the mean methylation for each bin, with an overlap between neighbouring bins of 250 bp. A similar sliding window approach was used to calculate mean methylation of up- and downstream regions. Here, the regions were divided into 40 bins of 250 bp each, and the mean methylation was calculated for each bin with an overlap between neighbouring bins of 125 bp.
 
 ```{r meanmeth, eval=F, echo=T}
 #| code-fold: true
@@ -214,6 +215,7 @@ save(cpg_windows, file = "data/processed/cpg_meth_per_window_per_region.RData")
 ```
 
 ## Plot the result
+
 ```{r plot, echo=T, eval=F}
 #| code-fold: true
 
@@ -295,3 +297,5 @@ ggsave(tss_sum_min2, file = "plots/summary_wgbs_TSS_min2.png", width=16, height=
 ```
 
 ![CpG methylation across gene regions](../plots/summary_wgbs_TSS_min2.png)
+
+We observe that the drop in CpG methylation around TSS sites is indeed consistent with other avian genomes.

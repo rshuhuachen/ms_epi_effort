@@ -10,11 +10,11 @@ format:
 
 **Preparing and filtering the data**
 
-Our dataset consists of 116 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis). 
+Our dataset consists of 118 samples that have been epi-genotyped using epiGBS2. The samples are part of a bigger dataset consisting of 450 epiGBS samples, and therefore have been sequenced across 10 libraries of 22 samples each (of which not all samples were used for the current analysis).
 
 First, we use a custom bash script to merge the two strands of each sample together, and subsequently filter for 10X over those merged strands. This contrasts methylKit, where we would first filter for 10X for each two strands before merging them together. Next, we load these merged strands into R using methlKit.
 
-## Prepare data 
+## Prepare data
 
 ```{r load, echo=T, eval=F}
 ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
@@ -25,9 +25,9 @@ ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
 
 Where `files` = the list of 116 file locations and `ids` = the list of the 116 ID's of those files.
 
-## Pre-filter data 
+## Pre-filter data
 
-Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile 
+Next, we perform a set of filtering steps. First, we filter by coverage, the maximum coverage to the 99.9 percentile
 
 ```{r filter, echo=T, eval=F}
 
@@ -36,7 +36,7 @@ ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
 
 ```
 
-Next, we unite the strands. We do not filter yet for sites that are covered in at least X individuals as we will perform this filtering steps later in the script. 
+Next, we unite the strands. 
 
 ```{r unite, echo=T, eval=F}
 
@@ -49,9 +49,9 @@ At this stage, we have a data set consisting of 1,559,800 partially filtered CpG
 
 ## Convert data
 
-The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated. 
+The next step is a custom R script that converts the output of the "unite" call to a long dataframe, where each line is a CpG site per individual and in the columns we have CpG site, nC, nT, cov, %meth. Moreover, in this script we remove CpG sites that are nonvariant, meaning that they are either 100% methylated in all samples or 0% methylated.
 
-We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the formula. Right now I have used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, I think this is more correct and will allow the models to make more accurate estimates and will only include CpG sites with more variation in methylation %.
+We also filter for CpG sites that are variable in at least X number of samples, where X is a threshold that can be defined within the function. We used a threshold of 0.3, meaning that CpG sites that are 0% methylated or 100% methylated in more than 70% (1-0.3*100) of the samples will be excluded. Although we exclude a large number of CpG sites in this filtering step, it is a consative step that we think is necessary as it will allow the models to compute more accurate estimates and will only include CpG sites with adequate variation in methylation %.
 
 ```{r convert, echo=T, eval=F}
 
@@ -59,13 +59,13 @@ source("scripts/function_convert_methfile.R")
 
 prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) 
 
-#Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
+#Out of 1559800 CpG sites, kept 815,460 which is 47.72% removed  
 
 ```
 
 ## Post-filtering {#sec-postfilter}
 
-Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering steps to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59  pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which I think is a good minimum to draw reliable conclusions.
+Because we have samples from two time points of individuals, and we want to compare the change across this time period, I applied a post-filtering step to include only CpG sites that are included in at least 50% of the samples in both time points. Since we have 118 samples, which are 59 time comparisons (59 pre-lekking samples linked to 59 post-lekking samples), this means we have an N of at least 29 samples where at least 30% of these samples are not completely methylated or unmethylated (see step above), which should be a good minimum to draw reliable conclusions.
 
 ```{r postfilter, echo=T, eval=F}
 
@@ -91,5 +91,4 @@ prepost_long_clean <- subset(prepost_long_clean, keep == "keep")
 
 ```
 
-Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes). 
-
+Thus, our fully filtered data set consists of 354,649 CpG sites that have been filtered to ensure: minimum coverage (to ensure more precision of methylation %), maximum coverage (to exclude potential PCR duplicates), variation in methylation % (to allow more accurate modelling) and enough samples in both time points (to draw reliable conclusions about temporal changes).
