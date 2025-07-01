@@ -12,15 +12,63 @@ format:
 
 We explore our data to ensure there are no biases created by methodological factors. To do so, we conduct a PCA and build linear regression models to test for e.g. library effects.
 
-We only use unfiltered data for this exploration.
+We only use partially filtered data for this exploration (only filtered for coverage).
 
-```{r unfiltered data, echo=T, eval=F}
-## load packages
+## Import raw data
+
+Before starting, we have to import the methylation data into methylKit.
+
+```{r methylkit, echo = T, eval = F}
 pacman::p_load(tidyverse, data.table, methylKit, tibble, matrixStats, ggpointdensity)
 
-## load data
-load("data/processed/methylkit_prepost_raw.RData")
-data <- getData(ltet_meth_unite)
+#| code-fold: true
+#### Get phenotype data ####
+load("data/phenotypes/fulldata_complete_epi_withdates.RData")
+prepost <- subset(all_pheno_epi, !is.na(prepost))
+
+#### Read in filtered data ####
+files <- NULL
+
+# change this path to wherever you store the data
+for (i in c(1:20, 99)){
+  files_i <- list.files(path=paste0("/data/processed/AnE/VanOersgroup/2023_Lyrurus_tetrix/epigbs_output/lib", i), pattern = "merge",
+                        full.names=T)
+  files <- c(files, files_i)
+  rm(files_i)
+}
+
+## get id's
+files <- as.data.frame(files)
+files$ids <- gsub("/data/processed/AnE/VanOersgroup/2023_Lyrurus_tetrix/epigbs_output/|_bismark_bt2_pe.CX_CpG_report_merge_10X.txt.gz|_bismark_bt2_pe.CpG_CpG_report_merge_10X.txt.gz", "", files$files)
+files$ids <- gsub("/", "_", files$ids)
+files$epi_nr <- gsub(".*_", "", files$ids)
+
+## subset based on epinr
+files_prepost <- subset(files, epi_nr %in% prepost$epi_nr)
+
+## those with replicate samples across libraries, change to the one with most reads
+files_prepost <- subset(files_prepost, ids != "lib99_1")
+files_prepost <- subset(files_prepost, ids != "lib20_119")
+files_prepost <- subset(files_prepost, ids != "lib20_191")
+files_prepost <- subset(files_prepost, ids != "lib7_250")
+
+#as list for methylkit
+ids <- as.list(files_prepost$ids)
+files <- as.list(files_prepost$files)
+
+ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
+                      sample.id = ids, assembly = "ltet", 
+                      treatment = c(rep(1, each =length(ids))), context = "CpG",
+                      sep = " ")
+
+ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
+                                    hi.count=NULL,hi.perc=99.9)   
+
+ltet_meth_unite <- methylKit::unite(ltet_meth, destrand = TRUE, 
+                                    min.per.group = 1L, mc.cores = 8) #1,559,800 CpG sites
+
+save(ltet_meth_unite, file = "data/processed/methylkit_prepost_raw.RData")
+
 ```
 
 ## Summary statistics
@@ -28,7 +76,9 @@ data <- getData(ltet_meth_unite)
 We start by collecting summary statistics per CpG site to check if methylation level is associated with coverage.
 
 ```{r sum, echo=T, eval=F}
-#| code-fold: true
+## load data
+load("data/processed/methylkit_prepost_raw.RData")
+data <- getData(ltet_meth_unite)
 
 #### Get summary statistics ####
 # select columns for specific data: number of sites that are methylated, coverage
@@ -113,7 +163,7 @@ Next, we can conduct a PCA to visualize potential methodological biases towards 
 #### PCA ####
 # create dataset for PCA with only complete data
 data_pca <- data.frame(matrix(unlist(sum_meth_prop), nrow=nrow(sum_meth_prop)),stringsAsFactors=FALSE)
-data_pca <- data_pca[complete.cases(data_pca),] 
+data_pca <- data_pca[complete.cases(data_pca),] # we can only include complete cases when conducting a pca, which excludes many cpg sites
 nrow(data_pca) 
 data_pca <- data_pca[,-1]
 data_pca <- lapply(data_pca, as.numeric)
@@ -201,9 +251,11 @@ cowplot::plot_grid(pca_site, pca_prepost, pca_year, pca_lib, pca_lib_n, pca_conc
 
 ![PCA plots](../plots/explore/pca_plots_factors.png)
 
+We don't report the sample within library and extraction batch in the manuscript for simplicity reasons.
+
 ## Linear mixed effect model
 
-Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a LMM
+Lastly, we want to make sure that average methylation percentage is not affected by library by conducting a linear mixed effect model (LMM).
 
 ```{r, load_sum, echo=F, message=F}
 load(file = "../results/pca/quality_check_pca_meanmeth.RData")
@@ -214,6 +266,7 @@ load(file = "../results/pca/quality_check_pca_meanmeth.RData")
 lmer_lib <- lmerTest::lmer(mean_perc_meth ~ lib + (1|id), data = merge_pca)
 lmer_null  <- lmerTest::lmer(mean_perc_meth ~ 1 + (1|id), data = merge_pca)
 anova(lmer_lib, lmer_null)
+summary(lmer_lib)
 ```
 
 It seems there are no library effects on average CpG methylation.
