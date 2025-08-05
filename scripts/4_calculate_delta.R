@@ -1,5 +1,5 @@
 ### load packages
-pacman::p_load(tidyverse, data.table, tibble, performance, matrixStats, 
+pacman::p_load(dplyr, data.table, tibble, performance, matrixStats, 
                parallel, performance, lmerTest, tidystats, insight, effects)
 
 ### load data

@@ -1,6 +1,6 @@
 
 ## load packages
-pacman::p_load(tidyverse, data.table, methylKit, tibble, matrixStats, ggpointdensity)
+pacman::p_load(dplyr, ggplot2, data.table, methylKit, tibble, matrixStats, ggpointdensity)
 
 source("scripts/plotting_theme.R")
 

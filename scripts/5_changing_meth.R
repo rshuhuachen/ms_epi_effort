@@ -3,7 +3,7 @@
 
 ### Packages ####
 #devtools::install_github("mastoffel/rptR", build_vignettes = TRUE)
-pacman::p_load(tidyverse, data.table, tibble, performance,  
+pacman::p_load(dplyr, data.table, tibble, performance,  
                parallel, performance, lmerTest, tidystats, cowplot, gaston)
 #matrixStats, insight, rptR, 
 
