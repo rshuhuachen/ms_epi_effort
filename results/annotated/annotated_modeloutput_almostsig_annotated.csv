@@ -1,0 +1,141 @@
+scaf_nr,pos,trait,estimate,pval,qval,region,similar
+9,36,006,955,Centrality,-0.05,0.006,0.24,upstream,ACVR1
+6,25,173,106,Mating success,-0.07,0.046,0.7,downstream,ADAMTSL2
+6,56,292,083,Mating success,-0.16,0.002,0.2,exon,ADRB1
+27,3,851,345,Centrality,-0.07,0.003,0.24,exon,ANK1
+13,18,332,312,Attendance,0.08,0.002,0.13,intron,ANKRD11
+13,18,316,851,Survival,-6.31,0.048,0.79,upstream,ANKRD11
+19,9,737,771,Attendance,0.05,0.017,0.3,downstream,ANKRD40
+19,9,737,771,Survival,-8.03,0.039,0.79,downstream,ANKRD40
+7,49,082,068,Mating success,-0.07,0.001,0.17,exon,ANKRD9
+7,49,082,068,Survival,-7.43,0.05,0.79,exon,ANKRD9
+25,5,152,922,Attendance,0.08,0.001,0.13,promoter,APOA1
+7,16,104,769,Attendance,0.04,0.019,0.3,promoter,BEST1
+7,16,104,769,Centrality,-0.05,0.007,0.24,promoter,BEST1
+7,16,104,759,Centrality,-0.04,0.021,0.29,promoter,BEST1
+7,16,104,775,Centrality,-0.05,0.004,0.24,promoter,BEST1
+19,9,844,172,Mating success,0.05,0.028,0.7,intron,CACNA1G
+23,358,619,Survival,-11.24,0.01,0.79,promoter,CAMTA1
+19,4,947,243,Blue chroma (next year),0.01,0.009,0.26,promoter,CANT1
+13,18,429,542,Centrality,-0.05,0.044,0.4,promoter,CBFA2T3
+24,2,545,576,Centrality,0.04,0.045,0.4,TSS,CILP2
+3,46,046,806,Centrality,-0.07,0.008,0.24,upstream,COLEC12
+7,190,378,Survival,-4.83,0.047,0.79,downstream,CPSF7
+28,355,968,Centrality,-0.07,0.005,0.24,upstream,CRABP2
+13,18,012,675,Attendance,-0.06,0.046,0.46,intron,CYB5B
+13,18,012,675,Centrality,0.08,0.01,0.24,intron,CYB5B
+6,6,229,580,Mating success,-0.07,0.005,0.3,downstream,DMRTA2
+4,56,198,050,Blue chroma (next year),0.01,0.026,0.43,upstream,DNAJB5
+23,506,065,Mating success,0.03,0.047,0.7,promoter,DNAJC11
+26,3,774,540,Centrality,-0.1,0.034,0.35,exon,DNALI1
+24,462,215,Centrality,0.07,0.01,0.24,promoter,DOT1L
+2,3,176,115,Centrality,-0.07,0.01,0.24,downstream,ELP3
+19,9,920,788,Centrality,-0.11,0.001,0.11,promoter,EPN3
+15,9,512,366,Mating success,0.05,0.01,0.46,downstream,FAF2
+24,2,986,739,Mating success,0.1,0,0.04,downstream,FKBP8
+11,111,251,Attendance,-0.06,0.017,0.3,intron,FURIN
+7,15,878,140,Centrality,-0.06,0.013,0.26,promoter,GAL
+12,8,736,017,Centrality,-0.05,0.036,0.36,upstream,GATA2
+12,8,736,370,Survival,-9.99,0.021,0.79,upstream,GATA2
+24,6,241,473,Mating success,0.06,0.001,0.17,exon,GLI1
+24,1,324,651,Attendance,-0.06,0.02,0.3,intron,GRAMD2B
+13,19,314,324,Attendance,-0.07,0.007,0.19,intron,GSE1
+10,15,663,765,Centrality,0.04,0.05,0.42,downstream,HES1-B
+10,15,663,816,Lyre size (next year),5.47,0.035,0.37,downstream,HES1-B
+1,85,356,738,Attendance,-0.1,0.002,0.13,promoter,HMG14
+26,5,691,986,Centrality,-0.13,0.007,0.24,exon,HMGCL
+22,6,616,045,Attendance,-0.08,0.004,0.14,promoter,HOXB2
+24,1,105,654,Attendance,-0.09,0.005,0.16,intron,HSD11B1L
+24,1,105,654,Centrality,0.08,0.028,0.32,intron,HSD11B1L
+17,3,956,821,Attendance,0.06,0.033,0.4,downstream,ID1
+25,2,512,503,Lyre size (next year),-4.66,0.036,0.37,promoter,JAM3
+25,2,512,626,Mating success,0.07,0.016,0.53,exon,JAM3
+25,2,512,626,Survival,-6.78,0.029,0.79,exon,JAM3
+22,5,532,734,Attendance,-0.09,0.005,0.16,intron,JUP
+14,16,305,631,Centrality,-0.06,0.026,0.3,downstream,LAMP2
+16,3,179,120,Centrality,-0.11,0.001,0.07,upstream,LFNG
+6,10,440,648,Attendance,-0.16,0.009,0.21,upstream,LRRC19
+26,5,443,524,Attendance,0.09,0.012,0.26,upstream,MACF1
+26,5,443,524,Centrality,-0.08,0.046,0.4,upstream,MACF1
+26,5,467,315,Centrality,-0.05,0.029,0.32,exon,MACF1
+24,2,702,734,Attendance,-0.05,0.036,0.4,downstream,MEF2B
+5,28,610,764,Attendance,0.09,0.016,0.29,exon,MFHAS1
+5,28,610,764,Centrality,-0.09,0.022,0.29,exon,MFHAS1
+6,2,881,316,Attendance,-0.03,0.047,0.46,downstream,NFIA
+6,2,881,497,Attendance,0.04,0.029,0.38,downstream,NFIA
+24,1,284,876,Survival,-10.5,0.037,0.79,upstream,NFIC
+24,1,284,881,Survival,-9.14,0.018,0.79,upstream,NFIC
+24,1,284,955,Attendance,-0.06,0.007,0.19,upstream,NFIC
+13,14,932,523,Centrality,0.08,0.025,0.3,exon,NLRC5
+19,5,502,407,Blue chroma (next year),-0.01,0.031,0.43,exon,NPLOC4
+23,1,421,756,Attendance,-0.06,0.002,0.13,promoter,PANK4
+23,1,421,880,Attendance,-0.06,0.001,0.09,promoter,PANK4
+22,3,652,515,Attendance,0.05,0.05,0.46,upstream,PLEKHA6
+22,3,652,515,Lyre size (next year),-7.96,0.014,0.26,upstream,PLEKHA6
+1,146,148,448,Mating success,0.04,0.015,0.53,intron,PLXNC1
+12,19,141,977,Centrality,-0.06,0.011,0.25,promoter,PLXND1
+6,51,134,063,Mating success,-0.08,0.004,0.26,upstream,PROM1A
+22,9,519,053,Survival,-4.26,0.04,0.79,exon,PSMD11
+22,9,519,121,Centrality,-0.06,0.011,0.25,exon,PSMD11
+6,9,950,458,Centrality,0.11,0,0.05,exon,PTPRF
+9,21,606,343,Attendance,0.05,0.029,0.38,promoter,RACGAP1
+9,21,606,328,Blue chroma (next year),0.01,0.003,0.16,promoter,RACGAP1
+18,6,910,579,Centrality,-0.06,0.041,0.4,promoter,RCJMB04_21H11
+7,25,450,447,Mating success,-0.09,0.003,0.26,exon,RIOX1
+12,2,799,757,Centrality,0.07,0.043,0.4,promoter,SEMA3B
+20,5,712,463,Survival,-6.91,0.01,0.79,intron,SLC25A25
+20,5,712,468,Blue chroma (next year),0.01,0.048,0.46,intron,SLC25A25
+22,7,658,401,Attendance,0.09,0.005,0.16,upstream,SLC25A39
+18,9,922,763,Blue chroma (next year),0.01,0.039,0.43,promoter,SMTN
+18,9,922,763,Centrality,-0.06,0.004,0.24,promoter,SMTN
+19,4,859,312,Attendance,-0.11,0.003,0.13,downstream,SOCS3
+19,5,590,706,Mating success,0.05,0.05,0.7,downstream,SOX9
+22,994,621,Centrality,-0.07,0.018,0.28,exon,SPDEF
+21,8,792,897,Lyre size (next year),-5.42,0.007,0.23,downstream,SRSF1
+21,8,793,064,Mating success,-0.13,0.004,0.26,downstream,SRSF1
+8,50,726,315,Mating success,0.06,0.021,0.59,intron,SSPO
+2,106,053,468,Lyre size (next year),-4.19,0.049,0.38,upstream,SSTR4
+6,9,779,970,Attendance,-0.04,0.047,0.46,downstream,ST3GAL3
+22,6,261,487,Mating success,0.05,0.017,0.53,intron,STARD3
+22,6,261,490,Centrality,-0.05,0.01,0.24,intron,STARD3
+22,6,261,517,Centrality,-0.07,0.046,0.4,intron,STARD3
+6,8,114,650,Mating success,0.04,0.038,0.7,intron,TAL1
+6,8,114,811,Survival,-5.75,0.029,0.79,exon,TAL1
+9,20,852,739,Attendance,0.21,0,0.06,intron,TBR1
+9,20,852,739,Centrality,-0.12,0.019,0.28,intron,TBR1
+11,13,037,331,Centrality,-0.11,0.035,0.36,promoter,TCF12
+24,161,329,Attendance,0.05,0.035,0.4,exon,TCF3
+24,161,513,Mating success,0.04,0.043,0.7,intron,TCF3
+16,4,916,072,Attendance,0.04,0.045,0.46,intron,TOM1L2
+17,3,936,611,Blue chroma (next year),-0.01,0.038,0.43,promoter,TPX2-B
+6,29,617,149,Attendance,0.09,0.003,0.13,promoter,TUBGCP2
+6,29,617,149,Centrality,-0.08,0.025,0.3,promoter,TUBGCP2
+22,7,638,774,Attendance,0.03,0.044,0.46,downstream,UBTF
+22,7,638,774,Centrality,-0.05,0.009,0.24,downstream,UBTF
+22,7,638,786,Blue chroma (next year),-0.01,0.01,0.26,downstream,UBTF
+22,5,929,242,Attendance,0.04,0.025,0.38,intron,WNK4
+22,5,929,242,Centrality,-0.05,0.021,0.29,intron,WNK4
+27,3,240,038,Attendance,-0.05,0.043,0.46,intron,XPO7
+27,3,239,941,Blue chroma (next year),-0.01,0.039,0.43,intron,XPO7
+27,3,239,995,Lyre size (next year),-5.78,0.015,0.26,intron,XPO7
+24,1,067,454,Attendance,0.08,0.014,0.28,intron,ZBTB7A
+24,1,067,454,Centrality,-0.09,0.005,0.24,intron,ZBTB7A
+26,3,802,592,Attendance,-0.09,0.001,0.09,exon,ZC3H12A
+13,10,836,664,Attendance,0.05,0.044,0.46,downstream,ZNF423
+13,10,836,664,Centrality,-0.06,0.013,0.26,downstream,ZNF423
+13,18,640,882,Centrality,-0.07,0.01,0.24,promoter,ZNF469
+4,37,107,500,Attendance,0.1,0.016,0.29,downstream,NA
+1,50,423,Attendance,-0.08,0,0.01,promoter,NA
+5,12,092,564,Attendance,0.06,0.003,0.13,promoter,NA
+5,12,092,564,Centrality,-0.04,0.03,0.33,promoter,NA
+5,50,969,477,Attendance,-0.06,0.026,0.38,TSS,NA
+11,18,733,797,Mating success,0.05,0.022,0.6,intron,NA
+11,18,733,819,Mating success,0.07,0.02,0.59,intron,NA
+8,2,890,848,Mating success,0.07,0.05,0.7,exon,NA
+9,4,520,683,Survival,-7.47,0.043,0.79,exon,NA
+10,9,236,234,Mating success,-0.07,0.011,0.46,exon,NA
+5,34,123,180,Centrality,0.09,0.036,0.36,downstream,NA
+24,1,606,325,Mating success,-0.06,0.031,0.7,promoter,NA
+24,1,606,325,Centrality,0.07,0.012,0.26,promoter,NA
+24,1,606,364,Attendance,0.07,0.047,0.46,promoter,NA
+16,5,045,219,Attendance,-0.07,0.035,0.4,TSS,NA
