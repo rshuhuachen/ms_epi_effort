@@ -231,3 +231,90 @@ almostsig_all_annotated_id <- almostsig_all_annotated_id %>% arrange(cpg_name)
 
 save(almostsig_all_annotated_id, file="results/annotated/annotated_modeloutput_almostsig_all_annotated_priority.RData")
 almostsig_all_annotated_id$similar %>% write.csv("results/go_almostsig_all.csv", quote=F, row.names=F)
+
+# load scaffold numbers
+load("data/scaffold_names_dovetail.RData")
+
+# Split the chr_pos column into two columns based on the first "_"
+split_chr_pos <- strsplit(almostsig_all_annotated_id$chr_pos, "_", fixed = TRUE)
+
+# Extract the numbers following HRSCAF=XXX_number
+almostsig_all_annotated_id$chr <- paste0(sapply(split_chr_pos, "[", 1), "_",
+                             sapply(split_chr_pos, "[", 2), ";", 
+                             sapply(split_chr_pos, "[", 4), "=",
+                             sapply(split_chr_pos, "[", 5))
+
+almostsig_all_annotated_id$pos <- as.numeric(sapply(split_chr_pos, "[", 6))
+
+# join
+almostsig_all_annotated_id <- left_join(almostsig_all_annotated_id, genome[,c("contig", "scaf_nr")], by = c("chr" = "contig"))
+
+#### select only those duplicates ####
+almostsig_all_annotated_id %>%
+  group_by(chr_pos) %>%
+  filter(n() > 1 & trait != "eyec_nextyear") %>%
+  ungroup -> almostsig_dups
+
+almostsig_all_annotated_id %>%
+  filter(trait == "attend"|trait=="dist"|trait=="MS") -> almostsig_effort
+
+almostsig_all_annotated_id %>%
+  filter(trait == "blue_nextyear"|trait=="lyre_nextyear"|trait=="surv") -> almostsig_cost
+
+### for table select all ####
+almostsig_all_annotated_id <- almostsig_all_annotated_id %>% ungroup()
+almostsig_all_annotated_id %>% dplyr::select(scaf_nr, pos, trait, estimate, pval, qval, region, similar) %>% filter(trait != "eyec_nextyear")-> table_sig
+table_sig$estimate <- round(table_sig$estimate, 2)
+table_sig$pval <- round(table_sig$pval, 3)
+table_sig$qval <- round(table_sig$qval, 2)
+table_sig$pos <- prettyNum(table_sig$pos, big.mark = ",", bi.interval = 3L)
+
+table_sig$trait <- gsub("attend", "Attendance", table_sig$trait)
+table_sig$trait <- gsub("blue_nextyear", "Blue chroma (next year)", table_sig$trait)
+table_sig$trait <- gsub("dist", "Centrality", table_sig$trait)
+table_sig$trait <- gsub("lyre_nextyear", "Lyre size (next year)", table_sig$trait)
+table_sig$trait <- gsub("MS", "Mating success", table_sig$trait)
+table_sig$trait <- gsub("surv", "Survival", table_sig$trait)
+
+table_sig$trait <- factor(table_sig$trait, levels = c("Attendance", "Centrality", "Mating success", "Survival", "Blue chroma (next year)", "Lyre size (next year)"))
+table_sig <- table_sig %>% arrange(similar)
+
+write.csv(table_sig, file = "results/annotated/annotated_modeloutput_almostsig_annotated.csv", quote=F, row.names = F)
+
+### make a manhattan plot ####
+### load model output
+load(file="results/modeloutput/changing/modeloutput_glmer.RData")
+
+# add col about significance
+out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_effort$chr_pos & chr_pos %in% almostsig_cost$chr_pos~ "Associated with effort and cost",
+                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_effort$chr_pos ~ "Associated with effort ",
+                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_cost$chr_pos~ "Associated with cost",
+                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "Dynamic",
+                                                            TRUE ~ "Stable")))
+
+out_changing <- subset(out_glmer, sig != "Stable")
+
+# manhattan plot
+
+# plot 
+# lmer
+out_changing <- out_changing %>% mutate(shade = case_when(scaf_nr %% 2 == 0 ~ "even",
+                                                  TRUE ~ "odd"))
+
+#clrs <- viridisLite::viridis(6)
+out_changing %>% subset(scaf_nr <= 10) %>% 
+  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
+  geom_point(size=3, aes(alpha =shade, col = sig, fill = sig)) +
+  facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
+  labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
+  # scale_color_manual(values=c(clrs[5], clrs[17])) +
+  # scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.5)) +
+  scale_alpha_discrete(range=c(0.4,1))+
+  theme(axis.text.x = element_blank(),
+        panel.spacing = unit(0, "lines"),
+        plot.margin = margin(r = 0.5, l = 0.1, b = 0.1, t = 0.1, unit = "cm"),
+        axis.line.x = element_blank(),
+        axis.title.x = element_text(margin=margin(t=10)),
+        axis.title.y = element_text(margin=margin(r=5)),
+        axis.ticks.x = element_blank(),
+        axis.line.y = element_blank()) 

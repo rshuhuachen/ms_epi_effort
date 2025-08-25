@@ -554,6 +554,9 @@ subset(all_models_sig_annotated_id, parameter == "all") %>% arrange(parameter_qv
 subset(all_models_sig_annotated_id, parameter == "time_period") %>% arrange(parameter_qval) %>%
   dplyr::select(similar) %>% unique() %>% write.csv("results/modeloutput/changing/gene_ids_sig_changing_similar.csv", quote=F, row.names=F, col.names = F)
 
+subset(all_models_sig_annotated_id, parameter == "time_period") %>% arrange(parameter_qval) -> annotated_changing
+save(annotated_changing, file = "results/modeloutput/changing/gene_ids_sig_changing_similar.RData")
+
 #### Summarise number of sites per region ####
 sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
 names(sum_annotated) <- c("region", "model", "n")
