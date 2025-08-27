@@ -27,8 +27,8 @@ ggplot(out_glmer, aes(x = mean_delta_meth*100, y = -log10(as.numeric(prepost_qva
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.5)) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
-    geom_vline(xintercept = 0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = -10, col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_vline(xintercept = 10, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> fig1_volcano
 
 fig1_volcano
@@ -69,8 +69,8 @@ out_glmer %>% subset(scaf_nr <= 10) %>%
     labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
     scale_color_manual(values=c("#E28979", clr_sig)) +
     scale_fill_manual(values=c(alpha("#E28979", 0.5), alpha(clr_sig), 0.5)) +
-    geom_hline(yintercept = -log10(5*10^-8), col = clr_highlight, linetype= "dotted",linewidth = 0.8) +
-    geom_hline(yintercept = -log10(5*10^-5), col = clr_high, linetype= "dotted",linewidth = 0.8) +
+    geom_hline(yintercept = -log10(5*10^-8), col = clrs_related[5], linetype= "dotted",linewidth = 0.5) +
+    geom_hline(yintercept = -log10(5*10^-5), col = clrs_related[4], linetype= "dotted",linewidth = 0.5) +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
    axis.line.x = element_blank(),
