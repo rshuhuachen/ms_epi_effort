@@ -64,13 +64,13 @@ out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" ~ "even",
                                 
 out_glmer %>% subset(scaf_nr <= 10) %>% 
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_qval)))) + 
-    geom_point(size=2, alpha=0.5, shape=21, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
+    geom_point(size=3, alpha=0.5, shape=21, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
     labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
     scale_color_manual(values=c("#E28979", clr_sig)) +
     scale_fill_manual(values=c(alpha("#E28979", 0.5), alpha(clr_sig), 0.5)) +
-    geom_hline(yintercept = -log10(5*10^-8), col = clrs_related[5], linetype= "dotted",linewidth = 0.5) +
-    geom_hline(yintercept = -log10(5*10^-5), col = clrs_related[4], linetype= "dotted",linewidth = 0.5) +
+    geom_hline(yintercept = -log10(5*10^-8), col = clrs_related[5], linetype= "dotted",linewidth = 0.8) +
+    geom_hline(yintercept = -log10(5*10^-5), col = clrs_related[4], linetype= "dotted",linewidth = 0.8) +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
    axis.line.x = element_blank(),
