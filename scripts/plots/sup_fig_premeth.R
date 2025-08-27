@@ -50,4 +50,4 @@ plot_grid(plots[[1]] + labs(title = "Attendance"),
           plots[[3]] + labs(title = "Mating success"),
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
-ggsave(all_plots, file = "plots/final/supp_volcano_pre_lekking.png", width = 12, height = 18)
+ggsave(all_plots, file = "plots/final/supp_volcano_pre_lekking.png", width = 10, height = 14)
