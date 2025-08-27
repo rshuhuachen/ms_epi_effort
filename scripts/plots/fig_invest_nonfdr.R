@@ -213,4 +213,4 @@ plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           ncol=2, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig3_raw
 
-ggsave(fig3_raw, file = "plots/final/raw_invest_cost.png", width=18, height=14)
+ggsave(fig3_raw, file = "plots/final/raw_invest_cost.png", width=14, height=12)
