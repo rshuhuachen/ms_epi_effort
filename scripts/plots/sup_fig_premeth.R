@@ -39,6 +39,7 @@ for (i in 1:length(models)){
     labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = "-log10(q-value)", title = as.character(df$parameter[1])) +
     geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+    xlim(-2,2)+
     theme(legend.position="none") -> volcano
   plots[[i]] <- volcano        
   
@@ -50,4 +51,4 @@ plot_grid(plots[[1]] + labs(title = "Attendance"),
           plots[[3]] + labs(title = "Mating success"),
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
-ggsave(all_plots, file = "plots/final/supp_volcano_pre_lekking.png", width = 10, height = 14)
+ggsave(all_plots, file = "plots/final/supp_volcano_pre_lekking.png", width = 8, height = 14)

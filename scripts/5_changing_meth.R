@@ -25,6 +25,14 @@ prepost <- subset(all_pheno_epi, !is.na(prepost))
 
 rm(all_pheno_epi)
 
+## for sup table: export relevant info ###
+head(prepost)
+
+table <- prepost %>% dplyr::select(c(id, year, site, fulldate, prepost, attend, dist, MS, surv))
+ny <- read.csv("data/phenotypes/data_for_nextyear_corrected.csv")
+table <- left_join(table, ny[,c("id", "year", "age_cat", "blue_nextyear", "lyre_nextyear")], by = c("id", "year"))
+write.csv(table, file = "data/metadata_samples.csv", quote=F, row.names = F)
+
 ### merge with some metadata
 
 prepost_long <- left_join(prepost_long, prepost[,c("id", "year", "Core", "born", "fulldate")], 
