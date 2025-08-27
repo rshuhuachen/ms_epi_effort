@@ -279,7 +279,7 @@ table_sig$trait <- gsub("surv", "Survival", table_sig$trait)
 table_sig$trait <- factor(table_sig$trait, levels = c("Attendance", "Centrality", "Mating success", "Survival", "Blue chroma (next year)", "Lyre size (next year)"))
 table_sig <- table_sig %>% arrange(similar)
 
-write.csv(table_sig, file = "results/annotated/annotated_modeloutput_almostsig_annotated.csv", quote=F, row.names = F)
+write.table(sep = "\t", table_sig, file = "results/annotated/annotated_modeloutput_almostsig_annotated.tsv", quote=F, row.names = F)
 
 ### make a manhattan plot ####
 ### load model output

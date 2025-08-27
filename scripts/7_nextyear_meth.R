@@ -47,6 +47,7 @@ delta_meth_n_blue_ny_min12 <- subset(delta_meth_n_blue_ny, n > 12)
 
 delta_meth_sub_blue_ny <- subset(delta_meth_blue_ny, chr_pos %in% delta_meth_n_blue_ny_min12$chr_pos)
 length(unique(delta_meth_sub_blue_ny$chr_pos)) # 125 sites
+save(delta_meth_sub_blue_ny, file = "data/processed/delta_meth_sub_blue_ny.RData")
 
 delta_meth_sub_blue_ny_ls <- delta_meth_sub_blue_ny %>% group_split(chr_pos)
 
@@ -77,6 +78,7 @@ delta_meth_n_lyre_ny_min12 <- subset(delta_meth_n_lyre_ny, n > 12)
 
 delta_meth_sub_lyre_ny <- subset(delta_meth_lyre_ny, chr_pos %in% delta_meth_n_lyre_ny_min12$chr_pos)
 length(unique(delta_meth_sub_lyre_ny$chr_pos)) # 125 sites
+save(delta_meth_sub_lyre_ny, file = "data/processed/delta_meth_sub_lyre_ny.RData")
 
 delta_meth_sub_lyre_ny_ls <- delta_meth_sub_lyre_ny %>% group_split(chr_pos)
 

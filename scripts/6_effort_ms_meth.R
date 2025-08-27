@@ -125,9 +125,10 @@ delta_meth_n_MS <- subset(delta_meth_n_MS, n > 20)
 
 delta_meth_sub_MS <- subset(delta_meth_MS, chr_pos %in% delta_meth_n_MS$chr_pos)
 length(unique(delta_meth_sub_MS$chr_pos)) # 564 sites
+save(delta_meth_sub_MS, file = "data/processed/delta_meth_MS_sub.RData")
 
-delta_meth_MS_ls <- delta_meth_sub_MS %>% group_split(chr_pos)
-save(delta_meth_MS_ls, file = "data/processed/delta_meth_ls_MS.RData")
+delta_meth_MS_ls <-  delta_meth_sub_MS %>% group_split(chr_pos)
+
 
 ## model
 m_MS_pre <- parallel::mclapply(delta_meth_MS_ls, function_model_delta_pheno_norepeat, parameter="MS", pre="control", mc.cores=4)
