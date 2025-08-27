@@ -42,7 +42,7 @@ ggplot(m_attend_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+
+  ylim(0, -log10(0.000005))+
   theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_attend
 volcano_attend
@@ -59,7 +59,7 @@ ggplot(m_dist_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+theme(legend.position="none") +
+  ylim(0, -log10(0.000005))+theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_dist
 
 volcano_dist
@@ -75,7 +75,7 @@ ggplot(m_MS_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_pva
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+theme(legend.position="none") +
+  ylim(0, -log10(0.000005))+theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_ms
 
 ###### Survival #######
@@ -90,7 +90,7 @@ ggplot(m_surv_out, aes(x = surv_delta_meth_estimate, y = -log10(as.numeric(surv_
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+
+  ylim(0, -log10(0.000005))+
   xlim(-10,10)+
   theme(legend.position="none") -> volcano_surv
 
@@ -108,7 +108,7 @@ ggplot(m_blue_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+
+  ylim(0, -log10(0.000005))+
   xlim(-0.015, 0.015)+
   theme(legend.position="none")  -> volcano_blue
 
@@ -126,7 +126,7 @@ ggplot(m_lyre_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.00005))+
+  ylim(0, -log10(0.000005))+
   xlim(-10,10)+
   theme(legend.position="none")  -> volcano_lyre
 
@@ -204,10 +204,10 @@ raw_lyre_2
 # volcanoes
 
 plot_grid(volcano_attend, volcano_dist, volcano_ms,
-          volcano_surv, volcano_blue, volcano_lyre, ncol=3, labels="auto", 
+          volcano_surv, volcano_blue, volcano_lyre, ncol=2, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig2_volcanoes
 
-ggsave(fig2_volcanoes, file = "plots/final/volcanoes_invest_cost.png", width=22, height=14)
+ggsave(fig2_volcanoes, file = "plots/final/volcanoes_invest_cost.png", width=12, height=16)
 
 plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           ncol=2, labels="auto", 
