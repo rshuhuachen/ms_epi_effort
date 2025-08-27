@@ -31,6 +31,7 @@ head(prepost)
 table <- prepost %>% dplyr::select(c(id, year, site, fulldate, prepost, attend, dist, MS, surv))
 ny <- read.csv("data/phenotypes/data_for_nextyear_corrected.csv")
 table <- left_join(table, ny[,c("id", "year", "age_cat", "blue_nextyear", "lyre_nextyear")], by = c("id", "year"))
+table <- table %>% dplyr::select(c(id, site, age_cat, prepost, fulldate, attend, dist, MS, surv, blue_nextyear, lyre_nextyear))
 write.csv(table, file = "data/metadata_samples.csv", quote=F, row.names = F)
 
 ### merge with some metadata
