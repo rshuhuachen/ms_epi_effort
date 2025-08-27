@@ -36,8 +36,8 @@ m_attend_out <- m_attend_out %>% mutate(sig = case_when(parameter_qval < 0.05 ~ 
                                                         TRUE ~ "nonsig"))
 
 ggplot(m_attend_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_pval)))) + 
-  geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Lek attendance") +
+  geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
+  labs(x = expression("Estimate lek attendance"), y = expression(-log[10]*"("*italic(p*")")), title = "Lek attendance") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -54,7 +54,7 @@ m_dist_out <- m_dist_out %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig
 
 ggplot(m_dist_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_pval)))) + 
   geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
+  labs(x = expression("Estimate centrality"), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -70,7 +70,7 @@ m_MS_out <- m_MS_out %>% mutate(sig = case_when(parameter_qval < 0.05 ~ "sig_q",
 
 ggplot(m_MS_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_pval)))) + 
   geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Mating success") +
+  labs(x = expression("Estimate mating success"), y = expression(-log[10]*"("*italic(p*")")), title = "Mating success") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -85,7 +85,7 @@ m_surv_out <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval < 0
 
 ggplot(m_surv_out, aes(x = surv_delta_meth_estimate, y = -log10(as.numeric(surv_delta_meth_pval)))) + 
   geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Survival") +
+  labs(x = expression("Estimate "*Delta*" methylation"), y = expression(-log[10]*"("*italic(p*")")), title = "Survival") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -102,8 +102,8 @@ m_blue_out <- m_blue_out %>% mutate(sig = case_when(deltameth_qval < 0.05 ~ "sig
                                                         TRUE ~ "nonsig"))
 
 ggplot(m_blue_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_pval)))) + 
-  geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Blue chroma next year") +
+  geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
+  labs(x = expression("Estimate "*Delta*" methylation"), y = expression(-log[10]*"("*italic(p*")")), title = "Blue chroma next year") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -120,8 +120,8 @@ m_lyre_out <- m_lyre_out %>% mutate(sig = case_when(deltameth_qval < 0.05 ~ "sig
                                                     TRUE ~ "nonsig"))
 
 ggplot(m_lyre_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_pval)))) + 
-  geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-  labs(x = expression("Estimate"), y = expression(-log[10]*"("*italic(p*")")), title = "Lyre size next year") +
+  geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
+  labs(x = expression("Estimate "*Delta*" methylation"), y = expression(-log[10]*"("*italic(p*")")), title = "Lyre size next year") +
   scale_color_manual(values=c(clrs[5], clrs_related[4], clrs_related[5])) +
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
@@ -207,7 +207,7 @@ plot_grid(volcano_attend, volcano_dist, volcano_ms,
           volcano_surv, volcano_blue, volcano_lyre, ncol=2, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig2_volcanoes
 
-ggsave(fig2_volcanoes, file = "plots/final/volcanoes_invest_cost.png", width=12, height=16)
+ggsave(fig2_volcanoes, file = "plots/final/volcanoes_invest_cost.png", width=12, height=14)
 
 plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           ncol=2, labels="auto", 
