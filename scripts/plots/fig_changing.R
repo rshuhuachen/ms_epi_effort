@@ -170,21 +170,22 @@ ggsave(fig1_raw, file="plots/test.png", height=10, width=10)
 ### sites per region ###
 
 sum_annotated <- read.csv(file="results/modeloutput/changing/summary_regions_sig_cpgs.csv")
+sum_annotated$region <- factor(sum_annotated$region, levels=c("Upstream", "Downstream", "Intron", "Exon", "Promoter", "TSS"))
 
 ggplot(subset(sum_annotated, region != "5' UTR" & region != "3' UTR"), aes(x = region, y = perc)) + 
-    geom_bar(stat="identity", position="dodge", aes(fill = model, col = model)) + 
+  geom_bar(stat="identity", position="dodge", aes(fill = model, col = model)) + 
   labs(y="Percentage of CpG sites", x="Region", fill = "Subset")+ coord_flip() + 
   scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.8), label = c("All", "Significantly changing")) +
   scale_color_manual(values=c(clrs[5], clr_sig)) + 
   guides(color = "none")+
   ylim(0, 28) +
   geom_text(aes(label = paste0(round(perc, 1), " %"), x = region, y = perc, group=model), 
-              hjust=-0.2, size = 6, position=position_dodge(width=0.9)) +
+            hjust=-0.2, size = 6, position=position_dodge(width=0.9)) +
   theme(legend.position = "top") +
-  geom_text(label = "*", x = 6, y = 14.2, hjust=-9, vjust = 0.8, size = 6) +
-  geom_text(label = "*", x = 5, y = 6.9, hjust=-9, size = 6, vjust = 0.8) +
-  geom_text(label = "*", x = 4, y = 18.6, hjust=-9, size = 6, vjust = 0.8) +
-  geom_text(label = "*", x = 3, y = 15, hjust=-9, size = 6, vjust = 0.8) -> fig1_region
+  geom_text(label = "*", x = 1, y = 14.2, hjust=-9, vjust = 0.8, size = 6) + #upstream
+  geom_text(label = "*", x = 6, y = 6.9, hjust=-9, size = 6, vjust = 0.8) + #tss
+  geom_text(label = "*", x = 5, y = 18.6, hjust=-9, size = 6, vjust = 0.8) + #promo
+  geom_text(label = "*", x = 3, y = 15, hjust=-9, size = 6, vjust = 0.8) -> fig1_region #intron
   
 
 ggsave(fig1_region, file="plots/test.png", height=10, width=10)
