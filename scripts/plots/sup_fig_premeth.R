@@ -54,28 +54,55 @@ ggsave(cor_premeths, file = "plots/final/supp/pre_vs_delta.png", width=8, height
 ### volcano plot pre-meth effects ####
 models <- list(m_attend_out, m_dist_out, m_MS_out)
 
-plots <- list()
-for (i in 1:length(models)){
-  df <- as.data.frame(models[[i]])
-  df <- df %>% mutate(sig = case_when(pre_pval < 0.05 ~ "sig", TRUE ~ "nonsig"))
-  
-  ggplot(df, aes(x = pre_estimate, y = -log10(pre_pval))) + 
+# attend
+m_attend_out$pre_qval <- p.adjust(m_attend_out$pre_pval, method = "fdr", n = nrow(m_attend_out))
+m_attend_out <- m_attend_out %>% mutate(sig = case_when(pre_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+m_attend_out_pmin <-max(m_attend_out$pre_pval[m_attend_out$pre_qval < 0.05])
+
+ggplot(m_attend_out, aes(x = pre_estimate, y = -log10(pre_pval))) + 
     geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
     scale_color_manual(values=c(clr_grey, clr_sig)) +
     scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-    labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = "-log10(q-value)", title = as.character(df$parameter[1])) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = expression(-log[10]*"("*italic(p*")")), title = "Attendance") +
+    geom_hline(yintercept = -log10(m_attend_out_pmin), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
     xlim(-2,2)+
-    theme(legend.position="none") -> volcano
-  plots[[i]] <- volcano        
-  
-  ggsave(volcano, file= paste0("plots/model_out/pre_lekking/volcano_", as.character(df$parameter[1]), ".png"), width=10, height=10)}
+    theme(legend.position="none") -> volcano_attend
+    
+# dist
+m_dist_out$pre_qval <- p.adjust(m_dist_out$pre_pval, method = "fdr", n = nrow(m_dist_out))
+m_dist_out <- m_dist_out %>% mutate(sig = case_when(pre_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+m_dist_out_pmin <-max(m_dist_out$pre_pval[m_dist_out$pre_qval < 0.05])
+
+ggplot(m_dist_out, aes(x = pre_estimate, y = -log10(pre_pval))) + 
+  geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
+  scale_color_manual(values=c(clr_grey, clr_sig)) +
+  scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
+  labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
+  geom_hline(yintercept = -log10(m_dist_out_pmin), col = "darkred", linetype = "dotted", linewidth = 1) +
+  geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+  xlim(-2,2)+
+  theme(legend.position="none") -> volcano_dist
+
+# MS
+m_MS_out$pre_qval <- p.adjust(m_MS_out$pre_pval, method = "fdr", n = nrow(m_MS_out))
+m_MS_out <- m_MS_out %>% mutate(sig = case_when(pre_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
+m_MS_out_pmin <-max(m_MS_out$pre_pval[m_MS_out$pre_qval < 0.05])
+
+ggplot(m_MS_out, aes(x = pre_estimate, y = -log10(pre_pval))) + 
+  geom_point(size=7, alpha=0.5, aes(col = sig, fill = sig)) +
+  scale_color_manual(values=c(clr_grey, clr_sig)) +
+  scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
+  labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = expression(-log[10]*"("*italic(p*")")), title = "Mating success") +
+  geom_hline(yintercept = -log10(m_MS_out_pmin), col = "darkred", linetype = "dotted", linewidth = 1) +
+  geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
+  xlim(-2,2)+
+  theme(legend.position="none") -> volcano_MS
 
 ### combine in plot
-plot_grid(plots[[1]] + labs(title = "Attendance"), 
-          plots[[2]] + labs(title = "Centrality"), 
-          plots[[3]] + labs(title = "Mating success"),
+plot_grid(volcano_attend, 
+          volcano_dist, 
+          volcano_MS,
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
 ggsave(all_plots, file = "plots/final/supp_volcano_pre_lekking.png", width = 8, height = 14)

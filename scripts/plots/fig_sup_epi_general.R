@@ -21,7 +21,7 @@ load(file = "results/pca/quality_check_pca_meanmeth.RData")
 
 # plot PCs
 ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = site)) + 
-  labs(x = "PC 1", y = "PC 2", col = "Lek") +
+  labs(x = "PC 1 (97.5)", y = "PC 2", col = "Lek") +
   scale_color_manual(values=clrs_hunting) -> pca_site
 
 merge_pca$prepost <- factor(merge_pca$prepost, levels = c("pre", "post"))
