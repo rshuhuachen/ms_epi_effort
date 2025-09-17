@@ -20,7 +20,7 @@ delta_meth <- subset(delta_meth, chr_pos %in% changing_cpg$chr_pos)
 
 ### Plot pre_meth effect on delta_meth ####
 
-lmer_pre_delta <- lmerTest::lmer(delta_meth ~ methperc_pre + (1|id), data = delta_meth)
+lmer_pre_delta <- lmerTest::lmer(delta_meth ~ methperc_pre + (1|chr_pos)+ (1|id), data = delta_meth)
 
 sum_pre_delta <- as.data.frame(summary(lmer_pre_delta)$coef) # negative relationship
 
@@ -33,7 +33,7 @@ ggplot(delta_meth, aes(methperc_pre, delta_meth)) +
 
 ggplot(delta_meth, aes(methperc_pre, abs(delta_meth))) + 
   geom_pointdensity() + 
-  scale_color_viridis_c() + geom_smooth() + 
+  scale_color_viridis_c() + #geom_smooth() + 
   labs(x = "Methylation % pre-lekking", y = expression("Absolute "*Delta*" methylation %")) -> cor_pre_delta_abs
 
 cowplot::plot_grid(cor_pre_delta, cor_pre_delta_abs, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) %>%
