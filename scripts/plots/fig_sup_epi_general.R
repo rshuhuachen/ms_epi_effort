@@ -21,7 +21,7 @@ load(file = "results/pca/quality_check_pca_meanmeth.RData")
 
 # plot PCs
 ggplot(merge_pca, aes(x = pc1, y = pc2)) + geom_point(size=3, aes(col = site)) + 
-  labs(x = "PC 1", y = "PC 2", col = "Lek site") +
+  labs(x = "PC 1", y = "PC 2", col = "Lek") +
   scale_color_manual(values=clrs_hunting) -> pca_site
 
 merge_pca$prepost <- factor(merge_pca$prepost, levels = c("pre", "post"))
@@ -45,4 +45,4 @@ ggsave(hist_plots, file="plots/final/supp/summary_stats_cov_meth.png", width=16,
 cowplot::plot_grid(pca_lib, pca_site, pca_prepost, pca_year,
                    labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> pcas
 
-ggsave(pcas, file="plots/final/supp/pca_plots.png", width=14, height=16)
+ggsave(pcas, file="plots/final/supp/pca_plots.png", width=14, height=14)
