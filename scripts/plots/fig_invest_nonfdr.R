@@ -209,10 +209,10 @@ plot_grid(volcano_surv, volcano_blue, volcano_lyre, ncol=3) -> fig2_volcanoes_co
 plot_grid(fig2_volcanoes_invest, fig2_volcanoes_cost, labels=c("auto"), ncol=1,
           label_fontface = "plain", label_size = 22)-> fig2
 fig2
-ggsave(fig2, file = "plots/final/volcanoes_invest_cost.png", width=12, height=14)
+ggsave(fig2, file = "plots/final/volcanoes_invest_cost.png", width=14, height=10)
 
 plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           ncol=2, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig3_raw
 
-ggsave(fig3_raw, file = "plots/final/raw_invest_cost.png", width=14, height=12)
+ggsave(fig3_raw, file = "plots/final/raw_invest_cost.png", width=16, height=12)
