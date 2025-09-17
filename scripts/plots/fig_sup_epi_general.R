@@ -41,3 +41,8 @@ cowplot::plot_grid(hist_mean_cov, hist_n, pca_lib, pca_site, pca_prepost, pca_ye
                    labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> hist_plots
 
 ggsave(hist_plots, file="plots/final/supp/summary_stats_cov_meth.png", width=16, height=18)
+
+cowplot::plot_grid(pca_lib, pca_site, pca_prepost, pca_year,
+                   labels="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) -> pcas
+
+ggsave(pcas, file="plots/final/supp/pca_plots.png", width=14, height=16)
