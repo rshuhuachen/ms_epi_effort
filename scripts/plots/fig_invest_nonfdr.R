@@ -203,11 +203,13 @@ raw_lyre_2
 
 # volcanoes
 
-plot_grid(volcano_attend, volcano_dist, volcano_ms,
-          volcano_surv, volcano_blue, volcano_lyre, ncol=2, labels="auto", 
-          label_fontface = "plain", label_size = 22) -> fig2_volcanoes
+plot_grid(volcano_attend, volcano_dist, volcano_ms,ncol=3) -> fig2_volcanoes_invest
+plot_grid(volcano_surv, volcano_blue, volcano_lyre, ncol=3) -> fig2_volcanoes_cost
 
-ggsave(fig2_volcanoes, file = "plots/final/volcanoes_invest_cost.png", width=12, height=14)
+plot_grid(fig2_volcanoes_invest, fig2_volcanoes_cost, labels=c("auto"), ncol=1,
+          label_fontface = "plain", label_size = 22)-> fig2
+fig2
+ggsave(fig2, file = "plots/final/volcanoes_invest_cost.png", width=12, height=14)
 
 plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           ncol=2, labels="auto", 
