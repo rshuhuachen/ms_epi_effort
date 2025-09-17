@@ -21,15 +21,18 @@ sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth
 
 out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "sig", TRUE ~ "nonsig")))
 
-ggplot(out_glmer, aes(x = mean_delta_meth*100, y = -log10(as.numeric(prepost_qval)))) + 
+p_cutoff <- max(out_glmer$prepost_pval[out_glmer$prepost_qval < 0.05])
+
+ggplot(out_glmer, aes(x = mean_delta_meth*100, y = -log10(as.numeric(prepost_pval)))) + 
     geom_point(size=4, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
-    labs(x = expression("Mean "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(q*")"))) +
+    labs(x = expression("Mean "*Delta*" methylation %"), y = expression(-log[10]*"("*italic(p*")"))) +
     scale_color_manual(values=c(clrs[5], clr_sig)) +
     scale_fill_manual(values=alpha(c(clrs[5], clr_sig), 0.5)) +
-    geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
+    geom_hline(yintercept = -log10(p_cutoff), col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = -10, col = "darkred", linetype = "dotted", linewidth = 1) +
     geom_vline(xintercept = 10, col = "darkred", linetype = "dotted", linewidth = 1) +
     theme(legend.position="none") -> fig1_volcano
+
 
 fig1_volcano
 
@@ -63,14 +66,14 @@ out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" ~ "even",
 
                                 
 out_glmer %>% subset(scaf_nr <= 10) %>% 
-  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_qval)))) + 
+  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
     geom_point(size=3, alpha=0.5, shape=21, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
     labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
     scale_color_manual(values=c("#E28979", clr_sig)) +
     scale_fill_manual(values=c(alpha("#E28979", 0.5), alpha(clr_sig), 0.5)) +
-    geom_hline(yintercept = -log10(5*10^-8), col = clrs_related[5], linetype= "dotted",linewidth = 0.8) +
-    geom_hline(yintercept = -log10(5*10^-5), col = clrs_related[4], linetype= "dotted",linewidth = 0.8) +
+    geom_hline(yintercept = -log10(p_cutoff), col = clr_high, linewidth = 0.8) +
+    geom_hline(yintercept = -log10(0.05), col = clr_high, linetype= "dotted",linewidth = 0.8) +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
    axis.line.x = element_blank(),

@@ -31,7 +31,7 @@ head(prepost)
 table <- prepost %>% dplyr::select(c(id, year, site, fulldate, prepost, attend, dist, MS, surv))
 ny <- read.csv("data/phenotypes/data_for_nextyear_corrected.csv")
 table <- left_join(table, ny[,c("id", "year", "age_cat", "blue_nextyear", "lyre_nextyear")], by = c("id", "year"))
-table <- table %>% dplyr::select(c(id, site, age_cat, prepost, fulldate, attend, dist, MS, surv, blue_nextyear, lyre_nextyear))
+table <- table %>% arrange(id, year) %>% dplyr::select(c(id, site, age_cat, prepost, fulldate, attend, dist, MS, surv, blue_nextyear, lyre_nextyear))
 write.csv(table, file = "data/metadata_samples.csv", quote=F, row.names = F)
 
 ### merge with some metadata
@@ -611,3 +611,28 @@ ggplot(sum_annotated, aes(x = region, y = perc)) + geom_bar(stat="identity") + y
   facet_wrap(~model, ncol=2,) + coord_flip() -> perc_region_cpg
 
 ggsave(perc_region_cpg, file="plots/model_out/changing/perc_sig_cpg_per_region.png", width=20, height=12)
+
+#### Number of sites per GENE ####
+sum_gene <- as.data.frame(table(as.factor(all_models_sig_annotated_id$similar), all_models_sig_annotated_id$parameter)) %>% 
+  arrange(Var1)
+
+sum_gene_wide <- spread(sum_gene,Var2, Freq)
+sum_gene_wide$prob_null <- sum_gene_wide$all / sum(sum_gene_wide$all)
+
+## gene MAB21L2 
+binom.test(x = sum_gene_wide$time_period[which(sum_gene_wide$Var1 == "MAB21L2")], 
+           n = sum(sum_gene_wide$time_period),
+           p = sum_gene_wide$prob_null[which(sum_gene_wide$Var1 == "MAB21L2")]/100) 
+
+## gene BEST1  
+binom.test(x = sum_gene_wide$time_period[which(sum_gene_wide$Var1 == "BEST1")], 
+           n = sum(sum_gene_wide$time_period), 
+           p = sum_gene_wide$prob_null[which(sum_gene_wide$Var1 == "BEST1")]/100) 
+
+## gene HES1-B  
+binom.test(x = sum_gene_wide$time_period[which(sum_gene_wide$Var1 == "HES1-B")], 
+           n = sum(sum_gene_wide$time_period), 
+           p = sum_gene_wide$prob_null[which(sum_gene_wide$Var1 == "HES1-B")]/100) 
+
+
+

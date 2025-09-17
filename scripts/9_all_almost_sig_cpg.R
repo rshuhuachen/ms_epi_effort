@@ -318,3 +318,44 @@ out_changing %>% subset(scaf_nr <= 10) %>%
         axis.title.y = element_text(margin=margin(r=5)),
         axis.ticks.x = element_blank(),
         axis.line.y = element_blank()) 
+
+
+#### Binomial test #####
+# load all changing cpg site numbers
+load(file = "results/modeloutput/changing/gene_ids_sig_changing_similar.RData")
+sum_annotated <- as.data.frame(table(as.factor(annotated_changing$similar), annotated_changing$parameter)) 
+sum_annotated <- subset(sum_annotated,Var2=="time_period")
+names(sum_annotated) <- c("gene", "model", "n_changing")
+
+#load all sig cpgs 
+load(file="results/annotated/annotated_modeloutput_almostsig_all_annotated_priority.RData")
+almostsig_all_annotated_id_unique <- almostsig_all_annotated_id %>% dplyr::select(c(chr_pos, similar)) %>% unique()
+sum_sig <- as.data.frame(table(as.factor(almostsig_all_annotated_id_unique$similar))) 
+names(sum_sig) <- c("gene", "n_sig")
+
+sum_sig_changing <- left_join(sum_annotated[,c(1,3)], sum_sig, by = "gene")
+sum_sig_changing$n_sig[which(is.na(sum_sig_changing$n_sig))] <- 0
+sum_sig_changing$prob_null <- sum_sig_changing$n_changing / sum(sum_sig_changing$n_changing)
+
+c("BEST1", "NFIC", "STARD3", "UBTF")
+
+## gene BEST1  
+binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "BEST1")], 
+           n = sum(sum_sig_changing$n_changing),
+           p = sum_sig_changing$prob_null[which(sum_sig_changing$gene == "BEST1")]/100) 
+
+## gene NFIC  
+binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "NFIC")], 
+           n = sum(sum_sig_changing$n_changing),
+           p = sum_sig_changing$prob_null[which(sum_sig_changing$gene == "NFIC")]/100) 
+
+## gene STARD3  
+binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "STARD3")], 
+           n = sum(sum_sig_changing$n_changing),
+           p = sum_sig_changing$prob_null[which(sum_sig_changing$gene == "STARD3")]/100) 
+
+## gene UBTF  
+binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "UBTF")], 
+           n = sum(sum_sig_changing$n_changing),
+           p = sum_sig_changing$prob_null[which(sum_sig_changing$gene == "UBTF")]/100) 
+
