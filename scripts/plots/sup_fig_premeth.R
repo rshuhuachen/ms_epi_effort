@@ -47,8 +47,9 @@ ggplot(delta_meth, aes(methperc_pre, abs(delta_meth))) +
   scale_color_viridis_c() + #geom_smooth() + 
   labs(x = "Methylation % pre-lekking", y = expression("Absolute "*Delta*" methylation %")) -> cor_pre_delta_abs
 
-cowplot::plot_grid(cor_pre_delta, cor_pre_delta_abs, labs="auto", align="hv", axis="lb", ncol=2, label_fontface = "plain", label_size = 22) %>%
-  ggsave(file = "plots/final/supp/pre_vs_delta.png", width=14, height=10)
+cowplot::plot_grid(cor_pre_delta, cor_pre_delta_abs, labels="auto", ncol=2, align="hv", axis="lb", label_fontface = "plain", label_size = 22) -> cor_premeths
+cor_premeths
+ggsave(cor_premeths, file = "plots/final/supp/pre_vs_delta.png", width=14, height=10)
 
 ### volcano plot pre-meth effects ####
 models <- list(m_attend_out, m_dist_out, m_MS_out)
