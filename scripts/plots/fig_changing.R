@@ -61,19 +61,22 @@ test <- sample_n(out_glmer, 100)
 out_glmer <- out_glmer %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
                                         TRUE ~ "odd"))
 
-out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" ~ "even",
-                                                      col == "odd"  ~ "odd"))                                        
-
+out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" & sig == "sig"~ "even_sig",
+                                                      col == "odd"  & sig == "sig" ~ "odd_sig",
+                                                      TRUE ~ "nonsig"))                                        
+out_glmer$col_sig <- factor(out_glmer$col_sig, levels=c("even_sig", "odd_sig","nonsig"))
                                 
 out_glmer %>% subset(scaf_nr <= 10) %>% 
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
-    geom_point(size=3, alpha=0.5, shape=21, aes(col = as.factor(col_sig), fill = as.factor(col_sig))) +
+  geom_point(data = out_glmer[out_glmer$col_sig == "even_sig", ], 
+             colour = "#E28979", fill = "#E28979", size=3, alpha=0.5, shape=21) +
+  geom_point(data = out_glmer[out_glmer$col_sig == "odd_sig", ], 
+             colour = clr_sig, fill = clr_sig, size=3, alpha=0.5, shape=21) +
+  geom_point(data = out_glmer[out_glmer$col_sig == "nonsig", ], 
+             colour = clrs[5], fill = clrs[5], size=3, alpha=0.5, shape=21) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
     labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
-    scale_color_manual(values=c("#E28979", clr_sig)) +
-    scale_fill_manual(values=c(alpha("#E28979", 0.5), alpha(clr_sig), 0.5)) +
-    geom_hline(yintercept = -log10(p_cutoff), col = clr_high, linewidth = 0.8) +
-    geom_hline(yintercept = -log10(0.05), col = clr_high, linetype= "dotted",linewidth = 0.8) +
+    geom_hline(yintercept = -log10(p_cutoff), col = clr_high, linewidth = 1,linetype="dotted") +
     theme(axis.text.x = element_blank(),
     panel.spacing = unit(0, "lines"),
    axis.line.x = element_blank(),
@@ -82,29 +85,6 @@ out_glmer %>% subset(scaf_nr <= 10) %>%
     axis.line.y = element_blank()) -> fig1_manhattan
 
 fig1_manhattan
-
-### highlight peaks ###
-load(file="results/modeloutput/changing/gene_ids_sig_changing_similar.RData")
-
-# add scaf names
-
-# Split the chr_pos column into two columns based on the first "_"
-split_chr_pos_annotated_changing <- strsplit(annotated_changing$chr_pos, "_", fixed = TRUE)
-
-# Extract the numbers following HRSCAF=XXX_number
-annotated_changing$chr <- paste0(sapply(split_chr_pos_annotated_changing, "[", 1), "_",
-                        sapply(split_chr_pos_annotated_changing, "[", 2), ";", 
-                        sapply(split_chr_pos_annotated_changing, "[", 4), "=",
-                        sapply(split_chr_pos_annotated_changing, "[", 5))
-
-annotated_changing$pos <- as.numeric(sapply(split_chr_pos_annotated_changing, "[", 6))
-
-annotated_changing <- left_join(annotated_changing, genome[,c("contig", "scaf_nr")], by = c("chr" = "contig"))
-
-# labs <- data.frame(label = ("MAB21L2"),
-#                    scaf_nr = 5, 
-#                    pos = 12092316, 
-#                    prepost_qval = 0.000000001)
 
 ggsave(fig1_manhattan, file="plots/test.png", height=10, width=10)
 
