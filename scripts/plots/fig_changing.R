@@ -63,17 +63,21 @@ out_glmer <- out_glmer %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
 
 out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" & sig == "sig"~ "even_sig",
                                                       col == "odd"  & sig == "sig" ~ "odd_sig",
-                                                      TRUE ~ "nonsig"))                                        
-out_glmer$col_sig <- factor(out_glmer$col_sig, levels=c("even_sig", "odd_sig","nonsig"))
+                                                      col == "even"  & sig == "nonsig" ~ "odd_nonsig"
+                                                      col == "odd"  & sig == "nonsig" ~ "even_nonsig")) 
+
+out_glmer$col_sig <- factor(out_glmer$col_sig, levels=c("even_sig", "odd_sig","odd_nonsig", "even_nonsig"))
                                 
 out_glmer %>% subset(scaf_nr <= 10) %>% 
   ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
-  geom_point(data = out_glmer[out_glmer$col_sig == "even_sig", ], 
+  geom_point(data = subset(out_glmer, col_sig == "even_sig" & scaf_nr <= 10), 
              colour = "#E28979", fill = "#E28979", size=3, alpha=0.5, shape=21) +
-  geom_point(data = out_glmer[out_glmer$col_sig == "odd_sig", ], 
+  geom_point(data = subset(out_glmer, col_sig == "odd_sig" & scaf_nr <= 10),
              colour = clr_sig, fill = clr_sig, size=3, alpha=0.5, shape=21) +
-  geom_point(data = out_glmer[out_glmer$col_sig == "nonsig", ], 
-             colour = clrs[5], fill = clrs[5], size=3, alpha=0.5, shape=21) +
+  geom_point(data = subset(out_glmer, col_sig == "odd_nonsig" & scaf_nr <= 10),
+             colour = clr_2[1], fill = clrs[5], size=3, alpha=0.5, shape=21) +
+  geom_point(data = subset(out_glmer, col_sig == "even_nonsig" & scaf_nr <= 10),
+             colour = clr_2[2], fill = clrs[5], size=3, alpha=0.5, shape=21) +
     facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
     labs(x = "Scaffold number", y = expression(-log[10]*"("*italic(p*")")))+
     geom_hline(yintercept = -log10(p_cutoff), col = clr_high, linewidth = 1,linetype="dotted") +
