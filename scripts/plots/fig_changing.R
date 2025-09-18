@@ -63,7 +63,7 @@ out_glmer <- out_glmer %>% mutate(col = case_when(scaf_nr %% 2 == 0 ~ "even",
 
 out_glmer <- out_glmer %>% mutate(col_sig = case_when(col == "even" & sig == "sig"~ "even_sig",
                                                       col == "odd"  & sig == "sig" ~ "odd_sig",
-                                                      col == "even"  & sig == "nonsig" ~ "odd_nonsig"
+                                                      col == "even"  & sig == "nonsig" ~ "odd_nonsig",
                                                       col == "odd"  & sig == "nonsig" ~ "even_nonsig")) 
 
 out_glmer$col_sig <- factor(out_glmer$col_sig, levels=c("even_sig", "odd_sig","odd_nonsig", "even_nonsig"))
