@@ -28,3 +28,13 @@ prepost_data <- left_join(prepost_data, unique(all_pheno_epi[,c("id", "Core")]),
 prepost_data <- prepost_data %>% select(c(id, Core, year, age, lifespan, site:eyec, blue, surv, eyec_nextyear:MS_nextyear))
 
 write.csv(prepost_data, file = "data/phenotypes/data_for_nextyear.csv", quote=F, row.names = F)
+
+### Export subset of data for supplementary table ####
+## for sup table: export relevant info ###
+prepost <- subset(all_pheno_epi, !is.na(prepost))
+
+table <- prepost %>% dplyr::select(c(id, year, site, fulldate, prepost, attend, dist, MS, surv))
+ny <- read.csv("data/phenotypes/data_for_nextyear_corrected.csv")
+table <- left_join(table, ny[,c("id", "year", "age_cat", "blue_nextyear", "lyre_nextyear")], by = c("id", "year"))
+table <- table %>% arrange(id, year) %>% dplyr::select(c(id, site, age_cat, prepost, fulldate, attend, dist, MS, surv, blue_nextyear, lyre_nextyear))
+write.csv(table, file = "data/metadata_samples.csv", quote=F, row.names = F)

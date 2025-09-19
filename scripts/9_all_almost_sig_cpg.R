@@ -20,10 +20,6 @@ m_blue_out <- data
 load(file="results/modeloutput/nextyear/out_lyre_ny.RData")
 m_lyre_out <- data
 
-# eye comb
-load(file="results/modeloutput/nextyear/out_eyec_ny.RData")
-m_eyec_out <- data
-
 # survival
 load(file="results/modeloutput/fitness/out_surv_deltameth_filtered.RData")
 
@@ -32,7 +28,6 @@ almostsig_ms <- subset(m_MS_out, parameter_pval < 0.05)
 almostsig_dist <- subset(m_dist_out, parameter_pval < 0.05)
 almostsig_blue <- subset(m_blue_out, deltameth_pval < 0.05)
 almostsig_lyre <- subset(m_lyre_out, deltameth_pval < 0.05)
-almostsig_eyec <- subset(m_eyec_out, deltameth_pval < 0.05)
 almostsig_surv <- subset(delta_out_surv, surv_delta_meth_pval < 0.05)
 almostsig_surv$response = "surv"
 
@@ -41,35 +36,30 @@ almostsig_all <- data.frame(chr_pos = c(almostsig_attend$chr_pos,
                                         almostsig_dist$chr_pos,
                                         almostsig_blue$chr_pos, 
                                         almostsig_lyre$chr_pos,
-                                        almostsig_eyec$chr_pos,
                                         almostsig_surv$chr_pos),
                             trait = c(as.character(almostsig_attend$parameter), 
                                       as.character(almostsig_ms$parameter),
                                       as.character(almostsig_dist$parameter),
                                       as.character(almostsig_blue$response), 
                                       as.character(almostsig_lyre$response),
-                                      as.character(almostsig_eyec$response),
                                       as.character(almostsig_surv$response)),
                             estimate = c(almostsig_attend$parameter_estimate, 
                                          almostsig_ms$parameter_estimate,
                                          almostsig_dist$parameter_estimate,
                                          almostsig_blue$deltameth_estimate, 
                                          almostsig_lyre$deltameth_estimate,
-                                         almostsig_eyec$deltameth_estimate,
                                          almostsig_surv$surv_delta_meth_estimate),
                             pval = c(almostsig_attend$parameter_pval, 
                                          almostsig_ms$parameter_pval,
                                          almostsig_dist$parameter_pval,
                                          almostsig_blue$deltameth_pval, 
                                          almostsig_lyre$deltameth_pval,
-                                         almostsig_eyec$deltameth_pval,
                                          almostsig_surv$surv_delta_meth_pval),
                             qval = c(almostsig_attend$parameter_qval, 
                                      almostsig_ms$parameter_qval,
                                      almostsig_dist$parameter_qval,
                                      almostsig_blue$deltameth_qval, 
                                      almostsig_lyre$deltameth_qval,
-                                     almostsig_eyec$deltameth_qval,
                                      almostsig_surv$surv_delta_meth_qval))
 
 dup <- almostsig_all[duplicated(almostsig_all$chr_pos),]
@@ -252,7 +242,7 @@ almostsig_all_annotated_id <- left_join(almostsig_all_annotated_id, genome[,c("c
 #### select only those duplicates ####
 almostsig_all_annotated_id %>%
   group_by(chr_pos) %>%
-  filter(n() > 1 & trait != "eyec_nextyear") %>%
+  filter(n() > 1) %>%
   ungroup -> almostsig_dups
 
 almostsig_all_annotated_id %>%
@@ -280,45 +270,6 @@ table_sig$trait <- factor(table_sig$trait, levels = c("Attendance", "Centrality"
 table_sig <- table_sig %>% arrange(similar)
 
 write.table(sep = "\t", table_sig, file = "results/annotated/annotated_modeloutput_almostsig_annotated.tsv", quote=F, row.names = F)
-
-### make a manhattan plot ####
-### load model output
-load(file="results/modeloutput/changing/modeloutput_glmer.RData")
-
-# add col about significance
-out_glmer <- out_glmer %>% mutate(sig = as.factor(case_when(abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_effort$chr_pos & chr_pos %in% almostsig_cost$chr_pos~ "Associated with effort and cost",
-                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_effort$chr_pos ~ "Associated with effort ",
-                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 & chr_pos %in% almostsig_cost$chr_pos~ "Associated with cost",
-                                                            abs(mean_delta_meth) >= 0.1 & prepost_qval < 0.05 ~ "Dynamic",
-                                                            TRUE ~ "Stable")))
-
-out_changing <- subset(out_glmer, sig != "Stable")
-
-# manhattan plot
-
-# plot 
-# lmer
-out_changing <- out_changing %>% mutate(shade = case_when(scaf_nr %% 2 == 0 ~ "even",
-                                                  TRUE ~ "odd"))
-
-#clrs <- viridisLite::viridis(6)
-out_changing %>% subset(scaf_nr <= 10) %>% 
-  ggplot(aes(x = pos, y = -log10(as.numeric(prepost_pval)))) + 
-  geom_point(size=3, aes(alpha =shade, col = sig, fill = sig)) +
-  facet_grid(~scaf_nr,scales = 'free_x', space = 'free_x', switch = 'x') +
-  labs(x = "Scaffold number", y = expression(-log[10]*"(p-value)")) +
-  # scale_color_manual(values=c(clrs[5], clrs[17])) +
-  # scale_fill_manual(values=alpha(c(clrs[5], clrs[17]), 0.5)) +
-  scale_alpha_discrete(range=c(0.4,1))+
-  theme(axis.text.x = element_blank(),
-        panel.spacing = unit(0, "lines"),
-        plot.margin = margin(r = 0.5, l = 0.1, b = 0.1, t = 0.1, unit = "cm"),
-        axis.line.x = element_blank(),
-        axis.title.x = element_text(margin=margin(t=10)),
-        axis.title.y = element_text(margin=margin(r=5)),
-        axis.ticks.x = element_blank(),
-        axis.line.y = element_blank()) 
-
 
 #### Binomial test #####
 # load all changing cpg site numbers

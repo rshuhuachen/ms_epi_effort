@@ -9,15 +9,18 @@ pacman::p_load(dplyr, data.table, methylKit, tibble)
 
 #### Get phenotype data ####
 load("data/phenotypes/fulldata_complete_epi_withdates.RData")
-prepost <- subset(all_pheno_epi, !is.na(prepost))
+prepost <- subset(all_pheno_epi, !is.na(prepost)) #only select the samples relevant for this paper
 
 #### Read in filtered data ####
+#if you want to execute this, make sure to change this absolute path to 
+# the relevant folder wher eyou executed the epigbs pipeline
+
 files <- NULL
 for (i in c(1:20, 99)){
-  files_i <- list.files(path=paste0("/data/processed/AnE/VanOersgroup/2023_Lyrurus_tetrix/epigbs_output/lib", i), pattern = "merge",
+  files_i <- list.files(path=paste0("/data/processed/AnE/VanOersgroup/2023_Lyrurus_tetrix/epigbs_output/lib", i), pattern = "merge", 
                         full.names=T)
   files <- c(files, files_i)
-  rm(files_i)
+  rm(files_i) 
 }
 
 ## get id's
@@ -29,7 +32,12 @@ files$epi_nr <- gsub(".*_", "", files$ids)
 ## subset based on epinr
 files_prepost <- subset(files, epi_nr %in% prepost$epi_nr)
 
-## those with replicate samples across libraries, change to the one with most reads
+## we sequenced a few samples in multiple libraries,
+# as these samples contain different cell populations, we
+# only use one of the two files and chose the files that have
+# the most reads 
+# the ones with less reads are deleted here
+
 files_prepost <- subset(files_prepost, ids != "lib99_1")
 files_prepost <- subset(files_prepost, ids != "lib20_119")
 files_prepost <- subset(files_prepost, ids != "lib20_191")
@@ -39,19 +47,21 @@ files_prepost <- subset(files_prepost, ids != "lib7_250")
 ids <- as.list(files_prepost$ids)
 files <- as.list(files_prepost$files)
 
+# import the data with methylkit
 ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
                       sample.id = ids, assembly = "ltet", 
                       treatment = c(rep(1, each =length(ids))), context = "CpG",
                       sep = " ")
 
+# filter out those with extremely high coverage
 ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
                               hi.count=NULL,hi.perc=99.9)   
 
-
+# unite the two strands
 ltet_meth_unite <- methylKit::unite(ltet_meth, destrand = TRUE, 
                                     min.per.group = 1L, mc.cores = 8) #1,559,800 CpG sites
 
-
+# save this raw, intermediate file. it can be retrieved from XXX
 save(ltet_meth_unite, file = "data/processed/methylkit_prepost_raw.RData")
 
 #unite and keep those with >75% shared cpg sites
@@ -65,6 +75,7 @@ save(ltet_meth_unite_0.75, file = "data/processed/methylkit_prepost_min0.75.RDat
 load(file = "data/processed/methylkit_prepost_raw.RData")
 source("scripts/function_convert_methfile.R")
 
+# we specify a threshold that indicates how many samples need to be variable in methylation
 prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0) #Out of 1559800 CpG sites, kept 1430526 which is 8.29% removed
 prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) #Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
 save(prepost_long, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3.RData")
@@ -94,4 +105,5 @@ prepost_long_clean <- left_join(prepost_long, n_per_prepost_wide, by = c("chr_po
 prepost_long_clean <- subset(prepost_long_clean, keep == "keep")
 prepost_long_clean$keep <- NULL
 
+# this is the clean datafile that we continue working with in subsequent analyses
 save(prepost_long_clean, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group.RData")

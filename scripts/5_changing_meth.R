@@ -2,14 +2,11 @@
 ##### This script identifies which CpG sites change from pre- to post-lekking
 
 ### Packages ####
-#devtools::install_github("mastoffel/rptR", build_vignettes = TRUE)
 pacman::p_load(dplyr, data.table, tibble, performance,  
                parallel, performance, lmerTest, tidystats, cowplot, gaston)
-#matrixStats, insight, rptR, 
 
 ### Plotting ###
 source("scripts/plotting_theme.R")
-#clrs <- viridisLite::viridis(6)
 
 ### Data ####
 
@@ -25,15 +22,6 @@ prepost <- subset(all_pheno_epi, !is.na(prepost))
 
 rm(all_pheno_epi)
 
-## for sup table: export relevant info ###
-head(prepost)
-
-table <- prepost %>% dplyr::select(c(id, year, site, fulldate, prepost, attend, dist, MS, surv))
-ny <- read.csv("data/phenotypes/data_for_nextyear_corrected.csv")
-table <- left_join(table, ny[,c("id", "year", "age_cat", "blue_nextyear", "lyre_nextyear")], by = c("id", "year"))
-table <- table %>% arrange(id, year) %>% dplyr::select(c(id, site, age_cat, prepost, fulldate, attend, dist, MS, surv, blue_nextyear, lyre_nextyear))
-write.csv(table, file = "data/metadata_samples.csv", quote=F, row.names = F)
-
 ### merge with some metadata
 
 prepost_long <- left_join(prepost_long, prepost[,c("id", "year", "Core", "born", "fulldate")], 
@@ -44,6 +32,10 @@ prepost_long <- prepost_long %>% mutate(age_year = as.factor(case_when(Core == "
                                         age = as.factor(case_when(Core == "Core" & (year - born > 1) ~ "Adult",
                                                         Core == "Core" & (year - born == 1) ~ "Yearling",
                                                         Core == "No core" ~ "Adult")))
+# Core referes to whether the male belongs to the core dataset. 
+# This core dataset includes males that were first captured as yearlings, and therefore we know their exact age
+# Non-core males were caught as adullts, and therefore their exact age can only be estimated from plumage but is not known
+# with certainty
 
 # swap levels
 prepost_long$prepost <- factor(prepost_long$prepost, levels = c("pre", "post"))
@@ -437,7 +429,9 @@ all_models_sig$chr <- gsub(";","__", all_models_sig$chr)
 all_models_sig$chr <- gsub("HRSCAF=", "HRSCAF_", all_models_sig$chr)
 
 ### Load annotation data
-annotation_dir <- "~/PhD_grouse/grouse-annotation/output"
+annotation_dir <- "~/PhD_grouse/grouse-annotation/output" 
+# change this to the location where you put the annotation file. 
+# to get the different genomic regions, see https://github.com/rshuhuachen/grouse-annotation.git
 
 promoter=unique(gffToGRanges(paste0(annotation_dir, "/promoters.gff3")))
 genes=unique(gffToGRanges(paste0(annotation_dir, "/genes.gff3")))
@@ -495,18 +489,6 @@ sig_up <- as.data.frame(sig_up@listData)
 sig_up <- sig_up %>% add_column("region" = "upstream", .after="parameter") %>% 
   mutate(distance =  as.numeric(upstream.end) - as.numeric(pos)) %>% 
   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
-# 
-# sig_threeUTR <- mergeByOverlaps(sig_gr, threeUTR)
-# sig_threeUTR <- as.data.frame(sig_threeUTR@listData)
-# sig_threeUTR <- sig_threeUTR %>% add_column("region" = "threeUTR", .after="parameter") %>% 
-#   mutate(distance =  as.numeric(threeUTR.start) - as.numeric(pos)) %>% 
-#   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
-# 
-# sig_fiveUTR <- mergeByOverlaps(sig_gr, fiveUTR)
-# sig_fiveUTR <- as.data.frame(sig_fiveUTR@listData)
-# sig_fiveUTR <- sig_fiveUTR %>% add_column("region" = "fiveUTR", .after="parameter") %>% 
-#   mutate(distance =  as.numeric(pos) - as.numeric(fiveUTR.start)) %>%
-#   dplyr::select(c(chr_pos, pos, parameter, region, parameter_qval,  ID, distance)) 
 
 all_models_sig_annotated_raw <- rbind(sig_promoter, sig_gene,
                                   sig_tss, sig_exon, sig_intron, sig_down,
@@ -531,7 +513,6 @@ prioritize_region <- function(region) {
   
   priority
 }
-
 
 all_models_sig_annotated <- all_models_sig_annotated_raw %>%
   group_by(chr_pos, parameter) %>% #doesn't really matter to group it by gene id, same priority applies
@@ -570,6 +551,7 @@ save(annotated_changing, file = "results/modeloutput/changing/gene_ids_sig_chang
 sum_annotated <- as.data.frame(table(as.factor(all_models_sig_annotated$region), all_models_sig_annotated$parameter))
 names(sum_annotated) <- c("region", "model", "n")
 
+# rename
 sum_annotated$model <- gsub("all", "All", sum_annotated$model)
 sum_annotated$model <- gsub("time_period", "Time period", sum_annotated$model)
 

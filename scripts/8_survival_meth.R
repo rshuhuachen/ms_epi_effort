@@ -161,20 +161,3 @@ load(dup, file = "results/modeloutput/effort/multiple_cpgs_effort_nofdr.RData")
 delta_out_surv <- delta_out_surv %>% select(c(chr_pos, intercept_surv:surv_disp_p, surv_delta_meth_qval))
 
 save(delta_out_surv, file="results/modeloutput/fitness/out_surv_deltameth_filtered.RData")
-
-### Volcano plot ####
-source("scripts/plotting_theme.R")
-
-# surv
-delta_out_surv <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval < 0.05 ~ "sig", TRUE ~ "nonsig"))
-
-ggplot(delta_out_surv, aes(x = surv_delta_meth_estimate, y = -log10(surv_delta_meth_qval))) + geom_point(size=4, alpha=0.5, aes(col = sig)) +
-  labs(x = expression("Estimate "*Delta*" methylation"), y = "-log10(q-value)") +
-  xlim(-10,10)+
-  scale_color_manual(values=c("grey60", clrs[4])) +
-  geom_hline(yintercept = -log10(0.05), col = "darkred", linetype = "dotted", linewidth = 1) +
-  #  geom_vline(xintercept = -0.1, col = "darkred", linetype = "dotted", linewidth = 1) +
-  geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
-  theme(legend.position="none") -> volcano_surv
-
-ggsave(volcano_surv, file = "plots/model_out/fitness/surv/volcano_surv.png", width=10, height=10)    
