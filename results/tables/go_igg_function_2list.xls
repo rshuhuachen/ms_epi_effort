@@ -1,5 +1,0 @@
-GO Term	Description	P-value	FDR q-value	Enrichment	N	B	n	b	Genes
-GO:0003682	chromatin binding	3.57E-4	1E0	17.87	11256	378	5	3	[HINFP  -  histone h4 transcription factor, SAMD11  -  sterile alpha motif domain containing 11, ZC3H12A  -  zinc finger ccch-type containing 12a]
-GO:0033749	histone demethylase activity (H4-R3 specific)	4.44E-4	9.23E-1	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
-GO:0033746	histone demethylase activity (H3-R2 specific)	4.44E-4	6.15E-1	2,251.20	11256	1	5	1	[JMJD6  -  jumonji domain containing 6]
-GO:0070815	peptidyl-lysine 5-dioxygenase activity	8.88E-4	9.23E-1	1,125.60	11256	2	5	1	[JMJD6  -  jumonji domain containing 6]

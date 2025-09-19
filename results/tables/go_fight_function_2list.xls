@@ -1,6 +1,0 @@
-GO Term	Description	P-value	FDR q-value	Enrichment	N	B	n	b	Genes
-GO:0001608	G protein-coupled nucleotide receptor activity	3.21E-6	1.34E-2	92.77	11256	7	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
-GO:0045028	G protein-coupled purinergic nucleotide receptor activity	3.21E-6	6.68E-3	92.77	11256	7	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
-GO:0016502	nucleotide receptor activity	2.57E-5	3.57E-2	49.95	11256	13	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
-GO:0001614	purinergic nucleotide receptor activity	2.57E-5	2.67E-2	49.95	11256	13	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
-GO:0035586	purinergic receptor activity	6.04E-5	5.02E-2	38.20	11256	17	52	3	[P2RY13  -  purinergic receptor p2y, g-protein coupled, 13, P2RY12  -  purinergic receptor p2y, g-protein coupled, 12, GPR87  -  g protein-coupled receptor 87]
