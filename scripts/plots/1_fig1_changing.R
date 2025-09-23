@@ -209,7 +209,8 @@ plot_grid(fig1_manhattan, fig1_raw, ncol=1, labels=c("c", "d"), label_fontface =
 
 plot_grid(fig1_top, fig1_bottom, ncol=1, align="hv", axis="lb", rel_heights=c(1,2)) -> fig1
 
-ggsave(fig1, file="plots/final/main/fig_changing.png", width=15, height=20)
+ggsave(fig1, file="plots/final/main/fig_1_changing.png", width=15, height=20)
+ggsave(fig1, file="plots/final/main/fig_1_changing.pdf", width=15, height=20, device = cairo_pdf)
 #ggsave(fig1, file="plots/test.png", height=16, width=18)
 
 
