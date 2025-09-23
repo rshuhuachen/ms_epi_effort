@@ -26,7 +26,7 @@ The genome annotation can be found in [this repository](https://github.com/rshuh
 
 ### EpiGBS data
 
-The raw sequencing data can be found at NCBI BioProject PRJNA1085187 with Bio Accessions X-X
+The raw sequencing data can be found at NCBI BioProject PRJNA1085187 with Bio Accessions [SAMN51757821](https://www.ncbi.nlm.nih.gov/biosample/51757821) - [SAMN51757844](https://www.ncbi.nlm.nih.gov/biosample/51757844). Note that these raw sequences are pooled libraries that contain 22 barcoded samples each. Demultiplexing is done within the epigbs bioinformatic pipeline (see above). I also copied the barcodes used per library in the `data/barcodes_epigbs` subdirectory which were used for demultiplexing.
 
 ### Phenotypic and metadata
 
@@ -42,7 +42,7 @@ The raw methylation dataset (2GB) in size which has been pre-processed with meth
 
 ### Whole genome bisulphite sequencing
 
-The pipeline executed for the single WGBS sample can be found here <https://github.com/rshuhuachen/wgbs_grouse>. The data used can be found on NCBI at XXX.
+The pipeline executed for the single WGBS sample can be found here <https://github.com/rshuhuachen/wgbs_grouse>. The data used can be found on NCBI at XXX. The processed intermediate datafile to produce the figure (Supplementary Figure 1) can be found in `results/wgbs/`
 
 ## Scripts
 
