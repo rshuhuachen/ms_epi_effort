@@ -42,7 +42,7 @@ The raw methylation dataset (2GB in size) which has been pre-processed with meth
 
 ### Whole genome bisulphite sequencing
 
-The pipeline executed for the single WGBS sample can be found here <https://github.com/rshuhuachen/wgbs_grouse>. The data used can be found on NCBI at XXX. The processed intermediate datafile to produce the figure (Supplementary Figure 1) can be found in `results/wgbs/`
+The pipeline executed for the single WGBS sample can be found here <https://github.com/rshuhuachen/wgbs_grouse>. The data used can be found under the same NCBI BioProject with SRA BioAccession Number [SAMN51785344](https://www.ncbi.nlm.nih.gov/biosample/51785344). The processed intermediate datafile to produce the figure (Supplementary Figure 1) can be found in `results/wgbs/`
 
 ## Scripts
 
