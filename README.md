@@ -1,6 +1,6 @@
 # Temporal epigenetic changes
 
-This is the workflow used for the manuscript titled "Epigenetic changes associated with reproductive investment and life-history trade-offs in lekking male black grouse ([i]Lyrurus tetrix[/i])" (in preparation)
+This is the workflow used for the manuscript titled "Epigenetic changes associated with reproductive investment and life-history trade-offs in lekking male black grouse (Lyrurus tetrix)" (in preparation)
 
 ## Overview
 
