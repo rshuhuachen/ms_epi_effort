@@ -210,7 +210,7 @@ plot_grid(fig2_volcanoes_invest, fig2_volcanoes_cost, labels=c("auto"), ncol=1,
           label_fontface = "plain", label_size = 22)-> fig2
 fig2
 ggsave(fig2, file = "plots/final/main/fig_2_volcanoes_invest_cost.png", width=14, height=10)
-ggsave(fig2, file="plots/final/main/fig_2_volcanoes_invest_cost.png", width=15, height=20, device = cairo_pdf)
+ggsave(fig2, file="plots/final/main/fig_2_volcanoes_invest_cost.pdf", width=15, height=20, device = cairo_pdf)
 
 
 plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
@@ -218,3 +218,4 @@ plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
           label_fontface = "plain", label_size = 22) -> fig3
 
 ggsave(fig3, file = "plots/final/main/fig_3_raw_invest_cost.png", width=16, height=12)
+ggsave(fig3, file="plots/final/main/fig_3_raw_invest_cost.pdf", width=16, height=12, device = cairo_pdf)
