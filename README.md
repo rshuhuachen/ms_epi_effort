@@ -38,7 +38,7 @@ The `scaffold_names_dovetail.RData` file contains the names of a scaffold, the s
 
 The `phenotypes` folder contains all raw phenotypic data for all epigbs samples (all 450, not all used for the current analysis). Many of these contain additional phenotypic data not used for the current analysis, and were used to pre-process the final phenotypic file.
 
-The raw methylation dataset (2GB) in size which has been pre-processed with methylKit to merge strands (i.e. a critical intermediate file that can be used for analysis without executing the entire epigbs pipeline) can be downloaded from XXX.
+The raw methylation dataset (2GB in size) which has been pre-processed with methylKit to merge strands (i.e. a critical intermediate file that can be used for analysis without executing the entire epigbs pipeline) can be downloaded from Figshare with DOI [10.6084/m9.figshare.30186571](https://figshare.com/articles/dataset/Raw_methylkit_object_for_pre-lekking_and_post-lekking_samples_from_black_grouse_males/30186571) and should be deposited in `./data/processed`.
 
 ### Whole genome bisulphite sequencing
 
