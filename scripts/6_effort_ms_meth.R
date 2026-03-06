@@ -1,5 +1,5 @@
 ### load packages
-pacman::p_load(dplyr, data.table, tibble, performance, gaston,
+pacman::p_load(dplyr, data.table, tibble, performance, gaston, ggplot2,
                parallel, performance, lmerTest, tidystats, ggpointdensity)
 
 source("scripts/plotting_theme.R")
