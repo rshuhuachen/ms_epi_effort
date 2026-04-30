@@ -68,10 +68,10 @@ delta_meth_n_attend <- subset(delta_meth_n_attend, n > 20)
 
 delta_meth_sub_attend <- subset(delta_meth_attend, chr_pos %in% delta_meth_n_attend$chr_pos)
 length(unique(delta_meth_sub_attend$chr_pos)) # 607 sites
+#save(delta_meth_sub_attend, file = "data/processed/delta_meth_attend.RData")
 
+load(file = "data/processed/delta_meth_attend.RData")
 delta_meth_attend_ls <- delta_meth_sub_attend %>% group_split(chr_pos)
-
-save(delta_meth_sub_attend, file = "data/processed/delta_meth_ls_attend.RData")
 
 ## run the model
 m_attend_pre <- parallel::mclapply(delta_meth_attend_ls, function_model_delta_pheno_norepeat, parameter="attend", pre="control", mc.cores=4)
@@ -97,6 +97,7 @@ delta_meth_n_dist <- subset(delta_meth_n_dist, n > 20)
 
 delta_meth_sub_dist <- subset(delta_meth_dist, chr_pos %in% delta_meth_n_dist$chr_pos)
 length(unique(delta_meth_sub_dist$chr_pos)) # 534 sites
+save(delta_meth_sub_dist, file = "data/processed/delta_meth_dist.RData")
 
 delta_meth_dist_ls <- delta_meth_sub_dist %>% group_split(chr_pos)
 save(delta_meth_dist_ls, file = "data/processed/delta_meth_ls_dist.RData")
@@ -105,8 +106,8 @@ save(delta_meth_dist_ls, file = "data/processed/delta_meth_ls_dist.RData")
 m_dist_pre <- parallel::mclapply(delta_meth_dist_ls, function_model_delta_pheno_norepeat, parameter="dist", pre="control", mc.cores=4)
 m_dist_pre_out <- function_process_model(m_dist_pre, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
                                          name_file = "dist_with_pre", pretty_name = "Centrality", filter_disp=FALSE)
-nrow(m_dist_pre_out$data) #n=534
-nrow(m_dist_pre_out$sig) #n=0
+nrow(m_dist_pre_out$data) #n=533
+nrow(m_dist_pre_out$sig) #n=2
 
 almostsig_dist <- subset(m_dist_pre_out$data, parameter_pval < 0.05)
 summary(almostsig_dist$parameter_estimate)
@@ -135,7 +136,7 @@ m_MS_pre <- parallel::mclapply(delta_meth_MS_ls, function_model_delta_pheno_nore
 m_MS_pre_out <- function_process_model(m_MS_pre, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
                                          name_file = "MS_with_pre", pretty_name = "Mating success", filter_disp=FALSE)
 nrow(m_MS_pre_out$data) #n=563
-nrow(m_MS_pre_out$sig) #n=0, was 1 before! due to random sampling of repeats?
+nrow(m_MS_pre_out$sig) #n=0
 
 almostsig_ms <- subset(m_MS_pre_out$data, parameter_pval < 0.05)
 summary(almostsig_ms$parameter_estimate)

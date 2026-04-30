@@ -42,7 +42,7 @@ ggplot(m_attend_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.000005))+
+  ylim(0, -log10(0.00000005))+
   theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_attend
 volcano_attend
@@ -59,7 +59,7 @@ ggplot(m_dist_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.000005))+theme(legend.position="none") +
+  ylim(0, -log10(0.00000005))+theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_dist
 
 volcano_dist
@@ -75,13 +75,16 @@ ggplot(m_MS_out, aes(x = parameter_estimate, y = -log10(as.numeric(parameter_pva
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.000005))+theme(legend.position="none") +
+  ylim(0, -log10(0.00000005))+theme(legend.position="none") +
   xlim(-0.2,0.2) -> volcano_ms
+volcano_ms
 
 ###### Survival #######
 m_surv_out <- delta_out_surv %>% mutate(sig = case_when(surv_delta_meth_qval < 0.05 ~ "sig_q", 
                                                         surv_delta_meth_pval < 0.05 ~ "sig_p", 
                                                         TRUE ~ "nonsig"))
+m_surv_out$surv_delta_meth_estimate <- as.numeric(m_surv_out$surv_delta_meth_estimate)
+m_surv_out$surv_delta_meth_pval <- as.numeric(m_surv_out$surv_delta_meth_pval)
 
 ggplot(m_surv_out, aes(x = surv_delta_meth_estimate, y = -log10(as.numeric(surv_delta_meth_pval)))) + 
   geom_point(size=5, alpha=0.5, aes(col = as.factor(sig), fill = as.factor(sig))) +
@@ -108,8 +111,8 @@ ggplot(m_blue_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.000005))+
-  xlim(-0.015, 0.015)+
+  ylim(0, -log10(0.0000005))+
+  xlim(-0.02, 0.02)+
   theme(legend.position="none")  -> volcano_blue
 
 volcano_blue
@@ -126,8 +129,8 @@ ggplot(m_lyre_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_p
   scale_fill_manual(values=alpha(c(clrs[5], clrs_related[4], clrs_related[5]), 0.5)) +
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
-  ylim(0, -log10(0.000005))+
-  xlim(-10,10)+
+  ylim(0, -log10(0.0000005))+
+  xlim(-12,12)+
   theme(legend.position="none")  -> volcano_lyre
 
 volcano_lyre
@@ -151,21 +154,51 @@ effect_plot(model_sig_attend, pred = attend, plot.points=T, interval=T, data = d
   labs(x = "Attendance", y = expression(Delta*" methylation")) +
   scale_color_manual(values = clrs_related[5]) -> raw_attend
 
-###### MS #######
+# ###### MS #######
+# # select sig cpg
+# sig_MS <- subset(m_MS_out, parameter_qval < 0.05)
+# # load data used for the model
+# load(file = "data/processed/delta_meth_MS_sub.RData")
+# 
+# data_sig_MS <- subset(delta_meth_sub_MS, chr_pos %in% sig_MS$chr_pos)
+# 
+# model_sig_MS <- lmerTest::lmer(delta_meth ~ MS + age + methperc_pre + (1|site), data = data_sig_MS)
+# 
+# # plot
+# effect_plot(model_sig_MS, pred = MS, plot.points=T, interval=T, data = data_sig_MS,
+#             line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
+#   labs(x = "Mating success", y = expression(Delta*" methylation")) +
+#   scale_color_manual(values = clrs_related[5]) -> raw_MS
+
+###### dist #######
 # select sig cpg
-sig_MS <- subset(m_MS_out, parameter_qval < 0.05)
+sig_dist <- subset(m_dist_out, parameter_qval < 0.05)
 # load data used for the model
-load(file = "data/processed/delta_meth_MS_sub.RData")
+load(file = "data/processed/delta_meth_dist.RData")
 
-data_sig_MS <- subset(delta_meth_sub_MS, chr_pos %in% sig_MS$chr_pos)
+data_sig_dist <- subset(delta_meth_sub_dist, chr_pos %in% sig_dist$chr_pos)
+data_sig_dist_cpg1 <- subset(data_sig_dist, chr_pos == "ScEsiA3_17641__HRSCAF_20530_9950458")
+data_sig_dist_cpg2 <- subset(data_sig_dist, chr_pos == "ScEsiA3_18782__HRSCAF_22964_707")
 
-model_sig_MS <- lmerTest::lmer(delta_meth ~ MS + age + methperc_pre + (1|site), data = data_sig_MS)
+model_sig_dist1 <- lmerTest::lmer(delta_meth ~ dist + age + methperc_pre + (1|site), data = data_sig_dist_cpg1)
 
 # plot
-effect_plot(model_sig_MS, pred = MS, plot.points=T, interval=T, data = data_sig_MS,
+effect_plot(model_sig_dist1, pred = dist, plot.points=T, interval=T, data = data_sig_dist_cpg1,
             line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
-  labs(x = "Mating success", y = expression(Delta*" methylation")) +
-  scale_color_manual(values = clrs_related[5]) -> raw_MS
+  labs(x = "Centrality", y = expression(Delta*" methylation")) +
+  scale_color_manual(values = clrs_related[5]) -> raw_dist1
+
+raw_dist1
+
+model_sig_dist2 <- lmerTest::lmer(delta_meth ~ dist + age + methperc_pre + (1|site), data = data_sig_dist_cpg2)
+
+# plot
+effect_plot(model_sig_dist2, pred = dist, plot.points=T, interval=T, data = data_sig_dist_cpg2,
+            line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
+  labs(x = "Centrality", y = expression(Delta*" methylation")) +
+  scale_color_manual(values = clrs_related[5]) -> raw_dist2
+
+raw_dist2
 
 ###### Lyre #######
 
@@ -186,18 +219,18 @@ effect_plot(model_sig_lyre_1, pred = delta_meth, plot.points=T, interval=T, data
   scale_color_manual(values = clrs_related[5]) -> raw_lyre_1
 
 raw_lyre_1
-
-data_sig_lyre_2 <- subset(delta_meth_sub_lyre_ny, chr_pos %in% sig_lyre$chr_pos[2])
-
-model_sig_lyre_2 <- lmerTest::lmer(lyre_nextyear ~ scale(delta_meth) + age_cat + (1|site), data = data_sig_lyre_2)
-
-# plot
-effect_plot(model_sig_lyre_2, pred = delta_meth, plot.points=T, interval=T, data = data_sig_lyre_2,
-            line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
-  labs(y = "Lyre size next year", x = expression(Delta*" methylation")) +
-  scale_color_manual(values = clrs_related[5]) -> raw_lyre_2
-
-raw_lyre_2
+# 
+# data_sig_lyre_2 <- subset(delta_meth_sub_lyre_ny, chr_pos %in% sig_lyre$chr_pos[2])
+# 
+# model_sig_lyre_2 <- lmerTest::lmer(lyre_nextyear ~ scale(delta_meth) + age_cat + (1|site), data = data_sig_lyre_2)
+# 
+# # plot
+# effect_plot(model_sig_lyre_2, pred = delta_meth, plot.points=T, interval=T, data = data_sig_lyre_2,
+#             line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
+#   labs(y = "Lyre size next year", x = expression(Delta*" methylation")) +
+#   scale_color_manual(values = clrs_related[5]) -> raw_lyre_2
+# 
+# raw_lyre_2
 
 #### Assemble two figures #####
 
@@ -213,7 +246,7 @@ ggsave(fig2, file = "plots/final/main/fig_2_volcanoes_invest_cost.png", width=14
 ggsave(fig2, file="plots/final/main/fig_2_volcanoes_invest_cost.pdf", width=15, height=20, device = cairo_pdf)
 
 
-plot_grid(raw_attend, raw_MS, raw_lyre_1, raw_lyre_2,
+plot_grid(raw_attend, raw_dist1, raw_dist2, raw_lyre_1,
           ncol=2, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig3
 

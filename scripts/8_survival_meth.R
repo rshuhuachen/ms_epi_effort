@@ -118,20 +118,23 @@ save(delta_out_surv, file="results/modeloutput/fitness/out_surv_nopre_raw.RData"
 delta_out_surv <- subset(delta_out_surv, surv_message == "relative convergence (4)")
 
 #### Survival #####
-nrow(delta_out_surv) # 584
+nrow(delta_out_surv) # 601
 
 ##### Overdispersion raw data #####
 
 summary(delta_out_surv$surv_disp_ratio)
 
 # histogram dispersion ratio raw 
+delta_out_surv$surv_disp_ratio <- as.numeric(delta_out_surv$surv_disp_ratio)
 ggplot(delta_out_surv, aes(x = surv_disp_ratio)) + geom_histogram() + geom_vline(xintercept = 1., col = "red", linetype = "dotted", linewidth=1) +
   scale_y_log10() + labs(title = "Histogram dispersion ratio", subtitle= "Raw model output surv") -> hist_surv_disp_ratio_raw
-
+hist_surv_disp_ratio_raw
 # histogram p-values raw
+delta_out_surv$surv_delta_meth_pval <- as.numeric(delta_out_surv$surv_delta_meth_pval)
 ggplot(delta_out_surv, aes(x = surv_delta_meth_pval)) + geom_histogram() + 
   scale_y_continuous(labels = scales::unit_format(unit = "K", scale = 1e-3)) + 
   labs(title = "Histogram p-values", subtitle="Raw model output surv")-> hist_surv_pvals_raw
+hist_surv_pvals_raw
 
 plot_grid(hist_surv_disp_ratio_raw, hist_surv_pvals_raw, labs="auto", align="hv", axis="lb", ncol=1, label_fontface = "plain", label_size = 22)-> hists_surv_raw
 

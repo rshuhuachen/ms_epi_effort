@@ -220,6 +220,31 @@ out_glmer <- left_join(out_glmer, mean_delta_meth, by = "chr_pos")
 
 sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
 nrow(sub_glmer_prepost)
+
+sensitivity_threshold <- data.frame(threshold = seq(0.05, 0.20, by = 0.01),
+                                    n_sig = c(nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.05)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.06)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.07)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.08)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.09)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.10)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.11)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.12)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.13)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.14)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.15)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.16)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.17)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.18)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.19)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.2))))
+
+source("scripts/plotting_theme.R")
+ggplot(sensitivity_threshold, aes(x = threshold, y = n_sig)) + geom_point() + geom_line() + 
+  labs(x = "Threshold", y = "Number of dynamic CpG sites") -> plot_thres
+
+ggsave(plot_thres, file = "plots/final/supp/sfig_sensitivity.png", width=10,height=8)
+
 # 1026
 
 ### Save original data (per CpG site per individual) for models but only subset significant CpG sites

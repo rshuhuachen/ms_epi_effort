@@ -68,7 +68,7 @@ dup <- unique(left_join(data.frame(chr_pos=dup[,c(1)]), almostsig_all[,c(1,2)],b
 #### Annotate all sites #####
 #### Packages ####
 pacman::p_load(dplyr, data.table, genomation, GenomicFeatures, rtracklayer, 
-               GenomicRanges)
+               GenomicRanges, tibble)
 
 
 ### Rename chr_pos and divide ###
@@ -254,6 +254,7 @@ almostsig_all_annotated_id %>%
 ### for table select all ####
 almostsig_all_annotated_id <- almostsig_all_annotated_id %>% ungroup()
 almostsig_all_annotated_id %>% dplyr::select(scaf_nr, pos, trait, estimate, pval, qval, region, similar) %>% filter(trait != "eyec_nextyear")-> table_sig
+table_sig$estimate <- as.numeric(table_sig$estimate)
 table_sig$estimate <- round(table_sig$estimate, 2)
 table_sig$pval <- round(table_sig$pval, 3)
 table_sig$qval <- round(table_sig$qval, 2)

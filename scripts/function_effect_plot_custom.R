@@ -11,6 +11,8 @@ effect_plot <- function(model, pred, pred.values = NULL, centered = "all",
                         partial.residuals = FALSE, color.class = colors, facet.by = NULL, ...) {
   pacman::p_load(ggplot2, rlang)
   source("scripts/plotting_theme.R")
+  `%nin%` = Negate(`%in%`)
+  library(jtools)
   # Evaluate the pred arg
   pred <- as_name(enquo(pred))
   

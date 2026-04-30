@@ -46,7 +46,8 @@ delta_meth_n_blue_ny_min12 <- subset(delta_meth_n_blue_ny, n > 12)
 
 delta_meth_sub_blue_ny <- subset(delta_meth_blue_ny, chr_pos %in% delta_meth_n_blue_ny_min12$chr_pos)
 length(unique(delta_meth_sub_blue_ny$chr_pos)) # 125 sites
-save(delta_meth_sub_blue_ny, file = "data/processed/delta_meth_sub_blue_ny.RData")
+#save(delta_meth_sub_blue_ny, file = "data/processed/delta_meth_sub_blue_ny.RData")
+load(file = "data/processed/delta_meth_sub_blue_ny.RData")
 
 delta_meth_sub_blue_ny_ls <- delta_meth_sub_blue_ny %>% group_split(chr_pos)
 
@@ -55,8 +56,8 @@ m_blue_ny <- parallel::mclapply(delta_meth_sub_blue_ny_ls, function_lmer_nextyea
 m_blue_ny_out <- function_process_model_nextyear(m_blue_ny, dir_plots = "plots/model_out/nextyear", dir_data = "results/modeloutput/nextyear",
                                          name_file = "blue_ny", pretty_name = "Next year blue chroma", filter_disp=FALSE)
 
-nrow(m_blue_ny_out$data) #n=125
-nrow(m_blue_ny_out$sig) #n=0 but n=5 without FDR correction
+nrow(m_blue_ny_out$data) #n=116
+nrow(m_blue_ny_out$sig) #n=1 but n=5 without FDR correction
 
 almostsig_blue_ny <- subset(m_blue_ny_out$data, deltameth_pval < 0.05)
 summary(almostsig_blue_ny$deltameth_estimate)
@@ -86,8 +87,8 @@ m_lyre_ny <- parallel::mclapply(delta_meth_sub_lyre_ny_ls, function_lmer_nextyea
 m_lyre_ny_out <- function_process_model_nextyear(m_lyre_ny, dir_plots = "plots/model_out/nextyear", dir_data = "results/modeloutput/nextyear",
                                                  name_file = "lyre_ny", pretty_name = "Next year lyre", filter_disp=FALSE)
 
-nrow(m_lyre_ny_out$data) #n=125
-nrow(m_lyre_ny_out$sig) #n=2 but n=16 without FDR correction
+nrow(m_lyre_ny_out$data) #n=116
+nrow(m_lyre_ny_out$sig) #n=1
 
 almostsig_lyre_ny = subset(m_lyre_ny_out$data, deltameth_pval < 0.05)
 summary(almostsig_lyre_ny$deltameth_estimate)
