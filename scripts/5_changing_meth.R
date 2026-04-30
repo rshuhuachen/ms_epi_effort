@@ -221,7 +221,7 @@ out_glmer <- left_join(out_glmer, mean_delta_meth, by = "chr_pos")
 sub_glmer_prepost <- subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.1)
 nrow(sub_glmer_prepost)
 
-sensitivity_threshold <- data.frame(threshold = seq(0.05, 0.20, by = 0.01),
+sensitivity_threshold <- data.frame(threshold = seq(0.05, 0.25, by = 0.01),
                                     n_sig = c(nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.05)),
                                               nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.06)),
                                               nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.07)),
@@ -237,7 +237,12 @@ sensitivity_threshold <- data.frame(threshold = seq(0.05, 0.20, by = 0.01),
                                               nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.17)),
                                               nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.18)),
                                               nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.19)),
-                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.2))))
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.20)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.21)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.22)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.23)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.24)),
+                                              nrow(subset(out_glmer, prepost_qval < 0.05 & abs(mean_delta_meth) >= 0.25))))
 
 source("scripts/plotting_theme.R")
 ggplot(sensitivity_threshold, aes(x = threshold, y = n_sig)) + geom_point() + geom_line() + 
