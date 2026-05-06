@@ -248,8 +248,14 @@ almostsig_all_annotated_id %>%
 almostsig_all_annotated_id %>%
   filter(trait == "attend"|trait=="dist"|trait=="MS") -> almostsig_effort
 
+# for gorilla / go enrichment
+almostsig_effort$similar %>% write.csv("results/go_almostsig_effort.csv", quote=F, row.names=F)
+
 almostsig_all_annotated_id %>%
   filter(trait == "blue_nextyear"|trait=="lyre_nextyear"|trait=="surv") -> almostsig_cost
+
+# for gorilla / go enrichment
+almostsig_cost$similar %>% write.csv("results/go_almostsig_cost.csv", quote=F, row.names=F)
 
 ### for table select all ####
 almostsig_all_annotated_id <- almostsig_all_annotated_id %>% ungroup()
@@ -310,4 +316,14 @@ binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "STARD3")],
 binom.test(x = sum_sig_changing$n_sig[which(sum_sig_changing$gene == "UBTF")], 
            n = sum(sum_sig_changing$n_changing),
            p = sum_sig_changing$prob_null[which(sum_sig_changing$gene == "UBTF")]/100) 
+
+
+#### find pattern of pleiotropy ####
+
+table_sig %>%
+  group_by(scaf_nr, pos) %>%
+  filter(n() > 1) %>%
+  ungroup() -> pleio #visually inspect which ones have opposite directions
+
+save(pleio, file = "results/modeloutput/pleio_cpgs.RData")
 

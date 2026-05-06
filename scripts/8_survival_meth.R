@@ -103,10 +103,11 @@ delta_meth_n_surv <- delta_meth_surv %>% group_by(chr_pos) %>% tally()
 delta_meth_n_min_surv <- subset(delta_meth_n_surv, n > 20)
 
 delta_meth_sub_surv <- subset(delta_meth_surv, chr_pos %in% delta_meth_n_min_surv$chr_pos) #399
+#save(delta_meth_sub_surv, file = "data/processed/delta_meth_surv.RData")
 delta_meth_ls_surv <- delta_meth_sub_surv %>% group_split(chr_pos)
 
-# save this data set for later due to randomisation
-save(delta_meth_ls_surv, file = "data/processed/delta_meth_ls_surv.RData")
+#save this data set for later due to randomisation
+#save(delta_meth_ls_surv, file = "data/processed/delta_meth_ls_surv.RData")
 
 delta_out_surv_raw <- parallel::mclapply(delta_meth_ls_surv, function_model_surv,mc.cores=4)
 delta_out_surv <- do.call(rbind.data.frame, delta_out_surv_raw)
@@ -158,9 +159,9 @@ nrow(subset(delta_out_surv, surv_delta_meth_qval < 0.05)) #0
 subset(delta_out_surv, surv_delta_meth_pval < 0.05) -> almost_sig_surv
 summary(as.numeric(almost_sig_surv$surv_delta_meth_estimate))
 
-load(dup, file = "results/modeloutput/effort/multiple_cpgs_effort_nofdr.RData")
+load(file = "results/modeloutput/effort/multiple_cpgs_effort_nofdr.RData")
 
 #### Save data ####
-delta_out_surv <- delta_out_surv %>% select(c(chr_pos, intercept_surv:surv_disp_p, surv_delta_meth_qval))
+delta_out_surv <- delta_out_surv %>% dplyr::select(c(chr_pos, intercept_surv:surv_disp_p, surv_delta_meth_qval))
 
 save(delta_out_surv, file="results/modeloutput/fitness/out_surv_deltameth_filtered.RData")

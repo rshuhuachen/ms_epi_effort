@@ -1,7 +1,7 @@
 ### This is a function to convert a united methylkit file 
 ### to a long file, where each line is a CpG site per individual
 ### and in the columns we have CpG site, nC, nT, cov, %meth
-
+pacman::p_load(tidyr)
 convert_meth <- function(methfile, novar, threshold){
   #extract data
   pacman::p_load(dplyr, methylKit)

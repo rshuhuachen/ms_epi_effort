@@ -57,10 +57,13 @@ m_blue_ny_out <- function_process_model_nextyear(m_blue_ny, dir_plots = "plots/m
                                          name_file = "blue_ny", pretty_name = "Next year blue chroma", filter_disp=FALSE)
 
 nrow(m_blue_ny_out$data) #n=116
-nrow(m_blue_ny_out$sig) #n=1 but n=5 without FDR correction
+nrow(m_blue_ny_out$sig) #n=1 
 
 almostsig_blue_ny <- subset(m_blue_ny_out$data, deltameth_pval < 0.05)
 summary(almostsig_blue_ny$deltameth_estimate)
+
+ggplot(subset(delta_meth_sub_blue_ny, chr_pos == m_blue_ny_out$sig$chr_pos), 
+       aes(x = delta_meth, y = blue_nextyear)) + geom_point() + geom_smooth(method='lm')
 
 #### lyre  ####
 ggplot(pheno, aes(x = lyre_nextyear)) + geom_histogram() # normal distribution?
@@ -78,7 +81,7 @@ delta_meth_n_lyre_ny_min12 <- subset(delta_meth_n_lyre_ny, n > 12)
 
 delta_meth_sub_lyre_ny <- subset(delta_meth_lyre_ny, chr_pos %in% delta_meth_n_lyre_ny_min12$chr_pos)
 length(unique(delta_meth_sub_lyre_ny$chr_pos)) # 125 sites
-save(delta_meth_sub_lyre_ny, file = "data/processed/delta_meth_sub_lyre_ny.RData")
+#save(delta_meth_sub_lyre_ny, file = "data/processed/delta_meth_sub_lyre_ny.RData")
 
 delta_meth_sub_lyre_ny_ls <- delta_meth_sub_lyre_ny %>% group_split(chr_pos)
 
@@ -93,10 +96,7 @@ nrow(m_lyre_ny_out$sig) #n=1
 almostsig_lyre_ny = subset(m_lyre_ny_out$data, deltameth_pval < 0.05)
 summary(almostsig_lyre_ny$deltameth_estimate)
 
-ggplot(subset(delta_meth_sub_lyre_ny, chr_pos == "ScEsiA3_16641__HRSCAF_18713_15489035"), 
-       aes(x = delta_meth, y = lyre_nextyear)) + geom_point() + geom_smooth(method='lm')
-
-ggplot(subset(delta_meth_sub_lyre_ny, chr_pos == "ScEsiA3_16858__HRSCAF_19404_134"), 
+ggplot(subset(delta_meth_sub_lyre_ny, chr_pos == m_lyre_ny_out$sig$chr_pos), 
        aes(x = delta_meth, y = lyre_nextyear)) + geom_point() + geom_smooth(method='lm')
 
 #### Collect and annotate almost sig sites ####

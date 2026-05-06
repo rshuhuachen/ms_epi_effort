@@ -57,12 +57,19 @@ ltet_meth <- methRead(files, pipeline = "bismarkCytosineReport",
 ltet_meth <- filterByCoverage(ltet_meth,lo.count=10,lo.perc=NULL,
                               hi.count=NULL,hi.perc=99.9)   
 
+ltet_meth_15X <- filterByCoverage(ltet_meth,lo.count=15,lo.perc=NULL,
+                              hi.count=NULL,hi.perc=99.9)   
+
 # unite the two strands
 ltet_meth_unite <- methylKit::unite(ltet_meth, destrand = TRUE, 
                                     min.per.group = 1L, mc.cores = 8) #1,559,800 CpG sites
 
+ltet_meth_unite_15X <- methylKit::unite(ltet_meth_15X, destrand = TRUE, 
+                                    min.per.group = 1L, mc.cores = 8) #1,559,800 CpG sites
+
 # save this raw, intermediate file. it can be retrieved from XXX
 save(ltet_meth_unite, file = "data/processed/methylkit_prepost_raw.RData")
+save(ltet_meth_unite_15X, file = "data/processed/methylkit_prepost_raw_15X.RData")
 
 #unite and keep those with >75% shared cpg sites
 
@@ -70,6 +77,11 @@ ltet_meth_unite_0.75 <- methylKit::unite(ltet_meth, destrand = TRUE,
                                          min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)
 
 save(ltet_meth_unite_0.75, file = "data/processed/methylkit_prepost_min0.75.RData") # 274,197
+
+ltet_meth_unite_15X_0.75 <- methylKit::unite(ltet_meth_15X, destrand = TRUE, 
+                                         min.per.group = as.integer(0.75*length(ids)), mc.cores = 8)
+
+save(ltet_meth_unite_15X_0.75, file = "data/processed/methylkit_prepost_15X_min0.75.RData") # 274,197
 
 #### Restructure the methylation file #####
 load(file = "data/processed/methylkit_prepost_raw.RData")
@@ -79,6 +91,9 @@ source("scripts/function_convert_methfile.R")
 prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0) #Out of 1559800 CpG sites, kept 1430526 which is 8.29% removed
 prepost_long <- convert_meth(methfile = ltet_meth_unite, novar = "remove", threshold = 0.3) #Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
 save(prepost_long, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3.RData")
+
+prepost_long_15X <- convert_meth(methfile = ltet_meth_unite_15X, novar = "remove", threshold = 0.3) #Out of 1559800 CpG sites, kept 815460 which is 47.72% removed  
+save(prepost_long_15X, file = "data/processed/methylkit_prepost_long_15X_onlyvar_thres0.3.RData")
 
 #### Filter for at least 50% of samples in both time points (N>30)
 
@@ -107,3 +122,30 @@ prepost_long_clean$keep <- NULL
 
 # this is the clean datafile that we continue working with in subsequent analyses
 save(prepost_long_clean, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group.RData")
+
+
+## repeat for 15X
+n_per_prepost_15X <- prepost_long_15X %>% 
+  group_by(chr_pos, prepost) %>% 
+  summarise(count=n())
+
+n_per_prepost_wide_15X <-  spread(n_per_prepost_15X,
+                              key=prepost,
+                              value=count)
+
+colnames(n_per_prepost_wide_15X)[2] <- "n_post"
+colnames(n_per_prepost_wide_15X)[3] <- "n_pre"
+
+#keep only if CpG site is covered in at least 50% of samples at both time points
+thres = 0.5
+n_per_prepost_wide_15X <- n_per_prepost_wide_15X %>% mutate(keep = as.factor(case_when(n_pre  > thres*(118*0.5) & n_post > thres*(118*0.5) ~ "keep")))
+
+summary(n_per_prepost_wide_15X$keep) # 253,589
+
+prepost_long_clean_15X <- left_join(prepost_long_15X, n_per_prepost_wide_15X, by = c("chr_pos"))
+
+prepost_long_clean_15X <- subset(prepost_long_clean_15X, keep == "keep")
+prepost_long_clean_15X$keep <- NULL
+
+# this is the clean datafile that we continue working with in subsequent analyses
+save(prepost_long_clean_15X, file = "data/processed/methylkit_prepost_long_onlyvar_thres0.3_min_0.5_group_15X.RData")

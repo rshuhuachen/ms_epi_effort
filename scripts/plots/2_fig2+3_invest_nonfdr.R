@@ -130,7 +130,6 @@ ggplot(m_lyre_out, aes(x = deltameth_estimate, y = -log10(as.numeric(deltameth_p
   geom_hline(yintercept = -log10(0.05), col = clrs_related[4], linetype = "dotted", linewidth = 0.5) +
   geom_vline(xintercept = 0, col = "black", linetype = "dotted", linewidth = 0.5) +
   ylim(0, -log10(0.0000005))+
-  xlim(-12,12)+
   theme(legend.position="none")  -> volcano_lyre
 
 volcano_lyre
@@ -177,8 +176,8 @@ sig_dist <- subset(m_dist_out, parameter_qval < 0.05)
 load(file = "data/processed/delta_meth_dist.RData")
 
 data_sig_dist <- subset(delta_meth_sub_dist, chr_pos %in% sig_dist$chr_pos)
-data_sig_dist_cpg1 <- subset(data_sig_dist, chr_pos == "ScEsiA3_17641__HRSCAF_20530_9950458")
-data_sig_dist_cpg2 <- subset(data_sig_dist, chr_pos == "ScEsiA3_18782__HRSCAF_22964_707")
+data_sig_dist_cpg1 <- subset(data_sig_dist, chr_pos == sig_dist$chr_pos[1])
+data_sig_dist_cpg2 <- subset(data_sig_dist, chr_pos == sig_dist$chr_pos[2])
 
 model_sig_dist1 <- lmerTest::lmer(delta_meth ~ dist + age + methperc_pre + (1|site), data = data_sig_dist_cpg1)
 
@@ -232,6 +231,26 @@ raw_lyre_1
 # 
 # raw_lyre_2
 
+###### blue #######
+
+# select sig cpg
+sig_blue <- subset(m_blue_out, deltameth_qval < 0.05)
+
+# load data used for the model
+load(file = "data/processed/delta_meth_sub_blue_ny.RData")
+
+data_sig_blue_1 <- subset(delta_meth_sub_blue_ny, chr_pos %in% sig_blue$chr_pos[1])
+
+model_sig_blue_1 <- lmerTest::lmer(blue_nextyear ~ scale(delta_meth) + age_cat + (1|site), data = data_sig_blue_1)
+
+# plot
+effect_plot(model_sig_blue_1, pred = delta_meth, plot.points=T, interval=T, data = data_sig_blue_1,
+            line.colors = clrs[5], point.size = 5, colors = clrs_related[5]) + 
+  labs(y = "Blue chroma next year", x = expression(Delta*" methylation")) +
+  scale_color_manual(values = clrs_related[5]) -> raw_blue_1
+
+raw_blue_1
+
 #### Assemble two figures #####
 
 # volcanoes
@@ -246,8 +265,8 @@ ggsave(fig2, file = "plots/final/main/fig_2_volcanoes_invest_cost.png", width=14
 ggsave(fig2, file="plots/final/main/fig_2_volcanoes_invest_cost.pdf", width=15, height=20, device = cairo_pdf)
 
 
-plot_grid(raw_attend, raw_dist1, raw_dist2, raw_lyre_1,
-          ncol=2, labels="auto", 
+plot_grid(raw_attend, raw_dist1, raw_dist2, raw_blue_1, raw_lyre_1,
+          ncol=3, labels="auto", 
           label_fontface = "plain", label_size = 22) -> fig3
 
 ggsave(fig3, file = "plots/final/main/fig_3_raw_invest_cost.png", width=16, height=12)
