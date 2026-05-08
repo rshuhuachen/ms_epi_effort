@@ -62,6 +62,12 @@ almostsig_all <- data.frame(chr_pos = c(almostsig_attend$chr_pos,
                                      almostsig_lyre$deltameth_qval,
                                      almostsig_surv$surv_delta_meth_qval))
 
+subset(almostsig_all, trait == "MS" | trait == "attend" | trait == "dist") -> sig_invest
+length(unique(sig_invest$chr_pos)) # 155
+
+subset(almostsig_all, trait == "surv" | trait == "blue_nextyear" | trait == "lyre_nextyear") -> sig_cost
+length(unique(sig_cost$chr_pos)) #43
+
 dup <- almostsig_all[duplicated(almostsig_all$chr_pos),]
 dup <- unique(left_join(data.frame(chr_pos=dup[,c(1)]), almostsig_all[,c(1,2)],by="chr_pos"))
 
@@ -207,17 +213,28 @@ almostsig_all_annotated_id <- left_join(almostsig_all_annotated_correct, lookup,
 
 almostsig_all_annotated_id$similar <- toupper(almostsig_all_annotated_id$similar)
 
-unique_cpg <- unique(data.frame(chr_pos = almostsig_all_annotated_id$chr_pos, trait = almostsig_all_annotated_id$trait))
-unique_cpg <- arrange(unique_cpg, trait)
-unique_cpg <- data.frame(chr_pos = unique(unique_cpg$chr_pos))
-unique_cpg$cpg_name <- NA
-for (i in 1:nrow(unique_cpg)){
-  unique_cpg$cpg_name[i] <- LETTERS[i]
-}
+# add those that weren't annotated
+`%!in%` = Negate(`%in%`)
+unannotated <- subset(almostsig_all, chr_pos %!in% almostsig_all_annotated_id$chr_pos)
 
-almostsig_all_annotated_id <- left_join(almostsig_all_annotated_id, unique(unique_cpg[,c("chr_pos", "cpg_name")]), by = "chr_pos")
-almostsig_all_annotated_id <- almostsig_all_annotated_id %>% relocate(cpg_name, .before = chr_pos)
-almostsig_all_annotated_id <- almostsig_all_annotated_id %>% arrange(cpg_name)
+#add chr/pos
+split_chr_pos_unann <- strsplit(as.character(unannotated$chr_pos), "_", fixed = TRUE)
+
+unannotated$pos <- sapply(split_chr_pos_unann, "[", 3)
+
+unannotated <- data.frame(chr_pos = unannotated$chr_pos,
+                          pos = unannotated$pos,
+                          trait = unannotated$trait,
+                          region = NA,
+                          estimate = unannotated$estimate,
+                          pval = unannotated$pval,
+                          qval = unannotated$qval,
+                          ID = NA,
+                          distance = NA,
+                          similar = "Unannotated")
+
+# add to big DF
+almostsig_all_annotated_id <- rbind(almostsig_all_annotated_id, unannotated)
 
 save(almostsig_all_annotated_id, file="results/annotated/annotated_modeloutput_almostsig_all_annotated_priority.RData")
 almostsig_all_annotated_id$similar %>% write.csv("results/go_almostsig_all.csv", quote=F, row.names=F)

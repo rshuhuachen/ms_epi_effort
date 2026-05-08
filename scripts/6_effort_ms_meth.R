@@ -16,11 +16,20 @@ load(file = "data/phenotypes/fulldata_complete_epi_withdates.RData")
 
 load(file = "results/modeloutput/all_sites_deltameth.RData")
 
+#only changing cpgs
 delta_meth <- subset(delta_meth, chr_pos %in% changing_cpg$chr_pos)
+
+### Is delta meth affected by interval? ###
+summary(lmerTest::lmer(abs(delta_meth) ~ diff_date + (1|chr_pos), data = subset(delta_meth, chr_pos %in% changing_cpg$chr_pos)))
+
+### Is delta meth affected by pre_meth date? ###
+delta_meth$pre_date_julian <- as.numeric(format(delta_meth$fulldate_pre, "%j"))
+lmer_pre_delta_date <- lmerTest::lmer(abs(delta_meth) ~ pre_date_julian + (1|chr_pos), data = delta_meth)
+summary(lmer_pre_delta_date)
 
 ### Plot pre_meth effect on delta_meth ####
 
-lmer_pre_delta <- lmerTest::lmer(delta_meth ~ methperc_pre + (1|chr_pos)+ (1|id), data = delta_meth)
+lmer_pre_delta <- lmerTest::lmer(delta_meth ~ methperc_pre + (1|chr_pos), data = delta_meth)
 
 sum_pre_delta <- as.data.frame(summary(lmer_pre_delta)$coef) # negative relationship
 
@@ -56,19 +65,19 @@ source("scripts/function_models.R")
 
 #### attendance ####
 ## remove repeated samples
-delta_meth_attend <- delta_meth %>%
-  filter(!is.na(delta_meth)& !is.na(attend))%>%
-  group_by(chr_pos, id) %>%
-  sample_n(1) %>%
-  ungroup()
-
-## only select cpg sites with enough data
-delta_meth_n_attend <- delta_meth_attend %>% group_by(chr_pos) %>% tally()
-delta_meth_n_attend <- subset(delta_meth_n_attend, n > 20)
-
-delta_meth_sub_attend <- subset(delta_meth_attend, chr_pos %in% delta_meth_n_attend$chr_pos)
-length(unique(delta_meth_sub_attend$chr_pos)) # 607 sites
-#save(delta_meth_sub_attend, file = "data/processed/delta_meth_attend.RData")
+# delta_meth_attend <- delta_meth %>%
+#   filter(!is.na(delta_meth)& !is.na(attend))%>%
+#   group_by(chr_pos, id) %>%
+#   sample_n(1) %>%
+#   ungroup()
+# 
+# ## only select cpg sites with enough data
+# delta_meth_n_attend <- delta_meth_attend %>% group_by(chr_pos) %>% tally()
+# delta_meth_n_attend <- subset(delta_meth_n_attend, n > 20)
+# 
+# delta_meth_sub_attend <- subset(delta_meth_attend, chr_pos %in% delta_meth_n_attend$chr_pos)
+# length(unique(delta_meth_sub_attend$chr_pos)) # 607 sites
+# save(delta_meth_sub_attend, file = "data/processed/delta_meth_attend.RData")
 
 load(file = "data/processed/delta_meth_attend.RData")
 delta_meth_attend_ls <- delta_meth_sub_attend %>% group_split(chr_pos)
@@ -85,19 +94,20 @@ summary(almostsig_attend$parameter_estimate)
 
 #### centrality ####
 ## remove repeated samples
-delta_meth_dist <- delta_meth %>%
-  filter(!is.na(delta_meth)& !is.na(dist))%>%
-  group_by(chr_pos, id) %>%
-  sample_n(1) %>%
-  ungroup()
-
-## only select cpg sites with enough data
-delta_meth_n_dist <- delta_meth_dist %>% group_by(chr_pos) %>% tally()
-delta_meth_n_dist <- subset(delta_meth_n_dist, n > 20)
-
-delta_meth_sub_dist <- subset(delta_meth_dist, chr_pos %in% delta_meth_n_dist$chr_pos)
-length(unique(delta_meth_sub_dist$chr_pos)) # 534 sites
+# delta_meth_dist <- delta_meth %>%
+#   filter(!is.na(delta_meth)& !is.na(dist))%>%
+#   group_by(chr_pos, id) %>%
+#   sample_n(1) %>%
+#   ungroup()
+# 
+# ## only select cpg sites with enough data
+# delta_meth_n_dist <- delta_meth_dist %>% group_by(chr_pos) %>% tally()
+# delta_meth_n_dist <- subset(delta_meth_n_dist, n > 20)
+# 
+# delta_meth_sub_dist <- subset(delta_meth_dist, chr_pos %in% delta_meth_n_dist$chr_pos)
+# length(unique(delta_meth_sub_dist$chr_pos)) # 534 sites
 #save(delta_meth_sub_dist, file = "data/processed/delta_meth_dist.RData")
+load(file = "data/processed/delta_meth_dist.RData")
 
 delta_meth_dist_ls <- delta_meth_sub_dist %>% group_split(chr_pos)
 #save(delta_meth_dist_ls, file = "data/processed/delta_meth_ls_dist.RData")
@@ -127,7 +137,7 @@ delta_meth_n_MS <- subset(delta_meth_n_MS, n > 20)
 delta_meth_sub_MS <- subset(delta_meth_MS, chr_pos %in% delta_meth_n_MS$chr_pos)
 length(unique(delta_meth_sub_MS$chr_pos)) # 564 sites
 #save(delta_meth_sub_MS, file = "data/processed/delta_meth_MS_sub.RData")
-
+load(file = "data/processed/delta_meth_MS_sub.RData")
 delta_meth_MS_ls <-  delta_meth_sub_MS %>% group_split(chr_pos)
 
 ## model

@@ -5,7 +5,7 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
   df$methperc_pre_scl <- scale(df$methperc_pre)
   
   if (pre == "control"){
-    formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre + (1|site) "))}
+    formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre + diff_date + (1|site) "))}
   
   if (pre == "no_control"){
     formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + (1|site) "))}

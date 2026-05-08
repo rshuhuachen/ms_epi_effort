@@ -22,12 +22,12 @@ source("scripts/function_models.R")
 # merge metadata
 delta_meth_nextyear <- left_join(delta_meth_raw[,-c(6,8,9)], pheno, by = (c("id", "year")))
 
-delta_meth_nextyear <- delta_meth_nextyear %>%
-  group_by(chr_pos, id) %>%
-  sample_n(1) %>%
-  ungroup()
-
-delta_meth_nextyear_ls <- delta_meth_nextyear %>% group_split(chr_pos)
+# delta_meth_nextyear <- delta_meth_nextyear %>%
+#   group_by(chr_pos, id) %>%
+#   sample_n(1) %>%
+#   ungroup()
+# 
+# delta_meth_nextyear_ls <- delta_meth_nextyear %>% group_split(chr_pos)
 
 ### Run models ####
 #### blue chroma ####
@@ -88,7 +88,7 @@ delta_meth_sub_lyre_ny_ls <- delta_meth_sub_lyre_ny %>% group_split(chr_pos)
 # run model
 m_lyre_ny <- parallel::mclapply(delta_meth_sub_lyre_ny_ls, function_lmer_nextyear, parameter="lyre_nextyear", mc.cores=4)
 m_lyre_ny_out <- function_process_model_nextyear(m_lyre_ny, dir_plots = "plots/model_out/nextyear", dir_data = "results/modeloutput/nextyear",
-                                                 name_file = "lyre_ny", pretty_name = "Next year lyre", filter_disp=FALSE)
+                                                 name_file = "lyre_ny_8", pretty_name = "Next year lyre", filter_disp=FALSE)
 
 nrow(m_lyre_ny_out$data) #n=116
 nrow(m_lyre_ny_out$sig) #n=1
@@ -96,7 +96,7 @@ nrow(m_lyre_ny_out$sig) #n=1
 almostsig_lyre_ny = subset(m_lyre_ny_out$data, deltameth_pval < 0.05)
 summary(almostsig_lyre_ny$deltameth_estimate)
 
-ggplot(subset(delta_meth_sub_lyre_ny, chr_pos == m_lyre_ny_out$sig$chr_pos), 
+ggplot(subset(delta_meth_sub_lyre_ny, chr_pos == m_lyre_ny_out$sig$chr_pos[1]), 
        aes(x = delta_meth, y = lyre_nextyear)) + geom_point() + geom_smooth(method='lm')
 
 #### Collect and annotate almost sig sites ####

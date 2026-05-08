@@ -259,6 +259,10 @@ save(changing_cpg, file="results/modeloutput/changing/changing_sites_glmer.RData
 ### Save the model output
 save(out_glmer, file="results/modeloutput/changing/modeloutput_glmer.RData")
 
+### Is pre-meth affected by pre-date and is post-meth affected by post-date? ###
+summary(lmerTest::lmer(methperc ~ fulldate + (1|chr_pos), data = subset(changing_cpg, prepost == "pre")))
+summary(lmerTest::lmer(methperc ~ fulldate + (1|chr_pos), data = subset(changing_cpg, prepost == "post")))
+
 #### Plotting results ####
 
 ### Volcano plot
