@@ -37,7 +37,7 @@ ggplot(delta_meth, aes(methperc_pre, abs(delta_meth))) +
 
 cowplot::plot_grid(cor_pre_delta, cor_pre_delta_abs, labels="auto", ncol=1, align="hv", axis="lb", label_fontface = "plain", label_size = 22) -> cor_premeths
 cor_premeths
-ggsave(cor_premeths, file = "plots/final/supp/sfig_2_pre_vs_delta.png", width=8, height=12)
+ggsave(cor_premeths, file = "plots/final/supp/sfig_2_pre_vs_delta.png", width=14, height=12)
 #ggsave(cor_premeths, file = "plots/final/supp/sfig_2_pre_vs_delta.pdf", width=8, height=12, device=cairo_pdf)
 
 ### Fig S4: volcano plots pre-meth ####
