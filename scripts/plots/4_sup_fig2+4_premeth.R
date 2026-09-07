@@ -172,4 +172,4 @@ plot_grid(volcanoes_attend,
           volcanoes_MS,
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
-ggsave(all_plots, file = "plots/final/supp/sfig_4_volcano_pre_lekking.png", width = 14, height = 10)
+ggsave(all_plots, file = "plots/final/supp/sfig_4_volcano_pre_lekking.png", width = 14, height = 12)
