@@ -96,7 +96,7 @@ ggplot(m_dist_out, aes(x = pre_estimate, y = -log10(pre_pval))) +
   geom_point(size=2, alpha=0.5, aes(col = sig_pre, fill = sig_pre)) +
   scale_color_manual(values=c(clr_grey, clr_sig)) +
   scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-  labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = expression(-log[10]*"("*italic(p*")")), title = "Distance") +
+  labs(x = expression(paste(beta, " estimate pre-lekking methylation %")), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
   geom_hline(yintercept = -log10(m_dist_out_pmin_pre), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
   xlim(-2,2)+
@@ -112,7 +112,7 @@ ggplot(m_dist_out, aes(x = age_estimate, y = -log10(age_pval))) +
   geom_point(size=2, alpha=0.5, aes(col = sig_age, fill = sig_age)) +
   scale_color_manual(values=c(clr_grey, clr_sig)) +
   scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-  labs(x = expression(paste(beta, " estimate Age")), y = expression(-log[10]*"("*italic(p*")")), title = "Distance") +
+  labs(x = expression(paste(beta, " estimate Age")), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
   geom_hline(yintercept = -log10(m_dist_out_pmin_age), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
   xlim(-0.5,0.5)+
@@ -172,4 +172,4 @@ plot_grid(volcanoes_attend,
           volcanoes_MS,
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
-ggsave(all_plots, file = "plots/final/supp/sfig_4_volcano_pre_lekking.png", width = 14, height = 12)
+ggsave(all_plots, file = "plots/final/supp/sfig_4_volcano_pre_lekking.png", width = 14, height = 14)
