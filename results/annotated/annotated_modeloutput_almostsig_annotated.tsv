@@ -3,17 +3,17 @@ scaf_nr	pos	trait	estimate	pval	qval	region	similar
 6	56,292,083	Mating success	-0.16	0.002	0.13	exon	ADRB1
 27	3,851,345	Centrality	-0.08	0.001	0.09	exon	ANK1
 13	18,332,312	Mating success	0.07	0.017	0.43	intron	ANKRD11
-13	18,332,312	Attendance	0.05	0.025	0.34	intron	ANKRD11
-19	9,737,771	Attendance	0.06	0.019	0.31	downstream	ANKRD40
+13	18,332,312	Attendance	0.06	0.026	0.34	intron	ANKRD11
+19	9,737,771	Attendance	0.05	0.023	0.34	downstream	ANKRD40
 19	9,737,771	Survival	-6.17	0.048	0.86	downstream	ANKRD40
 7	49,082,068	Mating success	-0.07	0.003	0.14	exon	ANKRD9
 7	49,082,068	Survival	-8.39	0.039	0.86	exon	ANKRD9
-25	5,152,922	Attendance	0.06	0.006	0.23	promoter	APOA1
-15	16,467,260	Attendance	-0.06	0.038	0.36	intron	ARHGAP26
+25	5,152,922	Attendance	0.08	0.001	0.08	promoter	APOA1
+15	16,467,260	Attendance	-0.07	0.031	0.34	intron	ARHGAP26
 13	17,225,011	Survival	-7.22	0.048	0.86	promoter	ATXN1L
 2	108,811,598	Mating success	0.07	0.014	0.39	downstream	BCL11A
 7	16,104,759	Centrality	-0.04	0.012	0.28	promoter	BEST1
-7	16,104,769	Attendance	0.04	0.026	0.35	promoter	BEST1
+7	16,104,769	Attendance	0.04	0.028	0.34	promoter	BEST1
 7	16,104,769	Centrality	-0.05	0.005	0.26	promoter	BEST1
 7	16,104,775	Centrality	-0.04	0.015	0.28	promoter	BEST1
 1	130,318,464	Mating success	0.07	0.018	0.43	downstream	BTBD11
@@ -34,66 +34,61 @@ scaf_nr	pos	trait	estimate	pval	qval	region	similar
 2	3,176,115	Centrality	-0.06	0.014	0.28	downstream	ELP3
 19	9,920,788	Centrality	-0.12	0.001	0.1	promoter	EPN3
 24	2,986,739	Mating success	0.09	0.001	0.07	downstream	FKBP8
-19	4,115,302	Attendance	-0.07	0.042	0.36	downstream	FOXJ1
-11	111,251	Attendance	-0.05	0.03	0.35	intron	FURIN
+11	111,251	Attendance	-0.05	0.034	0.34	intron	FURIN
 7	15,878,140	Centrality	-0.06	0.005	0.26	promoter	GAL
 12	8,736,017	Centrality	-0.06	0.028	0.35	upstream	GATA2
-12	8,736,056	Attendance	-0.04	0.023	0.34	upstream	GATA2
+12	8,736,056	Attendance	-0.04	0.05	0.42	upstream	GATA2
 12	8,736,370	Survival	-8.85	0.022	0.86	upstream	GATA2
 12	8,736,372	Mating success	0.08	0.008	0.24	upstream	GATA2
 24	6,241,473	Mating success	0.06	0.007	0.24	exon	GLI1
 20	2,572,304	Mating success	-0.05	0.04	0.6	downstream	GPSM1
-13	19,314,324	Attendance	-0.07	0.011	0.26	intron	GSE1
+13	19,314,324	Attendance	-0.07	0.011	0.27	intron	GSE1
 13	19,314,334	Mating success	0.08	0.023	0.46	intron	GSE1
-13	18,055,874	Attendance	0.04	0.024	0.34	promoter	HAS3
 10	15,663,813	Blue chroma (next year)	0.01	0.018	0.35	downstream	HES1-B
 10	15,663,813	Lyre size (next year)	5.22	0.024	0.42	downstream	HES1-B
 10	15,663,816	Lyre size (next year)	5.99	0.016	0.42	downstream	HES1-B
-1	85,356,738	Attendance	-0.11	0.001	0.08	promoter	HMG14
+1	85,356,738	Attendance	-0.1	0.001	0.08	promoter	HMG14
 26	5,691,986	Mating success	0.09	0.024	0.46	exon	HMGCL
 26	5,691,986	Centrality	-0.12	0.02	0.3	exon	HMGCL
-22	6,616,045	Attendance	-0.08	0.004	0.19	promoter	HOXB2
-24	1,105,654	Attendance	-0.09	0.008	0.26	intron	HSD11B1L
+22	6,616,045	Attendance	-0.08	0.004	0.16	promoter	HOXB2
+24	1,105,654	Attendance	-0.09	0.005	0.19	intron	HSD11B1L
 24	1,105,654	Centrality	0.08	0.034	0.35	intron	HSD11B1L
-17	3,956,821	Attendance	0.06	0.033	0.35	downstream	ID1
+17	3,956,821	Attendance	0.06	0.033	0.34	downstream	ID1
 25	2,512,626	Survival	-5.93	0.047	0.86	exon	JAM3
-22	5,532,734	Attendance	-0.08	0.009	0.26	intron	JUP
-22	5,732,985	Attendance	0.06	0.028	0.35	promoter	KCNH8
-14	16,305,631	Attendance	0.07	0.038	0.36	downstream	LAMP2
+22	5,532,734	Attendance	-0.08	0.008	0.25	intron	JUP
+22	5,732,985	Attendance	0.06	0.03	0.34	promoter	KCNH8
+14	16,305,631	Attendance	0.07	0.031	0.34	downstream	LAMP2
 14	16,305,631	Centrality	-0.06	0.034	0.35	downstream	LAMP2
 16	3,179,120	Centrality	-0.12	0.001	0.08	upstream	LFNG
-6	10,440,648	Attendance	-0.13	0.047	0.38	upstream	LRRC19
-26	5,443,524	Attendance	0.1	0.005	0.2	upstream	MACF1
+6	10,440,648	Attendance	-0.13	0.049	0.42	upstream	LRRC19
+26	5,443,524	Attendance	0.09	0.009	0.27	upstream	MACF1
 26	5,443,524	Centrality	-0.1	0.007	0.28	upstream	MACF1
 26	5,443,909	Mating success	0.05	0.024	0.46	upstream	MACF1
-26	5,443,909	Attendance	0.08	0.028	0.35	upstream	MACF1
 10	510,806	Mating success	-0.09	0.002	0.12	intron	MBNL1
-24	2,702,734	Attendance	-0.06	0.01	0.26	downstream	MEF2B
+24	2,702,734	Attendance	-0.06	0.011	0.27	downstream	MEF2B
 9	21,562,536	Mating success	0.11	0.003	0.14	exon	MEP
-5	28,610,764	Attendance	0.09	0.024	0.34	exon	MFHAS1
+5	28,610,764	Attendance	0.09	0.016	0.3	exon	MFHAS1
 18	10,515,151	Survival	5.22	0.046	0.86	intron	NEFH
-22	6,801,129	Attendance	-0.06	0.045	0.38	promoter	NFE2L1
 6	2,889,353	Centrality	-0.05	0.049	0.42	upstream	NFIA
 6	2,889,353	Survival	-5.55	0.049	0.86	upstream	NFIA
 24	1,284,876	Survival	-10.14	0.038	0.86	upstream	NFIC
 24	1,284,881	Survival	-8.94	0.022	0.86	upstream	NFIC
 24	1,284,945	Centrality	-0.06	0.011	0.28	upstream	NFIC
-24	1,284,955	Attendance	-0.06	0.012	0.28	upstream	NFIC
-23	1,421,756	Attendance	-0.07	0.001	0.08	promoter	PANK4
+24	1,284,955	Attendance	-0.06	0.015	0.3	upstream	NFIC
+23	1,421,756	Attendance	-0.06	0.001	0.08	promoter	PANK4
 23	1,421,756	Centrality	0.03	0.049	0.42	promoter	PANK4
-23	1,421,880	Attendance	-0.07	0	0.04	promoter	PANK4
+23	1,421,880	Attendance	-0.06	0	0.08	promoter	PANK4
 7	23,170,036	Lyre size (next year)	-4.37	0.029	0.42	promoter	PEX16
+22	3,652,515	Attendance	0.05	0.05	0.42	upstream	PLEKHA6
 12	19,141,977	Centrality	-0.05	0.042	0.39	promoter	PLXND1
-16	13,261,406	Attendance	0.05	0.047	0.38	upstream	PPL
 16	13,261,406	Centrality	-0.05	0.043	0.39	upstream	PPL
-1	84,261,350	Attendance	-0.05	0.046	0.38	exon	PRDM15
+1	84,261,350	Attendance	-0.04	0.044	0.39	exon	PRDM15
 6	51,134,063	Mating success	-0.09	0.001	0.07	upstream	PROM1A
-22	9,519,053	Attendance	0.07	0.014	0.29	exon	PSMD11
 22	9,519,053	Centrality	-0.06	0.033	0.35	exon	PSMD11
 22	9,519,053	Survival	-3.92	0.05	0.86	exon	PSMD11
 22	9,519,121	Centrality	-0.05	0.032	0.35	exon	PSMD11
 6	9,950,458	Centrality	0.12	0	0.01	exon	PTPRF
-9	21,606,343	Attendance	0.05	0.022	0.33	promoter	RACGAP1
+9	21,606,343	Attendance	0.05	0.023	0.34	promoter	RACGAP1
 9	21,606,343	Centrality	-0.05	0.034	0.35	promoter	RACGAP1
 7	6,262,304	Mating success	-0.11	0.001	0.07	exon	RHOF
 7	6,262,304	Centrality	0.07	0.015	0.28	exon	RHOF
@@ -101,15 +96,13 @@ scaf_nr	pos	trait	estimate	pval	qval	region	similar
 24	5,451,411	Centrality	-0.11	0.005	0.26	exon	RNF41
 12	2,799,757	Centrality	0.08	0.035	0.35	promoter	SEMA3B
 20	5,712,463	Survival	-6.63	0.009	0.86	intron	SLC25A25
-22	7,658,401	Attendance	0.1	0.003	0.15	upstream	SLC25A39
+22	7,658,401	Attendance	0.09	0.005	0.19	upstream	SLC25A39
 18	9,922,763	Centrality	-0.05	0.005	0.26	promoter	SMTN
-13	18,043,833	Attendance	-0.05	0.037	0.36	exon	SNTB2
-19	4,859,312	Attendance	-0.11	0.005	0.2	downstream	SOCS3
+19	4,859,312	Attendance	-0.11	0.003	0.14	downstream	SOCS3
 22	994,621	Centrality	-0.07	0.014	0.28	exon	SPDEF
 21	6,422,745	Survival	14.81	0.041	0.86	downstream	SPECC1
 9	21,641,379	Mating success	0.08	0.001	0.07	intron	SPEG
 16	12,647,497	Survival	-8.73	0.038	0.86	promoter	SRL
-21	8,792,956	Attendance	0.03	0.043	0.36	downstream	SRSF1
 21	8,792,962	Centrality	-0.03	0.027	0.35	downstream	SRSF1
 21	8,793,064	Mating success	-0.13	0.005	0.18	downstream	SRSF1
 8	50,726,208	Mating success	0.06	0.03	0.53	intron	SSPO
@@ -118,47 +111,46 @@ scaf_nr	pos	trait	estimate	pval	qval	region	similar
 22	6,261,490	Centrality	-0.04	0.018	0.29	intron	STARD3
 22	6,261,517	Mating success	0.1	0.001	0.09	intron	STARD3
 6	8,114,811	Survival	-6.12	0.023	0.86	exon	TAL1
-9	20,852,739	Attendance	0.18	0.002	0.14	intron	TBR1
+9	20,852,739	Attendance	0.18	0.002	0.13	intron	TBR1
 9	20,852,739	Centrality	-0.11	0.028	0.35	intron	TBR1
 9	20,854,979	Mating success	-0.08	0.01	0.29	exon	TBR1
-14	1,583,936	Attendance	-0.09	0.049	0.38	upstream	TBX22
 11	13,037,331	Centrality	-0.11	0.037	0.36	promoter	TCF12
-24	161,329	Attendance	0.05	0.035	0.35	exon	TCF3
+24	161,329	Attendance	0.06	0.021	0.34	exon	TCF3
 24	161,329	Blue chroma (next year)	0.01	0.035	0.58	exon	TCF3
 24	161,513	Mating success	0.05	0.016	0.43	intron	TCF3
 8	50,796,306	Mating success	0.07	0.018	0.43	promoter	TMUB1
 16	4,916,072	Mating success	0.05	0.003	0.14	intron	TOM1L2
-16	4,916,106	Attendance	0.06	0.033	0.35	intron	TOM1L2
-6	29,617,149	Attendance	0.08	0.009	0.26	promoter	TUBGCP2
+16	4,916,106	Attendance	0.05	0.04	0.37	intron	TOM1L2
+6	29,617,149	Attendance	0.09	0.003	0.14	promoter	TUBGCP2
 6	29,617,149	Centrality	-0.08	0.031	0.35	promoter	TUBGCP2
-12	2,350,159	Attendance	-0.06	0.02	0.31	exon	UBA1
-22	7,638,774	Attendance	0.04	0.026	0.35	downstream	UBTF
+12	2,350,159	Attendance	-0.06	0.038	0.35	exon	UBA1
+22	7,638,774	Attendance	0.04	0.028	0.34	downstream	UBTF
 22	7,638,774	Centrality	-0.05	0.013	0.28	downstream	UBTF
-22	7,638,833	Attendance	0.03	0.042	0.36	downstream	UBTF
-7	58,650,169	Attendance	0.06	0.01	0.26	NA	Unannotated
-11	15,489,029	Attendance	0.04	0.014	0.29	NA	Unannotated
-2723	143	Attendance	0.06	0.004	0.19	NA	Unannotated
-2723	173	Attendance	0.05	0.014	0.29	NA	Unannotated
-2723	175	Attendance	0.04	0.017	0.31	NA	Unannotated
-2723	747	Attendance	0.09	0.031	0.35	NA	Unannotated
-2723	760	Attendance	0.11	0.008	0.26	NA	Unannotated
-2723	83	Attendance	0.05	0.046	0.38	NA	Unannotated
-2723	94	Attendance	0.06	0.029	0.35	NA	Unannotated
-17	9,994,614	Attendance	-0.07	0.011	0.26	NA	Unannotated
-6	24,277,004	Attendance	-0.04	0.038	0.36	NA	Unannotated
-6	2,787,293	Attendance	0.06	0	0.03	NA	Unannotated
-6	2,789,519	Attendance	0.05	0.04	0.36	NA	Unannotated
-6	2,872,612	Attendance	-0.07	0.002	0.14	NA	Unannotated
+22	7,638,833	Attendance	0.03	0.034	0.34	downstream	UBTF
+7	15,229,424	Attendance	-0.04	0.03	0.34	NA	Unannotated
+7	58,650,169	Attendance	0.06	0.009	0.27	NA	Unannotated
+11	15,489,029	Attendance	0.05	0.01	0.27	NA	Unannotated
+2723	143	Attendance	0.06	0.003	0.14	NA	Unannotated
+2723	173	Attendance	0.05	0.016	0.3	NA	Unannotated
+2723	175	Attendance	0.05	0.011	0.27	NA	Unannotated
+2723	747	Attendance	0.09	0.034	0.34	NA	Unannotated
+2723	760	Attendance	0.1	0.012	0.27	NA	Unannotated
+2723	94	Attendance	0.06	0.029	0.34	NA	Unannotated
+17	9,994,614	Attendance	-0.06	0.02	0.34	NA	Unannotated
+6	2,787,293	Attendance	0.04	0.018	0.32	NA	Unannotated
+6	2,789,519	Attendance	0.05	0.013	0.29	NA	Unannotated
+6	2,872,612	Attendance	-0.07	0.002	0.12	NA	Unannotated
 6	2,872,664	Attendance	-0.08	0.001	0.08	NA	Unannotated
-6	63,694,220	Attendance	0.03	0.035	0.35	NA	Unannotated
-6	63,814,052	Attendance	-0.05	0.041	0.36	NA	Unannotated
-3	40,011,762	Attendance	0.06	0.018	0.31	NA	Unannotated
-20	2,734,015	Attendance	-0.08	0.005	0.2	NA	Unannotated
-5	2,860,073	Attendance	-0.1	0.039	0.36	NA	Unannotated
-12	12,725,091	Attendance	-0.08	0.006	0.23	NA	Unannotated
-21	8,522,830	Attendance	0.07	0.019	0.31	NA	Unannotated
-11655	239	Attendance	0.08	0.019	0.31	NA	Unannotated
-11655	350	Attendance	0.09	0.028	0.35	NA	Unannotated
+6	63,814,052	Attendance	-0.05	0.037	0.35	NA	Unannotated
+10	2,075,677	Attendance	-0.03	0.029	0.34	NA	Unannotated
+1	80,994,168	Attendance	0.04	0.045	0.4	NA	Unannotated
+3	40,011,762	Attendance	0.06	0.028	0.34	NA	Unannotated
+20	2,734,015	Attendance	-0.08	0.004	0.18	NA	Unannotated
+12	12,725,091	Attendance	-0.08	0.003	0.15	NA	Unannotated
+21	8,522,830	Attendance	0.07	0.023	0.34	NA	Unannotated
+24	2,309,785	Attendance	0.06	0.033	0.34	NA	Unannotated
+11655	239	Attendance	0.08	0.03	0.34	NA	Unannotated
+11655	350	Attendance	0.09	0.028	0.34	NA	Unannotated
 13	19,285,665	Mating success	-0.03	0.037	0.58	NA	Unannotated
 3244	230	Mating success	-0.06	0.007	0.23	NA	Unannotated
 2723	156	Mating success	0.04	0.048	0.67	NA	Unannotated
@@ -206,23 +198,25 @@ scaf_nr	pos	trait	estimate	pval	qval	region	similar
 2723	83	Survival	-7.26	0.018	0.86	NA	Unannotated
 1	127,143,450	Survival	-8.1	0.029	0.86	NA	Unannotated
 26	144,569	Survival	-4.95	0.038	0.86	NA	Unannotated
-22	5,929,242	Attendance	0.05	0.011	0.26	intron	WNK4
+22	5,929,242	Attendance	0.05	0.01	0.27	intron	WNK4
 22	5,929,242	Centrality	-0.05	0.015	0.28	intron	WNK4
 27	3,239,995	Survival	-4.91	0.036	0.86	intron	XPO7
-27	3,240,038	Attendance	-0.05	0.033	0.35	intron	XPO7
-24	1,067,454	Attendance	0.06	0.031	0.35	intron	ZBTB7A
+27	3,240,038	Attendance	-0.05	0.043	0.39	intron	XPO7
+24	1,067,454	Attendance	0.07	0.018	0.32	intron	ZBTB7A
 24	1,067,454	Centrality	-0.08	0.014	0.28	intron	ZBTB7A
 24	1,067,466	Mating success	0.07	0.045	0.65	intron	ZBTB7A
-26	3,802,592	Attendance	-0.1	0	0.05	exon	ZC3H12A
+26	3,802,592	Attendance	-0.09	0.001	0.08	exon	ZC3H12A
+13	10,836,664	Attendance	0.05	0.03	0.34	downstream	ZNF423
 13	10,836,664	Centrality	-0.06	0.03	0.35	downstream	ZNF423
 13	18,640,882	Centrality	-0.09	0.006	0.26	promoter	ZNF469
 8	2,890,896	Survival	-7.16	0.02	0.86	exon	NA
-4	37,107,500	Attendance	0.1	0.018	0.31	downstream	NA
-10	9,236,234	Attendance	-0.05	0.04	0.36	exon	NA
-1	50,423	Attendance	-0.08	0	0.02	promoter	NA
-20	2,799,330	Attendance	0.07	0.03	0.35	promoter	NA
+4	37,107,500	Attendance	0.11	0.015	0.3	downstream	NA
+10	9,236,234	Attendance	-0.07	0.032	0.34	exon	NA
+1	50,423	Attendance	-0.08	0	0.01	promoter	NA
+20	2,799,330	Attendance	0.07	0.029	0.34	promoter	NA
 5	12,092,564	Attendance	0.05	0.016	0.3	promoter	NA
 5	12,092,564	Centrality	-0.05	0.029	0.35	promoter	NA
 5	34,123,180	Centrality	0.11	0.014	0.28	downstream	NA
-24	1,606,364	Attendance	0.07	0.03	0.35	promoter	NA
-16	5,045,219	Attendance	-0.07	0.035	0.35	TSS	NA
+5	50,969,477	Attendance	-0.05	0.032	0.34	TSS	NA
+24	1,606,364	Attendance	0.08	0.026	0.34	promoter	NA
+16	5,045,219	Attendance	-0.07	0.035	0.34	TSS	NA
