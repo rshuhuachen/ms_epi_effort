@@ -5,7 +5,7 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
   df$methperc_pre_scl <- scale(df$methperc_pre)
   
   if (pre == "control"){
-    formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre + diff_date + (1|site) "))}
+    formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre + (1|site) "))}
   
   if (pre == "no_control"){
     formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + (1|site) "))}
@@ -26,7 +26,7 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
     
     if(grepl("problems: id:site",error_message)){
       if (pre == "control"){
-        formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre + (1|site) "))}
+        formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + methperc_pre +  (1|site) "))}
       
       if (pre == "no_control"){
         formula <- formula(paste0("delta_meth ~ scale(", parameter, ") + age + (1|site) "))
@@ -103,6 +103,12 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
     pre_df <- summary$coefficients["methperc_pre", "df"]
     pre_tval <- summary$coefficients["methperc_pre", "t value"]
     pre_pval <- summary$coefficients["methperc_pre", "Pr(>|t|)"]
+    
+    # diff_date_estimate <- summary$coefficients["diff_date", "Estimate"]
+    # diff_date_se <- summary$coefficients["diff_date", "Std. Error"]
+    # diff_date_df <- summary$coefficients["diff_date", "df"]
+    # diff_date_tval <- summary$coefficients["diff_date", "t value"]
+    # diff_date_pval <- summary$coefficients["diff_date", "Pr(>|t|)"]
   }
   
   if (pre == "no_control"){
@@ -111,6 +117,12 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
     pre_df <- NA
     pre_tval <- NA
     pre_pval <- NA
+    
+    # diff_date_estimate <- NA
+    # diff_date_se <- NA
+    # diff_date_df <- NA
+    # diff_date_tval <- NA
+    # diff_date_pval <- NA
   }
   
   rsqc <- performance::r2(model)$R2_conditional #fixed plus random parameterects relative to overall variance
@@ -161,6 +173,11 @@ function_model_delta_pheno_norepeat <- function(df, parameter, pre){tryCatch({
                     pre_df = as.numeric(pre_df),
                     pre_tval = as.numeric(pre_tval),
                     pre_pval = as.numeric(pre_pval),
+                    # diff_date_estimate = as.numeric(pre_estimate),
+                    # diff_date_se = as.numeric(pre_se),
+                    # diff_date_df = as.numeric(pre_df),
+                    # diff_date_tval = as.numeric(pre_tval),
+                    # diff_date_pval = as.numeric(pre_pval),
                     rsqc = as.numeric(rsqc),
                     rsqm = as.numeric(rsqm),
                     dispersion.chisq = as.numeric(dispersion.chisq),

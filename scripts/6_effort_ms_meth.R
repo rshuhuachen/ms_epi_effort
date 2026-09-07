@@ -64,7 +64,7 @@ delta_meth <- left_join(delta_meth, unique(effort[,c("id", "year", "attend", "di
 source("scripts/function_models.R")
 
 #### attendance ####
-## remove repeated samples
+# # remove repeated samples
 # delta_meth_attend <- delta_meth %>%
 #   filter(!is.na(delta_meth)& !is.na(attend))%>%
 #   group_by(chr_pos, id) %>%
@@ -91,6 +91,13 @@ nrow(m_attend_pre_out$sig) #n=1
 
 almostsig_attend <- subset(m_attend_pre_out$data, parameter_pval < 0.05)
 summary(almostsig_attend$parameter_estimate)
+
+m_attend_pre_nocontrol <- parallel::mclapply(delta_meth_attend_ls, function_model_delta_pheno_norepeat, parameter="attend", pre="no_control", mc.cores=4)
+m_attend_pre_nocontrol_out <- function_process_model(m_attend_pre_nocontrol, dir_plots = "plots/model_out/effort", dir_data = "results/modeloutput/effort",
+                                           name_file = "attend_with_pre", pretty_name = "Attendance", filter_disp=FALSE) 
+
+nrow(m_attend_pre_nocontrol_out$data) #n=602
+nrow(m_attend_pre_nocontrol_out$sig) #n=1
 
 #### centrality ####
 ## remove repeated samples
