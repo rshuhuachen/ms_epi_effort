@@ -70,7 +70,7 @@ ggplot(m_attend_out, aes(x = age_estimate, y = -log10(age_pval))) +
   geom_point(size=2, alpha=0.5, aes(col = sig_age, fill = sig_age)) +
   scale_color_manual(values=c(clr_grey, clr_sig)) +
   scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-  labs(x = expression(paste(beta, " estimate Age")), y = expression(-log[10]*"("*italic(p*")")), title = "Attendance") +
+  labs(x = expression(paste(beta, " estimate age")), y = expression(-log[10]*"("*italic(p*")")), title = "Attendance") +
  # geom_hline(yintercept = -log10(m_attend_out_pmin_age), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
   xlim(-0.5,0.5)+
@@ -112,7 +112,7 @@ ggplot(m_dist_out, aes(x = age_estimate, y = -log10(age_pval))) +
   geom_point(size=2, alpha=0.5, aes(col = sig_age, fill = sig_age)) +
   scale_color_manual(values=c(clr_grey, clr_sig)) +
   scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-  labs(x = expression(paste(beta, " estimate Age")), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
+  labs(x = expression(paste(beta, " estimate age")), y = expression(-log[10]*"("*italic(p*")")), title = "Centrality") +
   geom_hline(yintercept = -log10(m_dist_out_pmin_age), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
   xlim(-0.5,0.5)+
@@ -153,7 +153,7 @@ ggplot(m_MS_out, aes(x = age_estimate, y = -log10(age_pval))) +
   geom_point(size=2, alpha=0.5, aes(col = sig_age, fill = sig_age)) +
   scale_color_manual(values=c(clr_grey, clr_sig)) +
   scale_fill_manual(values=alpha(c(clr_grey, clr_sig), 0.6)) +
-  labs(x = expression(paste(beta, " estimate Age")), y = expression(-log[10]*"("*italic(p*")")), title = "Mating success") +
+  labs(x = expression(paste(beta, " estimate age")), y = expression(-log[10]*"("*italic(p*")")), title = "Mating success") +
   geom_hline(yintercept = -log10(m_MS_out_pmin_age), col = "darkred", linetype = "dotted", linewidth = 1) +
   geom_vline(xintercept = 0, col = "darkred", linetype = "dotted", linewidth = 1) +
   xlim(-0.5,0.5)+
@@ -172,4 +172,4 @@ plot_grid(volcanoes_attend,
           volcanoes_MS,
           ncol=1, align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> all_plots
 all_plots
-ggsave(all_plots, file = "plots/final/supp/sfig_4_volcano_pre_lekking.png", width = 14, height = 14)
+ggsave(all_plots, file = "plots/final/supp/sfig_6_volcano_pre_lekking.png", width = 14, height = 14)
