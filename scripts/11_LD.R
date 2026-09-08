@@ -65,5 +65,5 @@ plot_gene_cor("HES1-B", 6) -> cor_matrix_gene3
 plot_grid(cor_matrix_gene1, cor_matrix_gene2, cor_matrix_gene3, ncol = 2, 
           align="hv", axis="lb", labels="auto", label_fontface = "plain", label_size = 22 ) -> ld_plots
 
-ggsave(ld_plots, file = "plots/final/supp/sfig_5_cor_matrix.png", width = 12, height = 10)
+ggsave(ld_plots, file = "plots/final/supp/sfig_5_cor_matrix.png", width = 12, height = 10, bg = "white", dpi = 300)
 
