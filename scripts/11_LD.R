@@ -39,19 +39,23 @@ plot_gene_cor <- function(gene_name, n_cpgs){
     lab_size = 4,
     insig = "stars",
     sig.level = 0.05,
-    outline.color = "white",
-    colors = c("#284651", "#efefef", "#d34e38")) + 
+    outline.color = NA,   # <- remove per-tile borders (was "white")
+    colors = c("#284651", "#efefef", "#d34e38")
+  ) + 
     guides(fill = guide_legend(title = "Correlation")) +
-             theme(text=element_text(size=18, family = "Arial"),
-                                                       legend.text =  element_text(size = 14, family = "Arial"),
-                                                       legend.title = element_text(size = 16, family = "Arial"),
-                                                       plot.margin = margin(1,1,1,1, "cm"), 
-                                                       panel.background = element_rect(fill = "white", colour = NA),
-                                                       plot.background = element_rect(fill = "white", colour = NA),
-                                                       panel.grid.major = element_blank(),
-                                                       panel.grid.minor = element_blank(),
-                                                       panel.border = element_blank()
-                                                       )
+    theme(
+      text = element_text(size = 18, family = "Arial"),
+      legend.text = element_text(size = 14, family = "Arial"),
+      legend.title = element_text(size = 16, family = "Arial"),
+      plot.margin = margin(1, 1, 1, 1, "cm"),
+      panel.background = element_rect(fill = "white", colour = NA),
+      plot.background = element_rect(fill = "white", colour = NA),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_blank(),   # <- add
+      axis.ticks = element_blank()   # <- add
+    )
 }
 
 plot_gene_cor("MAB21L2", 6) -> cor_matrix_gene1
