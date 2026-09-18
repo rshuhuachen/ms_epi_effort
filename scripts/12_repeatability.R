@@ -12,6 +12,7 @@ rm(all_pheno_epi)
 
 ### merge with some metadata
 pacman::p_load(tidyverse, data.table)
+pacman::p_load(rptR, future.apply)
 prepost_long <- left_join(prepost_long, prepost[,c("id", "year", "Core", "born", "fulldate")], 
                           by = c("id", "year", "fulldate"))
 
@@ -23,7 +24,7 @@ prepost_long <- prepost_long %>% mutate(age_year = as.factor(case_when(Core == "
 
 
 
-pacman::p_load(rptR, future.apply)
+
 
 #### All sites ####
 ## all sites repeatability, randomly subset 1000 CpG sites and do this 100 times
@@ -105,13 +106,26 @@ save(rpt_changing, file = "results/repeatability/results_changing_sites.RData")
 #### Calculate per CpG site repeatability ####
 library(dplyr)
 library(purrr)
-library(parallel)
 
 # ---- 1. Make sure grouping vars are factors ----
 prepost_long <- prepost_long %>%
   mutate(id = factor(id), chr_pos = factor(chr_pos))
 
-# ---- 2. Pre-filter sites with insufficient repeat structure ----
+# ---- 2. Load changing sites list ----
+load(file = "results/modeloutput/changing/changing_sites_glmer.RData")
+changing_sites <- unique(as.character(changing_cpg$chr_pos))
+
+# ---- 3. Split all_sites into changing vs non-changing ----
+all_sites <- unique(as.character(prepost_long$chr_pos))
+
+non_changing_sites <- setdiff(all_sites, changing_sites)
+changing_sites_in_data <- intersect(all_sites, changing_sites)
+
+length(all_sites)
+length(non_changing_sites)
+length(changing_sites_in_data)
+
+# ---- 4. Filter to sites with sufficient repeat structure (do this ONCE, upfront) ----
 site_summary <- prepost_long %>%
   group_by(chr_pos, id) %>%
   summarise(n_reps = n(), .groups = "drop") %>%
@@ -120,85 +134,96 @@ site_summary <- prepost_long %>%
 
 valid_sites <- site_summary %>%
   filter(n_id_with_reps >= 2) %>%
-  pull(chr_pos)
+  pull(chr_pos) %>%
+  as.character()
 
-length(valid_sites)
-length(unique(prepost_long$chr_pos)) - length(valid_sites)  # how many dropped
+valid_non_changing <- intersect(non_changing_sites, valid_sites)
+valid_changing     <- intersect(changing_sites_in_data, valid_sites)
 
-## dynamic cpg sites only
-dynamic <- subset(prepost_long, chr_pos %in% valid_sites & chr_pos %in% changing_cpg$chr_pos)
-dynamic_site <- dynamic %>% dplyr::select(id, chr_pos, numC, cov, methperc) %>%
-  arrange(chr_pos) %>%
-  group_split(chr_pos, .keep = TRUE)
+length(valid_non_changing)
+length(valid_changing)  # sanity check - how many changing sites survive filtering
 
-`%!in%` = Negate(`%in%`)
-nondynamic <- subset(prepost_long, chr_pos %in% valid_sites & chr_pos %!in% changing_cpg$chr_pos)
-nondynamic_random <- sample(nondynamic$chr_pos, size = 1000)
-nondynamic_site <- subset(prepost_long, chr_pos %in% nondynamic_random)%>%
-  dplyr::select(id, chr_pos, numC, cov, methperc) %>%
-  arrange(chr_pos) %>%
-  group_split(chr_pos, .keep = TRUE)
+# ---- 5. Take ALL valid changing sites, and a random 1000 from non-changing ----
+set.seed(1908)
+selected_changing     <- valid_changing               # all of them, no sampling
+selected_non_changing <- sample(valid_non_changing, 1000)
 
-# ---- 3. Split into per-site data, then chunk for parallel dispatch ----
-n_sites_dynamic <- length(dynamic_site)
-chunk_size <- 150
-chunk_idx_dynamic <- split(seq_len(n_sites_dynamic), ceiling(seq_len(n_sites_dynamic) / chunk_size))
-data_chunks_dynamic <- lapply(chunk_idx_dynamic, function(idx) dynamic_site[idx])
-
-n_sites_nondynamic <- length(dynamic_site)
-chunk_idx_nondynamic <- split(seq_len(n_sites_nondynamic), ceiling(seq_len(n_sites_nondynamic) / chunk_size))
-data_chunks_nondynamic <- lapply(chunk_idx_nondynamic, function(idx) nondynamic_site[idx])
-
-# ---- 4. Worker function: loop over sites within one chunk ----
-run_chunk <- function(chunk) {
+# ---- 6. Function: fit repeatability for ONE site (sequential, no parallel) ----
+run_site <- function(dat, site_name) {
   library(rptR)
-  library(purrr)
   
-  map_dfr(chunk, function(dat) {
-    site_name <- as.character(dat$chr_pos[1])
-    dat$id <- factor(dat$id)
-    
-    fit <- tryCatch(
-      rpt(
-        cbind(numC, cov) ~ (1|id),
-        grname = "id",
-        data = dat,
-        datatype = "Proportion",
-        nboot = 0,
-        npermut = 0
-      ),
-      error = function(e) NULL,
-      warning = function(w) NULL
-    )
-    
-    if (is.null(fit)) {
-      data.frame(chr_pos = site_name, R = NA_real_,
-                 n_id = length(unique(dat$id)), n_obs = nrow(dat), status = "failed")
-    } else {
-      data.frame(chr_pos = site_name, R = unname(fit$R[1]),
-                 n_id = length(unique(dat$id)), n_obs = nrow(dat), status = "ok")
-    }
-  })
+  dat$id <- factor(dat$id)
+  
+  fit <- tryCatch(
+    rpt(
+      cbind(numC, cov) ~ (1|id),
+      grname = "id",
+      data = dat,
+      datatype = "Proportion",
+      nboot = 0,
+      npermut = 0
+    ),
+    error = function(e) NULL,
+    warning = function(w) NULL
+  )
+  
+  if (is.null(fit)) {
+    data.frame(chr_pos = site_name, R_org = NA_real_, R_link = NA_real_,
+               n_id = length(unique(dat$id)), n_obs = nrow(dat), status = "failed")
+  } else {
+    data.frame(chr_pos = site_name,
+               R_org  = fit$R["R_org",  "id"],
+               R_link = fit$R["R_link", "id"],
+               n_id = length(unique(dat$id)), n_obs = nrow(dat), status = "ok")
+  }
 }
 
-# ---- 5. Run in parallel ----
-n_cores <- detectCores() - 1
-cl <- makeCluster(n_cores)
-clusterExport(cl, varlist = "run_chunk")
+# ---- 7. Sequential loop over a set of sites, with progress printing ----
+run_sites_sequential <- function(sites, data) {
+  n <- length(sites)
+  results <- vector("list", n)
+  
+  for (i in seq_along(sites)) {
+    site <- sites[i]
+    dat <- data %>%
+      filter(chr_pos == site) %>%
+      dplyr::select(id, chr_pos, numC, cov, methperc)
+    
+    results[[i]] <- run_site(dat, site)
+    
+    if (i %% 50 == 0) cat("Processed", i, "/", n, "sites\n")
+  }
+  
+  bind_rows(results)
+}
 
-results_list <- parLapply(cl, data_chunks, run_chunk)
-stopCluster(cl)
+# ---- 8. Run for non-changing sites ----
+cat("Running non-changing sites...\n")
+rpt_non_changing <- run_sites_sequential(selected_non_changing, prepost_long)
 
-# ---- 6. Combine and save ----
-rpt_all_sites <- bind_rows(results_list)
+# ---- 9. Run for changing sites (all of them) ----
+cat("Running changing sites (all)...\n")
+rpt_changing <- run_sites_sequential(selected_changing, prepost_long)
 
-save(rpt_all_sites, file = "results/repeatability/results_all_sites_per_cpg.RData")
+rownames(rpt_changing) <- NULL
+rpt_changing <- unique(rpt_changing)
 
-rpt_all_sites <- rpt_all_sites %>% mutate(changing = case_when(
-  chr_pos %in% changing_cpg$chr_pos ~ "changing",
-  TRUE ~ "non-changing"))
-
+# ---- 10. Save ----
+save(rpt_non_changing, file = "results/repeatability/results_non_changing_1000_per_cpg.RData")
+save(rpt_changing,     file = "results/repeatability/results_changing_all_per_cpg.RData")
 
 ### plot ####
+source("scripts/plotting_theme.R")
+library(scales)
+rpt_non_changing$changing <- "Non-changing sites"
+rpt_changing$changing <- "Changing sites"
+allsites <- rbind(rpt_non_changing, rpt_changing)
 
-ggplot(rpt_all_sites, aes(x = R, fill = changing)) + geom_histogram() + scale_log10() + labs(title = "All sites")
+ggplot(allsites, aes(x = R_link, fill = changing, col = changing)) + 
+  geom_histogram(position="dodge") + labs(fill = "Category", y = "Count", x = "R") + 
+  scale_y_continuous(trans=scales::pseudo_log_trans(base = 10)) +
+  scale_fill_manual(values=alpha(c(clr_sig, clrs[5]), 0.7)) +
+  scale_color_manual(values=c(clr_sig, clrs[5])) +
+  guides(col="none") -> hist_r
+
+ggsave(hist_r, file = "plots/final/supp/histogram_repeatability.png", width=12, height=8)
