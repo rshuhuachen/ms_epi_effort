@@ -39,7 +39,7 @@ plot_gene_cor <- function(gene_name, n_cpgs){
     lab_size = 4,
     insig = "stars",
     sig.level = 0.05,
-    outline.color = NA,   # <- remove per-tile borders (was "white")
+    outline.color = NA,   
     colors = c("#284651", "#efefef", "#d34e38")
   ) + 
     guides(fill = guide_legend(title = "Correlation")) +
@@ -53,8 +53,8 @@ plot_gene_cor <- function(gene_name, n_cpgs){
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
       panel.border = element_blank(),
-      axis.line = element_blank(),   # <- add
-      axis.ticks = element_blank()   # <- add
+      axis.line = element_blank(),  
+      axis.ticks = element_blank()   
     )
 }
 
