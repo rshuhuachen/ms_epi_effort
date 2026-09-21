@@ -62,9 +62,13 @@ The R scripts can be found in the `scripts` directory. They are numbered accordi
 
 7_nextyear_meth and 8_survival_meth. In these scripts, we do something similar to script 6 but instead, we model how delta methylation is associated with future traits: survival to the next year and plumage expression in the next year.
 
-9_all_almost_sig_cpg. In this last script, we annotate all sites that were significant (before multiple testing correction) and we execute a few binomial tests to see if certain genes contain more than expeced significant CpG sites
+9_all_almost_sig_cpg. In this script, we annotate all sites that were significant (before multiple testing correction) and we execute a few binomial tests to see if certain genes contain more than expected significant CpG sites
 
-plots. Within the `./scripts/plots` you will find the 4 scripts used to create the main and supplementary figures, and a script used to make qqplots.
+10_repeatability. Here, we calculate repeatability of DNA methylation
+
+11_LD. In this last script, we investigate correlations in DNA methylation across CpG sites residing in the same gene. If sites are uncorrelated, this indicates they are independent and therefore the observed pattern (multiple significant CpGs in the same gene) is not necessarily due to linkage disequilibrium.
+
+plots. Within the `./scripts/plots` you will find the 5 scripts used to create the main and supplementary figures, and a script used to make qqplots.
 
 ## Plots
 
@@ -72,6 +76,6 @@ Within the ./plots subdirectory, you will find a few folders. All created plots 
 
 ## Results
 
-In this directory, most results are outputted but not all can be found on github due to filesize restrictions. The file that are synced are the outputs from GO analyses and gene lists of significant CpG sites.
+In this directory, most results are outputted but not all can be found on github due to file size restrictions. The file that are synced are the outputs from GO analyses and gene lists of significant CpG sites.
 
 ## 
